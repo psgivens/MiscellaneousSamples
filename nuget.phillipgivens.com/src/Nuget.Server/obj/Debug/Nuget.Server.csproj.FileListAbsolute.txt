@@ -1,0 +1,10 @@
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\NuGet.Server.dll.config
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\NuGet.Server.dll
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\NuGet.Server.pdb
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\Microsoft.Web.Infrastructure.dll
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\NuGet.Core.dll
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\NuGet.Core.pdb
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\bin\Microsoft.Web.Infrastructure.xml
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\obj\Debug\Nuget.Server.csprojResolveAssemblyReference.cache
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\obj\Debug\NuGet.Server.dll
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Server\obj\Debug\NuGet.Server.pdb

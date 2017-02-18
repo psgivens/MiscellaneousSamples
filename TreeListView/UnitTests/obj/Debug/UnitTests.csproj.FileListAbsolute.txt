@@ -1,0 +1,1 @@
+C:\Dev\Downloads\_WPF\wpftreelistview_src\UnitTests\obj\Debug\UnitTests.csprojResolveAssemblyReference.cache

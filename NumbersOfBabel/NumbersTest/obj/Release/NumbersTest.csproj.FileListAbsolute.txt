@@ -1,0 +1,11 @@
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersTest.exe.config
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersTest.exe
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersTest.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersOfBabel.dll
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersTranslators.dll
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersOfBabel.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersTranslators.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTest\bin\Release\NumbersTranslators.xml
+C:\R2\Products\NumbersOfBabel\NumbersTest\obj\Release\NumbersTest.csprojResolveAssemblyReference.cache
+C:\R2\Products\NumbersOfBabel\NumbersTest\obj\Release\NumbersTest.exe
+C:\R2\Products\NumbersOfBabel\NumbersTest\obj\Release\NumbersTest.pdb

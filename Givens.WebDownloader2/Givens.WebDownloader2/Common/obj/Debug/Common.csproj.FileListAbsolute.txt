@@ -1,0 +1,10 @@
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\Common\bin\Debug\Common.dll
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\Common\bin\Debug\Common.pdb
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\Common\obj\Debug\Common.dll
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\Common\obj\Debug\Common.pdb
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\Common\bin\Debug\Common.dll
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\Common\bin\Debug\Common.pdb
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\Common\obj\Debug\Common.dll
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\Common\obj\Debug\Common.pdb

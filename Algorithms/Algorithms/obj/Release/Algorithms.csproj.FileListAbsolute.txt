@@ -1,0 +1,4 @@
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\bin\Release\Algorithms.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\bin\Release\Algorithms.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\obj\Release\Algorithms.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\obj\Release\Algorithms.pdb

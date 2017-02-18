@@ -1,0 +1,7 @@
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\obj\Debug\Algorithms.csprojResolveAssemblyReference.cache
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\bin\Debug\Algorithms.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\bin\Debug\Algorithms.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\obj\Debug\Algorithms.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\Algorithms\Algorithms\obj\Debug\Algorithms.pdb
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\Algorithms\Algorithms\bin\Debug\Algorithms.dll.config
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\Algorithms\Algorithms\bin\Debug\TechTalk.SpecFlow.dll

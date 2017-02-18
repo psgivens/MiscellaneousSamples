@@ -1,0 +1,17 @@
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloaderServices.Tests.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloaderServices.Tests.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\obj\Debug\WebDownloaderServices.Tests.csprojResolveAssemblyReference.cache
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\obj\Debug\WebDownloaderServices.Tests.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\obj\Debug\WebDownloaderServices.Tests.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloaderServices.Tests.dll.config
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\Autofac.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\Common.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\EntityFramework.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloader.Data.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\Common.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloader.Data.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\Autofac.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\Autofac.xml
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\EntityFramework.xml
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloader.Services.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloaderServices.Tests\bin\Debug\WebDownloader.Services.pdb

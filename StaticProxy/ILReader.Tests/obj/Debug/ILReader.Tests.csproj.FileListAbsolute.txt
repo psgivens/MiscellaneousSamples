@@ -1,0 +1,9 @@
+C:\R2\Tools\StaticProxy\ILReader.Tests\bin\Debug\ILReader.Tests.dll
+C:\R2\Tools\StaticProxy\ILReader.Tests\bin\Debug\ILReader.Tests.pdb
+C:\R2\Tools\StaticProxy\ILReader.Tests\bin\Debug\ClrTest.Reflection.ILReader.dll
+C:\R2\Tools\StaticProxy\ILReader.Tests\bin\Debug\xunit.dll
+C:\R2\Tools\StaticProxy\ILReader.Tests\bin\Debug\ClrTest.Reflection.ILReader.pdb
+C:\R2\Tools\StaticProxy\ILReader.Tests\bin\Debug\xunit.xml
+C:\R2\Tools\StaticProxy\ILReader.Tests\obj\Debug\ILReader.Tests.csprojResolveAssemblyReference.cache
+C:\R2\Tools\StaticProxy\ILReader.Tests\obj\Debug\ILReader.Tests.dll
+C:\R2\Tools\StaticProxy\ILReader.Tests\obj\Debug\ILReader.Tests.pdb

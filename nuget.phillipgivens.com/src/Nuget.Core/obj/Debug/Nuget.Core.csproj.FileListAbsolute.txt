@@ -1,0 +1,9 @@
+C:\R2\Products\nuget.phillipgivens.com\Nuget.Core\obj\Debug\Nuget.Core.csprojResolveAssemblyReference.cache
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\bin\Debug\NuGet.Core.dll
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\bin\Debug\NuGet.Core.pdb
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\obj\Debug\NuGet.CommonResources.resources
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\obj\Debug\NuGet.Resources.AnalysisResources.resources
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\obj\Debug\NuGet.Resources.NuGetResources.resources
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\obj\Debug\Nuget.Core.csproj.GenerateResource.Cache
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\obj\Debug\NuGet.Core.dll
+C:\R2\Products\nuget.phillipgivens.com\src\Nuget.Core\obj\Debug\NuGet.Core.pdb

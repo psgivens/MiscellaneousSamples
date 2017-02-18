@@ -1,0 +1,12 @@
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\WebDownloader.Services.dll.config
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\WebDownloader.Services.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\WebDownloader.Services.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\Common.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\EntityFramework.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\WebDownloader.Data.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\Common.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\WebDownloader.Data.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\bin\Debug\EntityFramework.xml
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\obj\Debug\WebDownloader.Services.csprojResolveAssemblyReference.cache
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\obj\Debug\WebDownloader.Services.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.Services\obj\Debug\WebDownloader.Services.pdb

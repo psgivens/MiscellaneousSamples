@@ -1,0 +1,7 @@
+C:\Projects\SuperSocket(1.6 stable).Source\Common\bin\Debug\SuperSocket.Common.XML
+C:\Projects\SuperSocket(1.6 stable).Source\Common\bin\Debug\SuperSocket.Common.dll
+C:\Projects\SuperSocket(1.6 stable).Source\Common\bin\Debug\SuperSocket.Common.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\Common\bin\Debug\log4net.dll
+C:\Projects\SuperSocket(1.6 stable).Source\Common\obj\Debug\SuperSocket.Common.Net45.csprojResolveAssemblyReference.cache
+C:\Projects\SuperSocket(1.6 stable).Source\Common\obj\Debug\SuperSocket.Common.dll
+C:\Projects\SuperSocket(1.6 stable).Source\Common\obj\Debug\SuperSocket.Common.pdb

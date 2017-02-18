@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/PhillipScottGivens.WebDownloader.Data" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/PhillipScottGivens.WebDownloader.Data" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="DownloadStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Requested" />
+      <xs:enumeration value="Downloading" />
+      <xs:enumeration value="Downloaded" />
+      <xs:enumeration value="Errored" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DownloadStatus" nillable="true" type="tns:DownloadStatus" />
+</xs:schema>

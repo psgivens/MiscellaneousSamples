@@ -1,0 +1,6 @@
+C:\Projects\SuperWebSockets_SuperSockets\Common\bin\Release\SuperSocket.Common.XML
+C:\Projects\SuperWebSockets_SuperSockets\Common\bin\Release\SuperSocket.Common.dll
+C:\Projects\SuperWebSockets_SuperSockets\Common\bin\Release\SuperSocket.Common.pdb
+C:\Projects\SuperWebSockets_SuperSockets\Common\obj\Release\SuperSocket.Common.Net45.csprojResolveAssemblyReference.cache
+C:\Projects\SuperWebSockets_SuperSockets\Common\obj\Release\SuperSocket.Common.dll
+C:\Projects\SuperWebSockets_SuperSockets\Common\obj\Release\SuperSocket.Common.pdb

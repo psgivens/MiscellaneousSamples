@@ -1,0 +1,5 @@
+C:\R2\Tools\StaticProxy\SharedCore\bin\Debug\SharedCore.dll
+C:\R2\Tools\StaticProxy\SharedCore\bin\Debug\SharedCore.pdb
+C:\R2\Tools\StaticProxy\SharedCore\obj\Debug\SharedCore.csprojResolveAssemblyReference.cache
+C:\R2\Tools\StaticProxy\SharedCore\obj\Debug\SharedCore.dll
+C:\R2\Tools\StaticProxy\SharedCore\obj\Debug\SharedCore.pdb

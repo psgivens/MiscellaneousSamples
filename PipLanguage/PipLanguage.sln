@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipLanguage", "PipLanguage\PipLanguage.csproj", "{72D1A5E0-6B58-43E0-9EB4-9EFB16E00CEC}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PipCompiler", "PipCompiler\PipCompiler.fsproj", "{EA336FC3-D49E-4303-ADDD-470FEA12C285}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PipCompiler.Tests", "PipCompiler.Tests\PipCompiler.Tests.fsproj", "{8384AD2F-2376-4A6A-BA09-7AA657FDC041}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72D1A5E0-6B58-43E0-9EB4-9EFB16E00CEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72D1A5E0-6B58-43E0-9EB4-9EFB16E00CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72D1A5E0-6B58-43E0-9EB4-9EFB16E00CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72D1A5E0-6B58-43E0-9EB4-9EFB16E00CEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA336FC3-D49E-4303-ADDD-470FEA12C285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA336FC3-D49E-4303-ADDD-470FEA12C285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA336FC3-D49E-4303-ADDD-470FEA12C285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA336FC3-D49E-4303-ADDD-470FEA12C285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8384AD2F-2376-4A6A-BA09-7AA657FDC041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8384AD2F-2376-4A6A-BA09-7AA657FDC041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8384AD2F-2376-4A6A-BA09-7AA657FDC041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8384AD2F-2376-4A6A-BA09-7AA657FDC041}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

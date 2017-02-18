@@ -1,0 +1,6 @@
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.dll.config
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.dll
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.pdb
+E:\Dev\Proofs\Givens.WebDownloader\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.csprojResolveAssemblyReference.cache

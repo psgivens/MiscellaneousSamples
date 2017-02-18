@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="nuget.phillipgivens.com.seaweed.arvixe.com" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^c:\\users\\psgivens\\documents\\visual\ studio\ 2013\\Projects\\nuget\.phillipgivens\.com\\nuget\.phillipgivens\.com\\obj\\Release\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^c:\\users\\psgivens\\documents\\visual\ studio\ 2013\\Projects\\nuget\.phillipgivens\.com\\nuget\.phillipgivens\.com\\obj\\Release\\Package\\PackageTmp$" />
+  </parameter>
+</parameters>

@@ -1,0 +1,14 @@
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\ConsoleApp.exe.config
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\ConsoleApp.exe
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\ConsoleApp.pdb
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\Autofac.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\ProducerConsumerEngine.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\Castle.Core.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\System.Threading.Tasks.Dataflow.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\ProducerConsumerEngine.pdb
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\Autofac.xml
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\Castle.Core.xml
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\bin\Debug\System.Threading.Tasks.Dataflow.xml
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\obj\Debug\ConsoleApp.csprojResolveAssemblyReference.cache
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\obj\Debug\ConsoleApp.exe
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\ConsoleApp\obj\Debug\ConsoleApp.pdb

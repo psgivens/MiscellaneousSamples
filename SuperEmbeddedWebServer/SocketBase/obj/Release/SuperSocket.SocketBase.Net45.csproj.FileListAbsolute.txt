@@ -1,0 +1,11 @@
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\SuperSocket.SocketBase.XML
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\SuperSocket.SocketBase.dll
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\SuperSocket.SocketBase.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\SuperSocket.Common.dll
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\SuperSocket.Common.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\SuperSocket.Common.xml
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\obj\Release\SuperSocket.SocketBase.Net45.csprojResolveAssemblyReference.cache
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\obj\Release\SuperSocket.SocketBase.dll
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\obj\Release\SuperSocket.SocketBase.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\log4net.dll
+C:\Projects\SuperWebSockets_SuperSockets\SocketBase\bin\Release\log4net.xml

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8ac713a15f3142b6ac0a76a56e22cbce" Name="Diagram1" ZoomLevel="88" >
+        <EntityTypeShape EntityType="ParakeetModel.User" Width="1.5" PointX="12.375" PointY="10.375" />
+        <EntityTypeShape EntityType="ParakeetModel.Task" Width="1.75" PointX="15" PointY="13.125" />
+        <EntityTypeShape EntityType="ParakeetModel.Comment" Width="1.75" PointX="15" PointY="9.375" />
+        <EntityTypeShape EntityType="ParakeetModel.Tag" Width="1.5" PointX="17.625" PointY="10.25" />
+        <AssociationConnector Association="ParakeetModel.UserTask" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="ParakeetModel.CommentTag" />
+        <AssociationConnector Association="ParakeetModel.TagTask" />
+        <EntityTypeShape EntityType="ParakeetModel.Role" Width="1.5" PointX="10.25" PointY="10.5" />
+        <AssociationConnector Association="ParakeetModel.RoleUser" />
+        <EntityTypeShape EntityType="ParakeetModel.Query" Width="1.75" PointX="15" PointY="7.125" />
+        <AssociationConnector Association="ParakeetModel.UserQuery" />
+        <AssociationConnector Association="ParakeetModel.UserComment" />
+        <AssociationConnector Association="ParakeetModel.UserComment1" />
+        <AssociationConnector Association="ParakeetModel.RoleQuery" />
+        <AssociationConnector Association="ParakeetModel.TaskTask" />
+        <AssociationConnector Association="ParakeetModel.TaskComment" />
+        <AssociationConnector Association="ParakeetModel.TaskComment1" />
+        <AssociationConnector Association="ParakeetModel.QueryTag" />
+        <EntityTypeShape EntityType="ParakeetModel.ProgressEntry" Width="1.75" PointX="12.375" PointY="14.5" />
+        <AssociationConnector Association="ParakeetModel.TaskProgressEntry" />
+        <AssociationConnector Association="ParakeetModel.UserProgressEntry" />
+        <AssociationConnector Association="ParakeetModel.UserProgressEntry1" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,12 @@
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.SocketEngine.XML
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.SocketEngine.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.SocketEngine.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.Common.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.SocketBase.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.Common.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.Common.xml
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.SocketBase.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\bin\Debug\SuperSocket.SocketBase.xml
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\obj\Debug\SuperSocket.SocketEngine.Net45.csprojResolveAssemblyReference.cache
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\obj\Debug\SuperSocket.SocketEngine.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketEngine\obj\Debug\SuperSocket.SocketEngine.pdb

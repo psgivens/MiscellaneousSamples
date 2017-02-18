@@ -1,0 +1,14 @@
+E:\HgSC\psgivens\sandbox\Demonstrations\ILReader\bin\Debug\ClrTest.Reflection.ILReader.dll
+E:\HgSC\psgivens\sandbox\Demonstrations\ILReader\bin\Debug\ClrTest.Reflection.ILReader.pdb
+E:\HgSC\psgivens\sandbox\Demonstrations\ILReader\obj\Debug\ResolveAssemblyReference.cache
+E:\HgSC\psgivens\sandbox\Demonstrations\ILReader\obj\Debug\ClrTest.Reflection.ILReader.dll
+E:\HgSC\psgivens\sandbox\Demonstrations\ILReader\obj\Debug\ClrTest.Reflection.ILReader.pdb
+E:\HgSC\psgivens\sandbox\StaticProxy\ILReader\bin\Debug\ClrTest.Reflection.ILReader.dll
+E:\HgSC\psgivens\sandbox\StaticProxy\ILReader\bin\Debug\ClrTest.Reflection.ILReader.pdb
+E:\HgSC\psgivens\sandbox\StaticProxy\ILReader\obj\Debug\ClrTest.Reflection.ILReader.dll
+E:\HgSC\psgivens\sandbox\StaticProxy\ILReader\obj\Debug\ClrTest.Reflection.ILReader.pdb
+C:\R\BB\psgivens\sandbox\StaticProxy\ILReader\bin\Debug\ClrTest.Reflection.ILReader.dll
+C:\R\BB\psgivens\sandbox\StaticProxy\ILReader\bin\Debug\ClrTest.Reflection.ILReader.pdb
+C:\R\BB\psgivens\sandbox\StaticProxy\ILReader\obj\Debug\ILReader.csprojResolveAssemblyReference.cache
+C:\R\BB\psgivens\sandbox\StaticProxy\ILReader\obj\Debug\ClrTest.Reflection.ILReader.dll
+C:\R\BB\psgivens\sandbox\StaticProxy\ILReader\obj\Debug\ClrTest.Reflection.ILReader.pdb

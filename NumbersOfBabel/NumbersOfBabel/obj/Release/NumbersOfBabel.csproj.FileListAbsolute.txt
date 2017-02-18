@@ -1,0 +1,5 @@
+C:\R2\Products\NumbersOfBabel\NumbersOfBabel\bin\Release\NumbersOfBabel.dll.config
+C:\R2\Products\NumbersOfBabel\NumbersOfBabel\bin\Release\NumbersOfBabel.dll
+C:\R2\Products\NumbersOfBabel\NumbersOfBabel\bin\Release\NumbersOfBabel.pdb
+C:\R2\Products\NumbersOfBabel\NumbersOfBabel\obj\Release\NumbersOfBabel.dll
+C:\R2\Products\NumbersOfBabel\NumbersOfBabel\obj\Release\NumbersOfBabel.pdb

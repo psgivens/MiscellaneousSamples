@@ -1,0 +1,8 @@
+C:\R2\Proofs\PipLanguage\PipLanguage\obj\Debug\PipLanguage.csprojResolveAssemblyReference.cache
+C:\R2\Proofs\PipLanguage\PipLanguage\bin\Debug\PipLanguage.dll
+C:\R2\Proofs\PipLanguage\PipLanguage\bin\Debug\PipLanguage.pdb
+C:\R2\Proofs\PipLanguage\PipLanguage\bin\Debug\Irony.dll
+C:\R2\Proofs\PipLanguage\PipLanguage\bin\Debug\Irony.pdb
+C:\R2\Proofs\PipLanguage\PipLanguage\bin\Debug\Irony.xml
+C:\R2\Proofs\PipLanguage\PipLanguage\obj\Debug\PipLanguage.dll
+C:\R2\Proofs\PipLanguage\PipLanguage\obj\Debug\PipLanguage.pdb

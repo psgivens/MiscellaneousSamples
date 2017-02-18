@@ -1,0 +1,4 @@
+function Doit(i:int, j:int) :int
+{                            
+    (2 + i) * j - i;                    
+}                           

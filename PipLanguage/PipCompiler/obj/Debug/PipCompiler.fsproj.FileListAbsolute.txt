@@ -1,0 +1,14 @@
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\PipCompiler.exe.config
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\PipCompiler.XML
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\PipCompiler.exe
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\PipCompiler.pdb
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\FSharp.Core.dll
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\Irony.dll
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\PipLanguage.dll
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\PipLanguage.pdb
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\Irony.pdb
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\Irony.xml
+C:\R2\Proofs\PipLanguage\PipCompiler\bin\Debug\FSharp.Core.xml
+C:\R2\Proofs\PipLanguage\PipCompiler\obj\Debug\PipCompiler.exe
+C:\R2\Proofs\PipLanguage\PipCompiler\obj\Debug\PipCompiler.pdb
+C:\R2\Proofs\PipLanguage\PipCompiler\obj\Debug\PipCompiler.fsprojResolveAssemblyReference.cache

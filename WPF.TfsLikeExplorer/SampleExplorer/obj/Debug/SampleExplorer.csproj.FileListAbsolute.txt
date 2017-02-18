@@ -1,0 +1,32 @@
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\SampleExplorer.exe.config
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\SampleExplorer.exe
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\SampleExplorer.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer.csprojResolveAssemblyReference.cache
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\InsightExplorer.baml
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\MainWindow.baml
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\InsightExplorer.g.cs
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\MainWindow.g.cs
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\App.g.cs
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer_MarkupCompile.cache
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer.g.resources
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer.Properties.Resources.resources
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer.csproj.GenerateResource.Cache
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer.exe
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\GeneratedInternalTypeHelper.g.cs
+c:\users\psgivens\documents\visual studio 2013\Projects\SampleExplorer\SampleExplorer\obj\Debug\SampleExplorer_MarkupCompile.lref
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\Xceed.Wpf.AvalonDock.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\Xceed.Wpf.AvalonDock.pdb
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExplorer\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+C:\R2\Proofs\WPF.TfsLikeExplorer\SampleExplorer\bin\Debug\SampleExplorer.exe.config
+C:\R2\Proofs\WPF.TfsLikeExplorer\SampleExplorer\obj\Debug\SampleExplorer.exe
+C:\R2\Proofs\WPF.TfsLikeExplorer\SampleExplorer\obj\Debug\SampleExplorer.pdb

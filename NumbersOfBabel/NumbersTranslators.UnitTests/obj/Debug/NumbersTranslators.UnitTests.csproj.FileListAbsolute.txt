@@ -1,0 +1,12 @@
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersTranslators.UnitTests.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersTranslators.UnitTests.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersTranslators.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersOfBabel.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersTranslators.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersTranslators.xml
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\obj\Debug\NumbersTranslators.UnitTests.csprojResolveAssemblyReference.cache
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\obj\Debug\NumbersTranslators.UnitTests.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\obj\Debug\NumbersTranslators.UnitTests.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersOfBabel.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\NumbersTranslators.UnitTests.dll.config
+C:\R2\Products\NumbersOfBabel\NumbersTranslators.UnitTests\bin\Debug\TechTalk.SpecFlow.dll

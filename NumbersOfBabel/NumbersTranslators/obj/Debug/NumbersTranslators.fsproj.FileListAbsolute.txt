@@ -1,0 +1,10 @@
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\NumbersTranslators.XML
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\NumbersTranslators.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\NumbersTranslators.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\FSharp.Core.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\NumbersOfBabel.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\NumbersOfBabel.pdb
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\bin\Debug\FSharp.Core.xml
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\obj\Debug\NumbersTranslators.fsprojResolveAssemblyReference.cache
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\obj\Debug\NumbersTranslators.dll
+C:\R2\Products\NumbersOfBabel\NumbersTranslators\obj\Debug\NumbersTranslators.pdb

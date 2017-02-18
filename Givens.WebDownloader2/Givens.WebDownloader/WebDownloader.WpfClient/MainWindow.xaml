@@ -1,0 +1,22 @@
+﻿<Window x:Class="WebDownloader.WpfClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="432" Width="779">
+    <Grid>
+        <ListView 
+            ItemsSource="{Binding Records}" Height="175" Margin="33,38,195,0" VerticalAlignment="Top">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" />
+                    <GridViewColumn Header="Address" DisplayMemberBinding="{Binding Address}" />
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBox Name="NewAddress" Height="23" Margin="33,10,195,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <WebBrowser Margin="33,218,36,22"/>
+        <Button Name="AddUrlButton" Content="Add URLs" Margin="0,11,36,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="143" Click="AddUrlButton_Click" />
+        <Button Name="DownloadButton" Content="Download URLs" Margin="0,60,36,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="143" Click="DownloadButton_Click"/>
+        <Button Name="ShowButton" Content="Show Selected" Margin="0,87,36,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="143" IsEnabled="False"/>
+    </Grid>
+</Window>

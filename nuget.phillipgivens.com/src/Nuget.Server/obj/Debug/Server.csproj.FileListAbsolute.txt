@@ -1,0 +1,15 @@
+C:\R\CP\nuget.git\src\Server\bin\NuGet.Server.dll.config
+C:\R\CP\nuget.git\src\Server\bin\NuGet.Server.dll
+C:\R\CP\nuget.git\src\Server\bin\NuGet.Server.pdb
+C:\R\CP\nuget.git\src\Server\bin\Elmah.dll
+C:\R\CP\nuget.git\src\Server\bin\Microsoft.Web.Infrastructure.dll
+C:\R\CP\nuget.git\src\Server\bin\Ninject.dll
+C:\R\CP\nuget.git\src\Server\bin\NuGet.Core.dll
+C:\R\CP\nuget.git\src\Server\bin\RouteMagic.dll
+C:\R\CP\nuget.git\src\Server\bin\WebActivator.dll
+C:\R\CP\nuget.git\src\Server\bin\NuGet.Core.pdb
+C:\R\CP\nuget.git\src\Server\bin\Ninject.pdb
+C:\R\CP\nuget.git\src\Server\bin\Ninject.xml
+C:\R\CP\nuget.git\src\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\R\CP\nuget.git\src\Server\obj\Debug\NuGet.Server.dll
+C:\R\CP\nuget.git\src\Server\obj\Debug\NuGet.Server.pdb

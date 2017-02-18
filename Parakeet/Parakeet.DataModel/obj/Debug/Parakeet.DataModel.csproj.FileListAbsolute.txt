@@ -1,0 +1,10 @@
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataModel\bin\Debug\Parakeet.DataModel.dll
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataModel\bin\Debug\Parakeet.DataModel.pdb
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataModel\obj\Debug\Parakeet.DataModel.csprojResolveAssemblyReference.cache
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataModel\obj\Debug\Parakeet.DataModel.dll
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataModel\obj\Debug\Parakeet.DataModel.pdb
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataModel\bin\Debug\Parakeet.DataModel.dll
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataModel\bin\Debug\Parakeet.DataModel.pdb
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataModel\obj\Debug\Parakeet.DataModel.csprojResolveAssemblyReference.cache
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataModel\obj\Debug\Parakeet.DataModel.dll
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataModel\obj\Debug\Parakeet.DataModel.pdb

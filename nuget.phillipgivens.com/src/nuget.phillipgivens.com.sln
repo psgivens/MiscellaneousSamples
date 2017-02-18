@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuget.phillipgivens.com", "nuget.phillipgivens.com\nuget.phillipgivens.com.csproj", "{50555846-A10D-4A7B-9B1F-7D85FFAE7716}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuget.Core", "Nuget.Core\Nuget.Core.csproj", "{F879F274-EFA0-4157-8404-33A19B4E6AEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuget.Server", "Nuget.Server\Nuget.Server.csproj", "{793B20A9-E263-4B54-BB31-305B602087CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Coverage|Any CPU = Coverage|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50555846-A10D-4A7B-9B1F-7D85FFAE7716}.Coverage|Any CPU.ActiveCfg = Release|Any CPU
+		{50555846-A10D-4A7B-9B1F-7D85FFAE7716}.Coverage|Any CPU.Build.0 = Release|Any CPU
+		{50555846-A10D-4A7B-9B1F-7D85FFAE7716}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50555846-A10D-4A7B-9B1F-7D85FFAE7716}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50555846-A10D-4A7B-9B1F-7D85FFAE7716}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50555846-A10D-4A7B-9B1F-7D85FFAE7716}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F879F274-EFA0-4157-8404-33A19B4E6AEC}.Coverage|Any CPU.ActiveCfg = Coverage|Any CPU
+		{F879F274-EFA0-4157-8404-33A19B4E6AEC}.Coverage|Any CPU.Build.0 = Coverage|Any CPU
+		{F879F274-EFA0-4157-8404-33A19B4E6AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F879F274-EFA0-4157-8404-33A19B4E6AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F879F274-EFA0-4157-8404-33A19B4E6AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F879F274-EFA0-4157-8404-33A19B4E6AEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{793B20A9-E263-4B54-BB31-305B602087CE}.Coverage|Any CPU.ActiveCfg = Coverage|Any CPU
+		{793B20A9-E263-4B54-BB31-305B602087CE}.Coverage|Any CPU.Build.0 = Coverage|Any CPU
+		{793B20A9-E263-4B54-BB31-305B602087CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793B20A9-E263-4B54-BB31-305B602087CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793B20A9-E263-4B54-BB31-305B602087CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793B20A9-E263-4B54-BB31-305B602087CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

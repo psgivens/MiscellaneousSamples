@@ -1,0 +1,30 @@
+﻿<Window x:Class="Parakeet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:presenters="clr-namespace:Parakeet.Presenters"
+        xmlns:views="clr-namespace:Parakeet.Views"
+        xmlns:application="clr-namespace:Parakeet"
+        Title="Parakeet" Height="350" Width="525"
+        MaxWidth="550"
+        >
+    <Window.Resources>
+        <application:DefaultTemplateSelector x:Key="TemplateSelector" />     
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ContentControl 
+            Content="{Binding Entry}" 
+            Grid.Row="0"    
+            ContentTemplateSelector="{StaticResource TemplateSelector}" />
+        
+        <ContentControl 
+            Content="{Binding ActiveDisplay}" 
+            Grid.Row="1"  
+            ContentTemplateSelector="{StaticResource TemplateSelector}" />       
+
+    </Grid>
+</Window>

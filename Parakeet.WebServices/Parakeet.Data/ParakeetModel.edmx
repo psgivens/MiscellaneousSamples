@@ -1,0 +1,935 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ParakeetModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="ParakeetModelStoreContainer">
+    <EntitySet Name="Users" EntityType="ParakeetModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tasks" EntityType="ParakeetModel.Store.Tasks" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Comments" EntityType="ParakeetModel.Store.Comments" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tags" EntityType="ParakeetModel.Store.Tags" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Roles" EntityType="ParakeetModel.Store.Roles" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Queries" EntityType="ParakeetModel.Store.Queries" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ProgressEntries" EntityType="ParakeetModel.Store.ProgressEntries" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CommentTag" EntityType="ParakeetModel.Store.CommentTag" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TagTask" EntityType="ParakeetModel.Store.TagTask" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="RoleUser" EntityType="ParakeetModel.Store.RoleUser" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UserQuery" EntityType="ParakeetModel.Store.UserQuery" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UserComment1" EntityType="ParakeetModel.Store.UserComment1" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TaskComment1" EntityType="ParakeetModel.Store.TaskComment1" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="QueryTag" EntityType="ParakeetModel.Store.QueryTag" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="UserTask" Association="ParakeetModel.Store.UserTask">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Task" EntitySet="Tasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CommentTag_Comment" Association="ParakeetModel.Store.FK_CommentTag_Comment">
+      <End Role="Comment" EntitySet="Comments" />
+      <End Role="CommentTag" EntitySet="CommentTag" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CommentTag_Tag" Association="ParakeetModel.Store.FK_CommentTag_Tag">
+      <End Role="Tag" EntitySet="Tags" />
+      <End Role="CommentTag" EntitySet="CommentTag" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TagTask_Tag" Association="ParakeetModel.Store.FK_TagTask_Tag">
+      <End Role="Tag" EntitySet="Tags" />
+      <End Role="TagTask" EntitySet="TagTask" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TagTask_Task" Association="ParakeetModel.Store.FK_TagTask_Task">
+      <End Role="Task" EntitySet="Tasks" />
+      <End Role="TagTask" EntitySet="TagTask" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RoleUser_Role" Association="ParakeetModel.Store.FK_RoleUser_Role">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="RoleUser" EntitySet="RoleUser" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RoleUser_User" Association="ParakeetModel.Store.FK_RoleUser_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="RoleUser" EntitySet="RoleUser" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserQuery_User" Association="ParakeetModel.Store.FK_UserQuery_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserQuery" EntitySet="UserQuery" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserQuery_Query" Association="ParakeetModel.Store.FK_UserQuery_Query">
+      <End Role="Query" EntitySet="Queries" />
+      <End Role="UserQuery" EntitySet="UserQuery" />
+    </AssociationSet>
+    <AssociationSet Name="UserComment" Association="ParakeetModel.Store.UserComment">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Comment" EntitySet="Comments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserComment1_User" Association="ParakeetModel.Store.FK_UserComment1_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserComment1" EntitySet="UserComment1" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserComment1_Comment" Association="ParakeetModel.Store.FK_UserComment1_Comment">
+      <End Role="Comment" EntitySet="Comments" />
+      <End Role="UserComment1" EntitySet="UserComment1" />
+    </AssociationSet>
+    <AssociationSet Name="RoleQuery" Association="ParakeetModel.Store.RoleQuery">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="Query" EntitySet="Queries" />
+    </AssociationSet>
+    <AssociationSet Name="TaskTask" Association="ParakeetModel.Store.TaskTask">
+      <End Role="Task" EntitySet="Tasks" />
+      <End Role="Task1" EntitySet="Tasks" />
+    </AssociationSet>
+    <AssociationSet Name="TaskComment" Association="ParakeetModel.Store.TaskComment">
+      <End Role="Task" EntitySet="Tasks" />
+      <End Role="Comment" EntitySet="Comments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaskComment1_Task" Association="ParakeetModel.Store.FK_TaskComment1_Task">
+      <End Role="Task" EntitySet="Tasks" />
+      <End Role="TaskComment1" EntitySet="TaskComment1" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaskComment1_Comment" Association="ParakeetModel.Store.FK_TaskComment1_Comment">
+      <End Role="Comment" EntitySet="Comments" />
+      <End Role="TaskComment1" EntitySet="TaskComment1" />
+    </AssociationSet>
+    <AssociationSet Name="FK_QueryTag_Query" Association="ParakeetModel.Store.FK_QueryTag_Query">
+      <End Role="Query" EntitySet="Queries" />
+      <End Role="QueryTag" EntitySet="QueryTag" />
+    </AssociationSet>
+    <AssociationSet Name="FK_QueryTag_Tag" Association="ParakeetModel.Store.FK_QueryTag_Tag">
+      <End Role="Tag" EntitySet="Tags" />
+      <End Role="QueryTag" EntitySet="QueryTag" />
+    </AssociationSet>
+    <AssociationSet Name="TaskProgressEntry" Association="ParakeetModel.Store.TaskProgressEntry">
+      <End Role="Task" EntitySet="Tasks" />
+      <End Role="ProgressEntry" EntitySet="ProgressEntries" />
+    </AssociationSet>
+    <AssociationSet Name="UserProgressEntry" Association="ParakeetModel.Store.UserProgressEntry">
+      <End Role="User" EntitySet="Users" />
+      <End Role="ProgressEntry" EntitySet="ProgressEntries" />
+    </AssociationSet>
+    <AssociationSet Name="UserProgressEntry1" Association="ParakeetModel.Store.UserProgressEntry1">
+      <End Role="User" EntitySet="Users" />
+      <End Role="ProgressEntry" EntitySet="ProgressEntries" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserName" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Tasks">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="Parent_Id" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="Comments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TimeStamp" Type="datetime" Nullable="false" />
+    <Property Name="Content" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="TaskId" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="Tags">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Roles">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Queries">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Role_Id" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="ProgressEntries">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="TaskId" Type="int" Nullable="false" />
+    <Property Name="AssociatedUserId" Type="int" Nullable="false" />
+    <Property Name="ReportingUserId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CommentTag">
+    <Key>
+      <PropertyRef Name="Comments_Id" />
+      <PropertyRef Name="Tags_Id" />
+    </Key>
+    <Property Name="Comments_Id" Type="int" Nullable="false" />
+    <Property Name="Tags_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TagTask">
+    <Key>
+      <PropertyRef Name="Tags_Id" />
+      <PropertyRef Name="Tasks_Id" />
+    </Key>
+    <Property Name="Tags_Id" Type="int" Nullable="false" />
+    <Property Name="Tasks_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="RoleUser">
+    <Key>
+      <PropertyRef Name="Roles_Id" />
+      <PropertyRef Name="Users_Id" />
+    </Key>
+    <Property Name="Roles_Id" Type="int" Nullable="false" />
+    <Property Name="Users_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UserQuery">
+    <Key>
+      <PropertyRef Name="Users_Id" />
+      <PropertyRef Name="Queries_Id" />
+    </Key>
+    <Property Name="Users_Id" Type="int" Nullable="false" />
+    <Property Name="Queries_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UserComment1">
+    <Key>
+      <PropertyRef Name="MentionedUsers_Id" />
+      <PropertyRef Name="MentionedIn_Id" />
+    </Key>
+    <Property Name="MentionedUsers_Id" Type="int" Nullable="false" />
+    <Property Name="MentionedIn_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TaskComment1">
+    <Key>
+      <PropertyRef Name="MentionedTasks_Id" />
+      <PropertyRef Name="MentionedIn_Id" />
+    </Key>
+    <Property Name="MentionedTasks_Id" Type="int" Nullable="false" />
+    <Property Name="MentionedIn_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="QueryTag">
+    <Key>
+      <PropertyRef Name="QueryTag_Tag_Id" />
+      <PropertyRef Name="Tags_Id" />
+    </Key>
+    <Property Name="QueryTag_Tag_Id" Type="int" Nullable="false" />
+    <Property Name="Tags_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="UserTask">
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <End Role="Task" Type="ParakeetModel.Store.Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Task">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserComment">
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <End Role="Comment" Type="ParakeetModel.Store.Comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Comment">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="RoleQuery">
+    <End Role="Role" Type="ParakeetModel.Store.Roles" Multiplicity="0..1" />
+    <End Role="Query" Type="ParakeetModel.Store.Queries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Query">
+        <PropertyRef Name="Role_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TaskTask">
+    <End Role="Task" Type="ParakeetModel.Store.Tasks" Multiplicity="0..1" />
+    <End Role="Task1" Type="ParakeetModel.Store.Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Task">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Task1">
+        <PropertyRef Name="Parent_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TaskComment">
+    <End Role="Task" Type="ParakeetModel.Store.Tasks" Multiplicity="0..1" />
+    <End Role="Comment" Type="ParakeetModel.Store.Comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Task">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Comment">
+        <PropertyRef Name="TaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TaskProgressEntry">
+    <End Role="Task" Type="ParakeetModel.Store.Tasks" Multiplicity="1" />
+    <End Role="ProgressEntry" Type="ParakeetModel.Store.ProgressEntries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Task">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProgressEntry">
+        <PropertyRef Name="TaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserProgressEntry">
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <End Role="ProgressEntry" Type="ParakeetModel.Store.ProgressEntries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProgressEntry">
+        <PropertyRef Name="AssociatedUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserProgressEntry1">
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <End Role="ProgressEntry" Type="ParakeetModel.Store.ProgressEntries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProgressEntry">
+        <PropertyRef Name="ReportingUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CommentTag_Comment">
+    <End Role="Comment" Type="ParakeetModel.Store.Comments" Multiplicity="1" />
+    <End Role="CommentTag" Type="ParakeetModel.Store.CommentTag" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Comment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CommentTag">
+        <PropertyRef Name="Comments_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CommentTag_Tag">
+    <End Role="CommentTag" Type="ParakeetModel.Store.CommentTag" Multiplicity="*" />
+    <End Role="Tag" Type="ParakeetModel.Store.Tags" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Tag">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CommentTag">
+        <PropertyRef Name="Tags_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TagTask_Tag">
+    <End Role="Tag" Type="ParakeetModel.Store.Tags" Multiplicity="1" />
+    <End Role="TagTask" Type="ParakeetModel.Store.TagTask" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tag">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TagTask">
+        <PropertyRef Name="Tags_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TagTask_Task">
+    <End Role="TagTask" Type="ParakeetModel.Store.TagTask" Multiplicity="*" />
+    <End Role="Task" Type="ParakeetModel.Store.Tasks" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Task">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TagTask">
+        <PropertyRef Name="Tasks_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RoleUser_Role">
+    <End Role="Role" Type="ParakeetModel.Store.Roles" Multiplicity="1" />
+    <End Role="RoleUser" Type="ParakeetModel.Store.RoleUser" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="RoleUser">
+        <PropertyRef Name="Roles_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RoleUser_User">
+    <End Role="RoleUser" Type="ParakeetModel.Store.RoleUser" Multiplicity="*" />
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="RoleUser">
+        <PropertyRef Name="Users_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserQuery_User">
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <End Role="UserQuery" Type="ParakeetModel.Store.UserQuery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserQuery">
+        <PropertyRef Name="Users_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserQuery_Query">
+    <End Role="UserQuery" Type="ParakeetModel.Store.UserQuery" Multiplicity="*" />
+    <End Role="Query" Type="ParakeetModel.Store.Queries" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Query">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserQuery">
+        <PropertyRef Name="Queries_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserComment1_User">
+    <End Role="User" Type="ParakeetModel.Store.Users" Multiplicity="1" />
+    <End Role="UserComment1" Type="ParakeetModel.Store.UserComment1" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserComment1">
+        <PropertyRef Name="MentionedUsers_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserComment1_Comment">
+    <End Role="UserComment1" Type="ParakeetModel.Store.UserComment1" Multiplicity="*" />
+    <End Role="Comment" Type="ParakeetModel.Store.Comments" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Comment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserComment1">
+        <PropertyRef Name="MentionedIn_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaskComment1_Task">
+    <End Role="Task" Type="ParakeetModel.Store.Tasks" Multiplicity="1" />
+    <End Role="TaskComment1" Type="ParakeetModel.Store.TaskComment1" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Task">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TaskComment1">
+        <PropertyRef Name="MentionedTasks_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaskComment1_Comment">
+    <End Role="TaskComment1" Type="ParakeetModel.Store.TaskComment1" Multiplicity="*" />
+    <End Role="Comment" Type="ParakeetModel.Store.Comments" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Comment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TaskComment1">
+        <PropertyRef Name="MentionedIn_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_QueryTag_Query">
+    <End Role="Query" Type="ParakeetModel.Store.Queries" Multiplicity="1" />
+    <End Role="QueryTag" Type="ParakeetModel.Store.QueryTag" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Query">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="QueryTag">
+        <PropertyRef Name="QueryTag_Tag_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_QueryTag_Tag">
+    <End Role="QueryTag" Type="ParakeetModel.Store.QueryTag" Multiplicity="*" />
+    <End Role="Tag" Type="ParakeetModel.Store.Tags" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Tag">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="QueryTag">
+        <PropertyRef Name="Tags_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="ParakeetModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="ParakeetModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Users" EntityType="ParakeetModel.User" />
+          <EntitySet Name="Tasks" EntityType="ParakeetModel.Task" />
+          <EntitySet Name="Comments" EntityType="ParakeetModel.Comment" />
+          <EntitySet Name="Tags" EntityType="ParakeetModel.Tag" />
+          <AssociationSet Name="UserTask" Association="ParakeetModel.UserTask">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Task" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="CommentTag" Association="ParakeetModel.CommentTag">
+            <End Role="Comment" EntitySet="Comments" />
+            <End Role="Tag" EntitySet="Tags" />
+          </AssociationSet>
+          <AssociationSet Name="TagTask" Association="ParakeetModel.TagTask">
+            <End Role="Tag" EntitySet="Tags" />
+            <End Role="Task" EntitySet="Tasks" />
+          </AssociationSet>
+          <EntitySet Name="Roles" EntityType="ParakeetModel.Role" />
+          <AssociationSet Name="RoleUser" Association="ParakeetModel.RoleUser">
+            <End Role="Role" EntitySet="Roles" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <EntitySet Name="Queries" EntityType="ParakeetModel.Query" />
+          <AssociationSet Name="UserQuery" Association="ParakeetModel.UserQuery">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Query" EntitySet="Queries" />
+          </AssociationSet>
+          <AssociationSet Name="UserComment" Association="ParakeetModel.UserComment">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Comment" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="UserComment1" Association="ParakeetModel.UserComment1">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Comment" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="RoleQuery" Association="ParakeetModel.RoleQuery">
+            <End Role="Role" EntitySet="Roles" />
+            <End Role="Query" EntitySet="Queries" />
+          </AssociationSet>
+          <AssociationSet Name="TaskTask" Association="ParakeetModel.TaskTask">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="Task1" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="TaskComment" Association="ParakeetModel.TaskComment">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="Comment" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="TaskComment1" Association="ParakeetModel.TaskComment1">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="Comment" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="QueryTag" Association="ParakeetModel.QueryTag">
+            <End Role="Query" EntitySet="Queries" />
+            <End Role="Tag" EntitySet="Tags" />
+          </AssociationSet>
+          <EntitySet Name="ProgressEntries" EntityType="ParakeetModel.ProgressEntry" />
+          <AssociationSet Name="TaskProgressEntry" Association="ParakeetModel.TaskProgressEntry">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="ProgressEntry" EntitySet="ProgressEntries" />
+          </AssociationSet>
+          <AssociationSet Name="UserProgressEntry" Association="ParakeetModel.UserProgressEntry">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ProgressEntry" EntitySet="ProgressEntries" />
+          </AssociationSet>
+          <AssociationSet Name="UserProgressEntry1" Association="ParakeetModel.UserProgressEntry1">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ProgressEntry" EntitySet="ProgressEntries" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Roles" Relationship="ParakeetModel.RoleUser" FromRole="User" ToRole="Role" />
+          <Property Type="String" Name="UserName" Nullable="false" />
+          <NavigationProperty Name="Queries" Relationship="ParakeetModel.UserQuery" FromRole="User" ToRole="Query" />
+          <NavigationProperty Name="Comments" Relationship="ParakeetModel.UserComment" FromRole="User" ToRole="Comment" />
+          <NavigationProperty Name="MentionedIn" Relationship="ParakeetModel.UserComment1" FromRole="User" ToRole="Comment" />
+          <NavigationProperty Name="AssociatedEntries" Relationship="ParakeetModel.UserProgressEntry" FromRole="User" ToRole="ProgressEntry" />
+          <NavigationProperty Name="ReportedEntries" Relationship="ParakeetModel.UserProgressEntry1" FromRole="User" ToRole="ProgressEntry" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="AssignedUser" Relationship="ParakeetModel.UserTask" FromRole="Task" ToRole="User" />
+          <Property Type="Int32" Name="UserId" Nullable="false" />
+          <NavigationProperty Name="Tags" Relationship="ParakeetModel.TagTask" FromRole="Task" ToRole="Tag" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" />
+          <NavigationProperty Name="Children" Relationship="ParakeetModel.TaskTask" FromRole="Task" ToRole="Task1" />
+          <NavigationProperty Name="Parent" Relationship="ParakeetModel.TaskTask" FromRole="Task1" ToRole="Task" />
+          <NavigationProperty Name="Comments" Relationship="ParakeetModel.TaskComment" FromRole="Task" ToRole="Comment" />
+          <NavigationProperty Name="MentionedIn" Relationship="ParakeetModel.TaskComment1" FromRole="Task" ToRole="Comment" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" />
+          <NavigationProperty Name="ProgressEntries" Relationship="ParakeetModel.TaskProgressEntry" FromRole="Task" ToRole="ProgressEntry" />
+        </EntityType>
+        <EntityType Name="Comment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="TimeStamp" Nullable="false" />
+          <Property Type="String" Name="Content" Nullable="false" />
+          <NavigationProperty Name="Tags" Relationship="ParakeetModel.CommentTag" FromRole="Comment" ToRole="Tag" />
+          <NavigationProperty Name="Author" Relationship="ParakeetModel.UserComment" FromRole="Comment" ToRole="User" />
+          <Property Type="Int32" Name="UserId" Nullable="false" />
+          <NavigationProperty Name="MentionedUsers" Relationship="ParakeetModel.UserComment1" FromRole="Comment" ToRole="User" />
+          <NavigationProperty Name="ParentTask" Relationship="ParakeetModel.TaskComment" FromRole="Comment" ToRole="Task" />
+          <Property Type="Int32" Name="TaskId" Nullable="true" />
+          <NavigationProperty Name="MentionedTasks" Relationship="ParakeetModel.TaskComment1" FromRole="Comment" ToRole="Task" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Comments" Relationship="ParakeetModel.CommentTag" FromRole="Tag" ToRole="Comment" />
+          <NavigationProperty Name="Tasks" Relationship="ParakeetModel.TagTask" FromRole="Tag" ToRole="Task" />
+          <Property Type="String" Name="Name" Nullable="false" />
+        </EntityType>
+        <Association Name="UserTask">
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="1" />
+          <End Type="ParakeetModel.Task" Role="Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CommentTag">
+          <End Type="ParakeetModel.Comment" Role="Comment" Multiplicity="*" />
+          <End Type="ParakeetModel.Tag" Role="Tag" Multiplicity="*" />
+        </Association>
+        <Association Name="TagTask">
+          <End Type="ParakeetModel.Tag" Role="Tag" Multiplicity="*" />
+          <End Type="ParakeetModel.Task" Role="Task" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Users" Relationship="ParakeetModel.RoleUser" FromRole="Role" ToRole="User" />
+          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <NavigationProperty Name="Queries" Relationship="ParakeetModel.RoleQuery" FromRole="Role" ToRole="Query" />
+        </EntityType>
+        <Association Name="RoleUser">
+          <End Type="ParakeetModel.Role" Role="Role" Multiplicity="*" />
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Query">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Users" Relationship="ParakeetModel.UserQuery" FromRole="Query" ToRole="User" />
+          <Property Type="String" Name="Name" Nullable="false" />
+          <NavigationProperty Name="Role" Relationship="ParakeetModel.RoleQuery" FromRole="Query" ToRole="Role" />
+          <NavigationProperty Name="Tags" Relationship="ParakeetModel.QueryTag" FromRole="Query" ToRole="Tag" />
+        </EntityType>
+        <Association Name="UserQuery">
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="*" />
+          <End Type="ParakeetModel.Query" Role="Query" Multiplicity="*" />
+        </Association>
+        <Association Name="UserComment">
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="1" />
+          <End Type="ParakeetModel.Comment" Role="Comment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Comment">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserComment1">
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="*" />
+          <End Type="ParakeetModel.Comment" Role="Comment" Multiplicity="*" />
+        </Association>
+        <Association Name="RoleQuery">
+          <End Type="ParakeetModel.Role" Role="Role" Multiplicity="0..1" />
+          <End Type="ParakeetModel.Query" Role="Query" Multiplicity="*" />
+        </Association>
+        <Association Name="TaskTask">
+          <End Type="ParakeetModel.Task" Role="Task" Multiplicity="0..1" />
+          <End Type="ParakeetModel.Task" Role="Task1" Multiplicity="*" />
+        </Association>
+        <Association Name="TaskComment">
+          <End Type="ParakeetModel.Task" Role="Task" Multiplicity="0..1" />
+          <End Type="ParakeetModel.Comment" Role="Comment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Comment">
+              <PropertyRef Name="TaskId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="TaskComment1">
+          <End Type="ParakeetModel.Task" Role="Task" Multiplicity="*" />
+          <End Type="ParakeetModel.Comment" Role="Comment" Multiplicity="*" />
+        </Association>
+        <Association Name="QueryTag">
+          <End Type="ParakeetModel.Query" Role="Query" Multiplicity="*" />
+          <End Type="ParakeetModel.Tag" Role="Tag" Multiplicity="*" />
+        </Association>
+        <EntityType Name="ProgressEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Text" Nullable="false" />
+          <NavigationProperty Name="Task" Relationship="ParakeetModel.TaskProgressEntry" FromRole="ProgressEntry" ToRole="Task" />
+          <Property Type="Int32" Name="TaskId" Nullable="false" />
+          <NavigationProperty Name="ProgressingMember" Relationship="ParakeetModel.UserProgressEntry" FromRole="ProgressEntry" ToRole="User" />
+          <Property Type="Int32" Name="AssociatedUserId" Nullable="false" />
+          <NavigationProperty Name="ReportingMember" Relationship="ParakeetModel.UserProgressEntry1" FromRole="ProgressEntry" ToRole="User" />
+          <Property Type="Int32" Name="ReportingUserId" Nullable="false" />
+        </EntityType>
+        <Association Name="TaskProgressEntry">
+          <End Type="ParakeetModel.Task" Role="Task" Multiplicity="1" />
+          <End Type="ParakeetModel.ProgressEntry" Role="ProgressEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProgressEntry">
+              <PropertyRef Name="TaskId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EnumType Name="ProgressEntryType">
+          <Member Name="Progress" Value="1" />
+          <Member Name="Planned" Value="2" />
+        </EnumType>
+        <Association Name="UserProgressEntry">
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="1" />
+          <End Type="ParakeetModel.ProgressEntry" Role="ProgressEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProgressEntry">
+              <PropertyRef Name="AssociatedUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserProgressEntry1">
+          <End Type="ParakeetModel.User" Role="User" Multiplicity="1" />
+          <End Type="ParakeetModel.ProgressEntry" Role="ProgressEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProgressEntry">
+              <PropertyRef Name="ReportingUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ParakeetModelStoreContainer" CdmEntityContainer="ParakeetModelContainer">
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tasks">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.Task)">
+        <MappingFragment StoreEntitySet="Tasks">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Comments">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.Comment)">
+        <MappingFragment StoreEntitySet="Comments">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+          <ScalarProperty Name="Content" ColumnName="Content" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="TaskId" ColumnName="TaskId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tags">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.Tag)">
+        <MappingFragment StoreEntitySet="Tags">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Roles">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.Role)">
+        <MappingFragment StoreEntitySet="Roles">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Queries">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.Query)">
+        <MappingFragment StoreEntitySet="Queries">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProgressEntries">
+      <EntityTypeMapping TypeName="IsTypeOf(ParakeetModel.ProgressEntry)">
+        <MappingFragment StoreEntitySet="ProgressEntries">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+          <ScalarProperty Name="TaskId" ColumnName="TaskId" />
+          <ScalarProperty Name="AssociatedUserId" ColumnName="AssociatedUserId" />
+          <ScalarProperty Name="ReportingUserId" ColumnName="ReportingUserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="CommentTag" TypeName="ParakeetModel.CommentTag" StoreEntitySet="CommentTag">
+      <EndProperty Name="Comment">
+        <ScalarProperty Name="Id" ColumnName="Comments_Id" />
+      </EndProperty>
+      <EndProperty Name="Tag">
+        <ScalarProperty Name="Id" ColumnName="Tags_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="TagTask" TypeName="ParakeetModel.TagTask" StoreEntitySet="TagTask">
+      <EndProperty Name="Tag">
+        <ScalarProperty Name="Id" ColumnName="Tags_Id" />
+      </EndProperty>
+      <EndProperty Name="Task">
+        <ScalarProperty Name="Id" ColumnName="Tasks_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="RoleUser" TypeName="ParakeetModel.RoleUser" StoreEntitySet="RoleUser">
+      <EndProperty Name="Role">
+        <ScalarProperty Name="Id" ColumnName="Roles_Id" />
+      </EndProperty>
+      <EndProperty Name="User">
+        <ScalarProperty Name="Id" ColumnName="Users_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="UserQuery" TypeName="ParakeetModel.UserQuery" StoreEntitySet="UserQuery">
+      <EndProperty Name="User">
+        <ScalarProperty Name="Id" ColumnName="Users_Id" />
+      </EndProperty>
+      <EndProperty Name="Query">
+        <ScalarProperty Name="Id" ColumnName="Queries_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="UserComment1" TypeName="ParakeetModel.UserComment1" StoreEntitySet="UserComment1">
+      <EndProperty Name="User">
+        <ScalarProperty Name="Id" ColumnName="MentionedUsers_Id" />
+      </EndProperty>
+      <EndProperty Name="Comment">
+        <ScalarProperty Name="Id" ColumnName="MentionedIn_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="RoleQuery" TypeName="ParakeetModel.RoleQuery" StoreEntitySet="Queries">
+      <EndProperty Name="Role">
+        <ScalarProperty Name="Id" ColumnName="Role_Id" />
+      </EndProperty>
+      <EndProperty Name="Query">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Role_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="TaskTask" TypeName="ParakeetModel.TaskTask" StoreEntitySet="Tasks">
+      <EndProperty Name="Task">
+        <ScalarProperty Name="Id" ColumnName="Parent_Id" />
+      </EndProperty>
+      <EndProperty Name="Task1">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Parent_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="TaskComment1" TypeName="ParakeetModel.TaskComment1" StoreEntitySet="TaskComment1">
+      <EndProperty Name="Task">
+        <ScalarProperty Name="Id" ColumnName="MentionedTasks_Id" />
+      </EndProperty>
+      <EndProperty Name="Comment">
+        <ScalarProperty Name="Id" ColumnName="MentionedIn_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="QueryTag" TypeName="ParakeetModel.QueryTag" StoreEntitySet="QueryTag">
+      <EndProperty Name="Query">
+        <ScalarProperty Name="Id" ColumnName="QueryTag_Tag_Id" />
+      </EndProperty>
+      <EndProperty Name="Tag">
+        <ScalarProperty Name="Id" ColumnName="Tags_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

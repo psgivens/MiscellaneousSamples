@@ -1,0 +1,17 @@
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\ConsoleApplication.exe.config
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\ConsoleApplication.exe
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\ConsoleApplication.pdb
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\obj\Debug\ConsoleApplication.csprojResolveAssemblyReference.cache
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\obj\Debug\ConsoleApplication.exe
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\obj\Debug\ConsoleApplication.pdb
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\WebDownloader.Data.dll
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\WebDownloader.Data.pdb
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\EntityFramework.dll
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\EntityFramework.xml
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\Autofac.dll
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\Autofac.pdb
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\Autofac.xml
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\Common.dll
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\Common.pdb
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\WebDownloader.Services.dll
+E:\Dev\Proofs\Givens.WebDownloader\ConsoleApplication\bin\Debug\WebDownloader.Services.pdb

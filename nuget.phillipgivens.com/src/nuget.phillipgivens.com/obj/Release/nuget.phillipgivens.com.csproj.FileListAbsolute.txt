@@ -1,0 +1,16 @@
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\nuget.phillipgivens.com.dll.config
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\nuget.phillipgivens.com.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\nuget.phillipgivens.com.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\Elmah.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\Microsoft.Web.Infrastructure.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\Microsoft.Web.XmlTransform.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\Ninject.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\NuGet.Core.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\NuGet.Server.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\RouteMagic.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\WebActivatorEx.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\Ninject.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\bin\Ninject.xml
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\obj\Release\nuget.phillipgivens.com.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\obj\Release\nuget.phillipgivens.com.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\nuget.phillipgivens.com\nuget.phillipgivens.com\obj\Release\nuget.phillipgivens.com.csprojResolveAssemblyReference.cache

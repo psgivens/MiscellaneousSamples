@@ -1,0 +1,14 @@
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperWebSocket.XML
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperWebSocket.dll
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperWebSocket.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\Newtonsoft.Json.dll
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperSocket.Common.dll
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperSocket.SocketBase.dll
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperSocket.Common.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperSocket.Common.xml
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperSocket.SocketBase.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\SuperSocket.SocketBase.xml
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\bin\Release\Newtonsoft.Json.xml
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\obj\Release\SuperWebSocket.NET45.csprojResolveAssemblyReference.cache
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\obj\Release\SuperWebSocket.dll
+C:\Projects\SuperWebSockets_SuperSockets\SuperWebSocket\obj\Release\SuperWebSocket.pdb

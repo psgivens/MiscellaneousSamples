@@ -1,0 +1,10 @@
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataMapper\bin\Debug\Parakeet.DataMapper.dll
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataMapper\bin\Debug\Parakeet.DataMapper.pdb
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataMapper\obj\Debug\Parakeet.DataMapper.csprojResolveAssemblyReference.cache
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataMapper\obj\Debug\Parakeet.DataMapper.dll
+C:\R\BB\psgivens\sandbox\Parakeet\Parakeet.DataMapper\obj\Debug\Parakeet.DataMapper.pdb
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataMapper\bin\Debug\Parakeet.DataMapper.dll
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataMapper\bin\Debug\Parakeet.DataMapper.pdb
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataMapper\obj\Debug\Parakeet.DataMapper.csprojResolveAssemblyReference.cache
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataMapper\obj\Debug\Parakeet.DataMapper.dll
+C:\R2\Incubation\BB.sandbox\Parakeet\Parakeet.DataMapper\obj\Debug\Parakeet.DataMapper.pdb

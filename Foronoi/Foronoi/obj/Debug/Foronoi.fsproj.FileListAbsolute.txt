@@ -1,0 +1,8 @@
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\Foronoi.exe.config
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\Foronoi.XML
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\Foronoi.exe
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\Foronoi.pdb
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\FSharp.Core.dll
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\FSharp.Core.xml
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\obj\Debug\Foronoi.exe
+c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\obj\Debug\Foronoi.pdb

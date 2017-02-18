@@ -1,0 +1,15 @@
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperWebSocket.XML
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperWebSocket.dll
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperWebSocket.pdb
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\log4net.dll
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\Newtonsoft.Json.dll
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperSocket.Common.dll
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperSocket.SocketBase.dll
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\Newtonsoft.Json.xml
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperSocket.Common.pdb
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperSocket.Common.xml
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperSocket.SocketBase.pdb
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\bin\Debug\SuperSocket.SocketBase.xml
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\obj\Debug\SuperWebSocket.csprojResolveAssemblyReference.cache
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\obj\Debug\SuperWebSocket.dll
+C:\Projects\superwebsocket-0d826b22901cab6784f93c12df26b6bf46dd783e\SuperWebSocket\obj\Debug\SuperWebSocket.pdb

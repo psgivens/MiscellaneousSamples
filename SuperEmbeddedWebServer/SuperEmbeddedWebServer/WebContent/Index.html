@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script type="text/javascript" src="js/d3.v3.js" ></script>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js" ></script>
+    <script type="text/javascript" src="js/Greetings.js"></script>
+</head>
+<body>
+     <label for="message">Message: </label>
+    <input id="message" type="text" />
+    <button id="button" type="button">Send</button>
+    <div id="messages"></div>
+    <div id="Bargraph"></div>
+    <div id="Bargraph2"></div>
+
+    <script defer="defer" type="text/javascript">
+        var drawBarGraph = function (dataset) {            
+            var w = 500;
+            var h = 200;
+            var barPadding = 1;
+            var barBox = d3.select("#Bargraph");
+            barBox.selectAll("svg").remove();
+
+            var svg = barBox
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+            svg.selectAll("rect")
+                .data(dataset)
+                .enter()
+                .append("rect")
+                .attr({
+                    x: function (d, i) { return i * (w / dataset.length); },
+                    y: function (d) { return h - (d * 4); },
+                    width: w / dataset.length - barPadding,
+                    height: function (d) { return d * 4; },
+                    file: function (d) { return "rgb(0,0, " + (d * 10) + ")"; }
+                });
+        };
+
+        $(document).ready(function () {
+            $("#button").click(function () {
+                socket.send($("#message").val());
+                var greeter = new Greeter();
+                var message = greeter.greet();
+                $("#messages").append(message);
+            }).attr("disabled", "disabled");
+            var socket = new WebSocket('ws://localhost:8089/Sample');
+            socket.onopen = function () {
+                $("#messages").append("handshake successfully established. May send data now...<br/>");
+                $("#button").removeAttr("disabled");
+            };
+            socket.onclose = function () {
+                $("#messages").append("connection closed<br/>");
+                $("#button").attr("disabled", "disabled");
+            };
+            // when data is comming from the server, this metod is called
+            socket.onmessage = function (evt) {                
+                $("#messages").append("# " + evt.data + "<br/>");
+
+                var json = evt.data;
+                var person = JSON.parse(json);
+                $("#messages").append("# " + person.FirstName  + "<br/>");
+                var dataset = person.Numbers;
+
+                //var dataset = [2,2,2,2, 7, 5, 25, 11, 9, 25, 14, 23, 19, 14, 11, 22, 29, 11, 13, 12,
+                //            17, 18, 10, 24, 18, 25, 9, 3]
+                drawBarGraph(dataset);
+            };
+
+            var dataset = [25, 7, 5, 25, 11, 9, 25, 14, 23, 19, 14, 11, 22, 29, 11, 13, 12,
+                        17, 18, 10, 24, 18, 25, 9, 3]
+            drawBarGraph(dataset);
+            drawBarGraph(dataset);
+        });
+
+    </script>
+</body>
+</html>

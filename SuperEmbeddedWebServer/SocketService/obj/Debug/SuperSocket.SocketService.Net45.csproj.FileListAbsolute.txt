@@ -1,0 +1,22 @@
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketService.exe.config
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\Config\log4net.config
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\Config\log4net.unix.config
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\supersocket.cmd
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\supersocket.sh
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketService.exe
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketService.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.Common.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketBase.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketEngine.dll
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.Common.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.Common.xml
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketBase.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketBase.xml
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketEngine.pdb
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\bin\Debug\SuperSocket.SocketEngine.xml
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\obj\Debug\SuperSocket.SocketService.Net45.csprojResolveAssemblyReference.cache
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\obj\Debug\SuperSocket.SocketService.exe
+C:\Projects\SuperSocket(1.6 stable).Source\SocketService\obj\Debug\SuperSocket.SocketService.pdb
+C:\Projects\SuperWebSockets_SuperSockets\SocketService\bin\Debug\SuperSocket.SocketService.exe.config
+C:\Projects\SuperWebSockets_SuperSockets\SocketService\obj\Debug\SuperSocket.SocketService.exe
+C:\Projects\SuperWebSockets_SuperSockets\SocketService\obj\Debug\SuperSocket.SocketService.pdb

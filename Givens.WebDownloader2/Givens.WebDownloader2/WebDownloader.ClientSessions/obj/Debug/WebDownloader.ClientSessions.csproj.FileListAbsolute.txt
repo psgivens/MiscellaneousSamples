@@ -1,0 +1,12 @@
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.dll.config
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.dll
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.pdb
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.csprojResolveAssemblyReference.cache
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.dll
+E:\Dev\Proofs\Givens.WebDownloader2\Givens.WebDownloader\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.pdb
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.dll.config
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.dll
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\WebDownloader.ClientSessions\bin\Debug\WebDownloader.ClientSessions.pdb
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.csprojResolveAssemblyReference.cache
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.dll
+C:\R2\Products\Givens.WebDownloader2\Givens.WebDownloader2\WebDownloader.ClientSessions\obj\Debug\WebDownloader.ClientSessions.pdb
