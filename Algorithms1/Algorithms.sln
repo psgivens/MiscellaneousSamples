@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms", "Algorithms\Algorithms.csproj", "{6028C62C-F94B-4058-AF88-086350873BD4}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpConsole", "FSharpConsole\FSharpConsole.fsproj", "{E198295E-42F2-439F-A544-9A147655BB77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfVoronoi", "WpfVoronoi\WpfVoronoi.csproj", "{E7C0ED13-805D-4A46-940C-FB9D3C2BB3A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6028C62C-F94B-4058-AF88-086350873BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6028C62C-F94B-4058-AF88-086350873BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6028C62C-F94B-4058-AF88-086350873BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6028C62C-F94B-4058-AF88-086350873BD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E198295E-42F2-439F-A544-9A147655BB77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E198295E-42F2-439F-A544-9A147655BB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E198295E-42F2-439F-A544-9A147655BB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E198295E-42F2-439F-A544-9A147655BB77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7C0ED13-805D-4A46-940C-FB9D3C2BB3A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7C0ED13-805D-4A46-940C-FB9D3C2BB3A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7C0ED13-805D-4A46-940C-FB9D3C2BB3A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7C0ED13-805D-4A46-940C-FB9D3C2BB3A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
