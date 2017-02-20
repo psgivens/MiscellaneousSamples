@@ -1,0 +1,11 @@
+﻿<mui:ModernWindow x:Class="WpfTomighty.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        ContentSource="/Page1.xaml"
+        Title="MainWindow" Height="175" Width="225">
+    <Grid>
+    </Grid>
+</mui:ModernWindow>
