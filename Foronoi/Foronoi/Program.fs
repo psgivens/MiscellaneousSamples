@@ -20,13 +20,13 @@ let input =
 let letterLocations =
     input 
     |> Array.mapi (
-        fun y item -> 
-            item.ToCharArray()
+        fun y row -> 
+            row.ToCharArray()
             |> Array.mapi (
-                fun x item2 -> 
-                match item2 with
+                fun x -> 
+                function
                 | '.' -> None
-                | _ -> Some(x, y, item2)
+                | character -> Some(x, y, character)
                 )
             |> Array.toList
         )
@@ -39,7 +39,7 @@ let letterLocations =
     |> List.sortBy (fun (x, y, item) -> item)
 
 letterLocations 
-|> List.iter (fun (x, y, item) -> printfn "%c" item)
+|> List.iter (fun (x, y, item) -> printfn "%c at (%d, %d)" item x y)
 
 type Direction = Left = 1 | Up = 2 | Right = 3 | Down = 0
 

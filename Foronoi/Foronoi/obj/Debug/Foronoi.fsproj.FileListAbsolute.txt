@@ -6,3 +6,6 @@ c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debu
 c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\bin\Debug\FSharp.Core.xml
 c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\obj\Debug\Foronoi.exe
 c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\obj\Debug\Foronoi.pdb
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.XML
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\obj\Debug\Foronoi.exe
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\obj\Debug\Foronoi.pdb
