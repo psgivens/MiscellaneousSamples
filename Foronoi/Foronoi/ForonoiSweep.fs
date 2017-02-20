@@ -4,7 +4,7 @@ open ForonoiMath
 type ForonoiEvent = 
     | Start
     | Vertex of Coord
-    | Circle of Coord * int
+    | Circle of CircleCoord
     | Stop of int
     member this.y = 
         match this with

@@ -14,3 +14,9 @@ C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.exe
 C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.pdb
 C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\FSharp.Core.dll
 C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\FSharp.Core.xml
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\FSharp.Reactive.dll
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\System.Reactive.Core.dll
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\System.Reactive.Interfaces.dll
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\System.Reactive.Linq.dll
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\FSharp.Reactive.pdb
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\obj\Debug\Foronoi.fsproj.Foronoi.exe.config
