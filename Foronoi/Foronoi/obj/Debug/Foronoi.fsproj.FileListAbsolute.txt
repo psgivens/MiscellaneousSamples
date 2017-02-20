@@ -9,3 +9,8 @@ c:\users\psgivens\documents\visual studio 2013\Projects\Foronoi\Foronoi\obj\Debu
 C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.XML
 C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\obj\Debug\Foronoi.exe
 C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\obj\Debug\Foronoi.pdb
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.exe.config
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.exe
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\Foronoi.pdb
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\FSharp.Core.dll
+C:\Repos\GH\MiscellaneousSamples\Foronoi\Foronoi\bin\Debug\FSharp.Core.xml
