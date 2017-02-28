@@ -63,6 +63,7 @@
     <None Include="Heap.fsx" />
     <None Include="Heap1.fsx" />
     <None Include="ProjectEuler.fsx" />
+    <None Include="Heap2.fsx" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
