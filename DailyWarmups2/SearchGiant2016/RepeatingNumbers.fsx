@@ -48,6 +48,8 @@ let printQuotient dividend divisor =
         |> fun builder -> printfn "%s" (builder.ToString())
         )     
 
+|> Seq.iter (fun x -> printfn "%A" <| x.GetType())
+
 printQuotient 23 56
 printQuotient 2 7
 printQuotient 1 8
