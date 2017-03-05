@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalChallenge", "Extern
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SearchGiant2016", "SearchGiant2016\SearchGiant2016.fsproj", "{AF743F44-6E59-465B-94AA-491803F1F929}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsSearchGiatn2016", "CsSearchGiatn2016\CsSearchGiatn2016.csproj", "{CDDE8557-1455-4E1F-9697-1EB4EC07615B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsSearchGiant2016", "CsSearchGiant2016\CsSearchGiant2016.csproj", "{CDDE8557-1455-4E1F-9697-1EB4EC07615B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

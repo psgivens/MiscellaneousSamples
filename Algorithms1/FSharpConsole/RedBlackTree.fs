@@ -1,15 +1,31 @@
 ﻿namespace rbtree
 
-type Color = R | B | DB
-type Tree = E | T of Color * int * Tree * Tree | S
+type Color = 
+    | R 
+    | B 
+    // Double black is a transitionsl state. It represents
+    | DB 
+type Tree = 
+    | E 
+    | T of Color * int * Tree * Tree 
+    // Sentinel is a transitional state. . It represents an 
+    // empty node which counts as two black. Rebalancing is 
+    // in order to move one black to another location. 
+    | S  
+
 
 module RedBlackTree =
-    let rec isMember value = 
-        match value with
+    let color = function 
+        | E -> B
+        | T(c,v,l,r) -> c
+        | S -> DB
+
+    let rec isMember value tree = 
+        match value, tree with
         | x, E -> false
         | x, T(_,y,a,b) ->
-            if x < y then isMember (x,a)
-            else if x > x then isMember (x,b)
+            if x < y then isMember x a
+            else if x > x then isMember x b
             else true
         | _ -> false
 
@@ -18,7 +34,7 @@ module RedBlackTree =
             function
             | E -> i
             | S -> failwith "Should not be counting with sentinels"
-            | T(c',x,T(B,y,a,b),E) -> failwith "Black cannot have an Empty sibbling"
+            | T(c',x,T(B,y,a,b),E) 
             | T(c',x,E,T(B,y,a,b)) -> failwith "Black cannot have an Empty sibbling"
             | T(B,x,E,E) -> i + 1
             | T(R,x,E,E) -> i            
@@ -29,11 +45,10 @@ module RedBlackTree =
             | T(B,x,E,T(R,y,a,b)) -> i + 1
             | T(R,x,E,T(R,y,a,b)) 
             | T(R,x,T(R,y,a,b),E) -> i
-
+            
             | T(c',x,a,b) ->
                 let lcount = count i a 
-                let rcount = count i b 
-                if lcount <> rcount then failwith "children must match"
+                if lcount <> count i b then failwith "children must match"
                 else lcount
         count 0 tree |> ignore
         
@@ -52,7 +67,7 @@ module RedBlackTree =
         | T(B,x,a,T(R,z,T(R,y,b,c),d)) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         | T(B,x,a,T(R,y,b,T(R,z,c,d))) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         
-        (* Double Black on lef side *)
+        (* Double Black on left side *)
         // Red Sibling
         | T(B,x,DoubleBlack replacement,T(R,y,a,b))         -> T(B,y,T(B,f x,replacement,a),b) 
         // Red distal nephew
@@ -89,16 +104,22 @@ module RedBlackTree =
 
     let remove element tree =
         let trySwap' = trySwap element
+
+        // The purpose of 'swap and remove' is to swap the element to be removed
+        // with a leaf node element. The leaf is then easily removed by not building
+        // it into the new tree. 
         
         // Find and remove the right most ancestor.
         let rec swapAndRemoveRightMost = function
-            // Remove Red from Black
+            // Look for element where right child is E.
+
+            // Remove Red from Black - No need to rebalance
             | T(B,x,a,T(R,toBeSwappedUp,b,E)) -> T(B,x,a,b),toBeSwappedUp
                
-            // Remove Black with no children 
+            // Remove Black with no children - Introduce sentinel
             | T(c',x,a,T(B,toBeSwappedUp,E,E)) -> balance (trySwap' toBeSwappedUp) (T(c',x,a,S)),toBeSwappedUp
 
-            // Remove Black with Red child from any parent (*parent not shown)
+            // Remove Black with Red child from any parent (*parent not shown) - Promote child and preserve blackness
             | T(B,toBeSwappedUp,T(R,z,E,E),E) -> T(B,z,E,E),toBeSwappedUp
 
             // Continue to the right most. 
@@ -111,10 +132,12 @@ module RedBlackTree =
         
         // Find and remove the left most ancestor.
         let rec swapAndRemoveLeftMost = function
-            // Remove Red from Black
+            // Look for element where left child is E.
+
+            // Remove Red from Black - No need to rebalance
             | T(B,x,T(R,toBeSwappedUp,E,a),b) -> T(B,x,a,b),toBeSwappedUp
                
-            // Remove Black with no children 
+            // Remove Black with no children - Introduce sentinel
             | T(c',x,T(B,toBeSwappedUp,E,E),a) -> balance (trySwap' toBeSwappedUp) (T(c',x,S,a)),toBeSwappedUp
 
             // Remove Black with Red child from any parent (*parent not shown)
@@ -192,11 +215,12 @@ module RedBlackTree =
 
     let insert tree element =
         let rec insert' = function
-            | E -> T(R,element,E,E)
+            | E ->                          T(R,element,E,E)
             | T(color,y,a,b) ->
-                if element < y then balance id (T(color,y,insert' a,b))
-                else if element > y then balance id (T(color,y,a,insert' b))
-                else T(color,y,a,b)
+                if element < y then         balance id (T(color,y,insert' a,b))
+                else if element > y then    balance id (T(color,y,a,insert' b))
+                // Ignore inserting duplicates
+                else                        T(color,y,a,b)
             | S -> failwith "Cannot insert Sentinel into tree."
         root <| insert' tree
 
@@ -210,7 +234,4 @@ module RedBlackTree =
             | E -> printfn "%s%s" (String.replicate x "  ") "Empty"
             | S -> printfn "%s%s" (String.replicate x "  ") "Sentinel"
         printit tree 1
-
-
-
 
