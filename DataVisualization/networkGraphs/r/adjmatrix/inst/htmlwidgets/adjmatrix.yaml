@@ -1,0 +1,9 @@
+# (uncomment to add a dependency)
+ always_allow_html: yes
+ dependencies:
+  - name: adjmatrix
+    version: 0.0.1
+    src: htmlwidgets/lib/
+    script: d3-4.5.0/d3.min.js
+    stylesheet: mystyle.css
+#    script:

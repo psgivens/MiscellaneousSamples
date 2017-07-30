@@ -52,6 +52,12 @@ let calculateOdds rows columns stormCount =
 let print rows columns stormCount =    
     printfn "%d %d %d %f" rows columns stormCount 
         <| calculateOdds rows columns stormCount 
+
+
+print 1 1 1
+print 2 1 1
+print 1 2 1 
+print 1 1 2
 print 3 1 1
 print 3 2 1
 print 3 2 2

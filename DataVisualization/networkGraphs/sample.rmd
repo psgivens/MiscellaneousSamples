@@ -1,0 +1,70 @@
+---
+title: "R Notebook"
+output:
+  html_notebook: default
+  html_document: default
+  pdf_document: default
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+library(networkD3)
+
+# simpleNetwork
+src <- c("A", "A", "A", "A", "B", "B", "C", "C", "D")
+target <- c("B", "C", "D", "J", "E", "F", "G", "H", "I")
+networkData <- data.frame(src, target)
+simpleNetwork(networkData)
+
+```
+
+Here is another demonstration
+
+```{r}
+library(networkD3)
+# chordDiagram
+hairColourData <- matrix(c(11975,  1951,  8010, 1013,
+                           5871, 10048, 16145,  990,
+                           8916,  2060,  8090,  940,
+                           2868,  6171,  8045, 6907), nrow = 4)
+
+chordNetwork(Data = hairColourData, 
+             width = 500, 
+             height = 500,
+             colourScale = c("#000000", "#FFDD89", "#957244", "#F26223"))
+
+```
+
+
+My widget adustment
+
+```{r}
+library(mywidget)
+mywidget("Hello world")
+```
+
+
+
+
+```{r}
+
+# chordDiagram
+hairColourData <- matrix(c(11975,  1951,  8010, 1013,
+                           5871, 10048, 16145,  990,
+                           8916,  2060,  8090,  940,
+                           2868,  6171,  8045, 6907), nrow = 4)
+library(adjmatrix)
+adjmatrix("Hello matrix", data=hairColourData)
+```
+
+

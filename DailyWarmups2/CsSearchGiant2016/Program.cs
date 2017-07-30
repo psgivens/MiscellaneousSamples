@@ -7,6 +7,17 @@ using System.Threading.Tasks;
 namespace CsSearchGiatn2016 {
     public class Program {
         static void Main(string[] args) {
+            int[,] values = new int[3, 4];
+            values[2, 3] = 13;
+            int leng = values.Length;
+            int lengt = values.GetUpperBound(0);
+            int lengtt = values.GetUpperBound(1);
+            int rank = values.Rank;
+
+            new TheBomb();
+            new TriangleCellArrangment();
+            var hopper = new IslandHopper(1, 2);
+            var hopper2 = new IslandHopper(2, 3);
             Console.WriteLine(Divide(2, 7));
             Console.WriteLine(Divide(23, 56));
             Console.WriteLine(Divide(1, 8));
