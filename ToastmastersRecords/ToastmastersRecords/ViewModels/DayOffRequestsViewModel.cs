@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
 
@@ -10,21 +11,31 @@ namespace ToastmastersRecords.ViewModels {
     public class DayOffRequestsViewModel : ViewModelBase {
         private MemberMessage _message;
         private Member _member;
-        public DayOffRequestsViewModel(TIDbContext context, MemberMessage message) : base(context) {
+
+        private DayOffRequestsViewModel(TIDbContext context) : base(context) {
+            OpenMessageCommand = new ActionCommand(OpenMessage);
+        }
+
+        public DayOffRequestsViewModel(TIDbContext context, MemberMessage message) : this(context) {
             _message = message;
 
             DayOffRequests = (
                 from req in context.DayOffRequests
                 where req.Message.Id == message.Id
-                select req).ToList();
+                select req).ToList();            
         }
-        public DayOffRequestsViewModel(TIDbContext context, Member member) : base(context) {
+        public DayOffRequestsViewModel(TIDbContext context, Member member) : this(context) {
             _member = member;
 
             DayOffRequests = (
                 from req in context.DayOffRequests
                 where req.Message.MemberId == _member.Id
-                select req).ToList();
+                select req).ToList();            
+        }
+
+        public ICommand OpenMessageCommand { get; private set; }
+
+        public void OpenMessage() {
         }
 
         private IList<DayOffRequest> _dayOffRequests;

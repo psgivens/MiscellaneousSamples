@@ -36,6 +36,7 @@ namespace ToastmastersRecords.ViewModels {
             var dialog = _dialogManager.CreateCustomContentDialog(control, "Member Message", DialogMode.Ok);
             dialog.DialogClosed += (sender, e) => {
                 // TODO: Refresh messages, day off requests, and role requests througout the application
+                MembersViewModel.ReloadUserInfo();
             };
             dialog.Show();
         }

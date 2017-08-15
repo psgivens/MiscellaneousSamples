@@ -25,7 +25,7 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Entered" IsReadOnly="True" Binding="{Binding DateEntered, StringFormat=MM/dd/yyyy}"/>
+                <DataGridTextColumn Header="Entered" IsReadOnly="True" Binding="{Binding Message.DateEntered, StringFormat=MM/dd/yyyy}"/>
                 <DataGridTextColumn Header="Requested" Binding="{Binding DateRequested, StringFormat=MM/dd/yyyy}"/>
                 <DataGridCheckBoxColumn Header="Is Fullfilled" Binding="{Binding RequestedFullfiled}"/>
                 <DataGridComboBoxColumn
@@ -34,6 +34,7 @@
                                 SelectedItemBinding="{Binding Path=RoleType, NotifyOnSourceUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 ElementStyle="{StaticResource RoleListSource}"
                                 EditingElementStyle="{StaticResource RoleListSource}"/>
+                <DataGridTextColumn Header="Message" IsReadOnly="True" Binding="{Binding Message.Text}"/>
             </DataGrid.Columns>
         </DataGrid>
 

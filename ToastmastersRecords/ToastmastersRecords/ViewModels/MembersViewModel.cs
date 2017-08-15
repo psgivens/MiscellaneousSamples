@@ -34,13 +34,7 @@ namespace ToastmastersRecords.ViewModels {
             }
             set {
                 _member = value;
-                if (_member == null) {
-                    ClearUserInfo();
-                }
-                else {
-                    LoadUserInfo();
-                }
-
+                ReloadUserInfo();
             }
         }
         public IList<Member> Members { get; private set; }
@@ -60,7 +54,14 @@ namespace ToastmastersRecords.ViewModels {
             set { _memberMessageViewModel = value; Notify("MemberMessageVM"); }
         }
 
-        
+        public void ReloadUserInfo() {
+            if (_member == null) {
+                ClearUserInfo();
+            }
+            else {
+                LoadUserInfo();
+            }
+        }        
         private void LoadUserInfo() {
             DayOffRequestsVM = new DayOffRequestsViewModel(Context, _member);
             RoleRequestsVM = new RoleRequestsViewModel(Context, _member);

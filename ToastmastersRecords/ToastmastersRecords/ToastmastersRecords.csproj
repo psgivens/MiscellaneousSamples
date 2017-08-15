@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="Controls\UserControlBase.cs" />
     <Compile Include="Infrastructure\ActionCommand.cs" />
+    <Compile Include="Infrastructure\DebugDataBindingConverter.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
     <Compile Include="Controls\DayOffRequestsUserControl.xaml.cs">
       <DependentUpon>DayOffRequestsUserControl.xaml</DependentUpon>
