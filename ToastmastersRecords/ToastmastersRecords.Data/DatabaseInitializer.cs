@@ -47,7 +47,7 @@ namespace ToastmastersRecords.Data {
                         break;
 
                     var who = parts[NameField].Split(',');
-                    var member = new Member {
+                    var member = new ClubMember {
                         Id = int.Parse(parts[IdField]),
                         Name = who[0],
                         HasCompetentCommunicator = who.Length > 1,

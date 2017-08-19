@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ToastmastersRecords.Data {
     public class TIDbContext : DbContext{
-        public virtual DbSet<Member> Members { get; set; }
+        public virtual DbSet<ClubMember> Members { get; set; }
         public virtual DbSet<MeetingRoleType> MeetingRoleTypes { get; set; }
         public virtual DbSet<DayOffRequest> DayOffRequests { get; set; }
         public virtual DbSet<RoleRequest> RoleRequests { get; set; }

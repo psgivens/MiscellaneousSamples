@@ -9,7 +9,7 @@ using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
 
 namespace ToastmastersRecords.ViewModels {
-    public class ApplicationViewModel : ViewModelBase {              
+    public class ApplicationViewModel : DataViewModelBase {              
         private readonly DialogManager _dialogManager;
         private DialogManager dialogManager;
 
@@ -18,6 +18,7 @@ namespace ToastmastersRecords.ViewModels {
             _schedulerViewModel = new SchedulerViewModel(Context);
             _dialogManager = dialogManager;
             NewMemberMessage = new ActionCommand(ShowNewMemberMessageDialog);
+            SampleMessageDialog = new ActionCommand(ShowSampleMessageDialog);
         }
         
         public static ApplicationViewModel Instance { get; internal set; }
@@ -40,7 +41,25 @@ namespace ToastmastersRecords.ViewModels {
             };
             dialog.Show();
         }
-        
+
+        public ICommand SampleMessageDialog { get; private set; }
+        private void ShowSampleMessageDialog() {
+            var control = new Controls.NewMeetingWorkflowUserControl();
+            var viewModel = new MeetingViewModel(Context);
+            viewModel.TableTopicsMaster = new ClubMember {
+                Name = "Bob Ross"
+            };
+            control.DataContext = viewModel;
+            //var viewModel = new MemberMessageViewModel(Context, MembersViewModel.Member);
+            //control.DataContext = viewModel;
+            var dialog = _dialogManager.CreateCustomContentDialog(control, "Meeting Agenda", DialogMode.Ok);
+            dialog.DialogClosed += (sender, e) => {
+                // TODO: Refresh messages, day off requests, and role requests througout the application
+                MembersViewModel.ReloadUserInfo();
+            };
+            dialog.Show();
+        }
+
         public void Upsert(BaseEntity entity) {
             Context.Upsert(entity);
             Context.SaveChanges();

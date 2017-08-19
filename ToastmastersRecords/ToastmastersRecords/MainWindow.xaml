@@ -11,7 +11,7 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" />
+                <MenuItem Header="_New" Command="{Binding SampleMessageDialog}" />
                 <MenuItem Header="New _Message" Command="{Binding NewMemberMessage}" />
                 <MenuItem Header="_Open" />
                 <MenuItem Header="_Save" />
@@ -20,19 +20,19 @@
             </MenuItem>
         </Menu>
         <Grid x:Name="mainPanel">
-        <TabControl x:Name="tabControl" >
-            <TabItem Header="Members" DataContext="{Binding MembersViewModel}">
-                <Grid >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="200" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <DataGrid x:Name="usersDataGrid" 
+            <TabControl x:Name="tabControl" >
+                <TabItem Header="Members" DataContext="{Binding MembersViewModel}">
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="200" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <DataGrid x:Name="usersDataGrid" 
                           Grid.Row="0" Grid.ColumnSpan="3"
                           IsSynchronizedWithCurrentItem="True" 
                           ItemsSource="{Binding Members}"
@@ -41,23 +41,23 @@
                           CanUserAddRows="False"
                           SelectionMode="Single"
                           />
-                    <GridSplitter x:Name="gridSplitter" 
+                        <GridSplitter x:Name="gridSplitter" 
                               Grid.Row="0" Grid.ColumnSpan="3"
                               Height="5" 
                               VerticalAlignment="Bottom" 
                               HorizontalAlignment="Stretch" />
 
-                    <local:DayOffRequestsUserControl
+                        <local:DayOffRequestsUserControl
                         Grid.Row="1" Grid.Column="0" 
                         DataContext="{Binding DayOffRequestsVM}"
                         />
-                    <local:RoleRequestsUserControl
+                        <local:RoleRequestsUserControl
                       Grid.Row="1" Grid.Column="1"
                       DataContext="{Binding RoleRequestsVM}"
                         />
-                    <Grid x:Name="roleAssignmentPanel"
+                        <Grid x:Name="roleAssignmentPanel"
                       Grid.Row="1" Grid.Column="2">
-                        <DataGrid x:Name="userRoleAssignmentsDataGrid" 
+                            <DataGrid x:Name="userRoleAssignmentsDataGrid" 
                           Grid.Row="0" Grid.ColumnSpan="3"
                           IsSynchronizedWithCurrentItem="True" 
                           ItemsSource="{Binding RoleAssignments}" 
@@ -69,32 +69,32 @@
                               AutoGeneratingColumn="OnAutoGeneratingColumn"
                               />
 
+                        </Grid>
                     </Grid>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Scheduler" DataContext="{Binding SchedulerViewModel}">
-                <Grid >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <GridSplitter 
+                </TabItem>
+                <TabItem Header="Scheduler" DataContext="{Binding SchedulerViewModel}">
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <GridSplitter 
                     Grid.Column="0"
                     HorizontalAlignment="Right" 
                     Width="5"
                     VerticalAlignment="Stretch" />
-                    <DataGrid x:Name="meetingsDataGrid" 
+                        <DataGrid x:Name="meetingsDataGrid" 
                           Grid.Row="0" Grid.Column="0"
                           IsSynchronizedWithCurrentItem="True" 
-                          ItemsSource="{Binding Members}" 
+                          ItemsSource="{Binding ClubMeetings}" 
                           HorizontalAlignment="Stretch" SelectionChanged="usersDataGrid_SelectionChanged"
                           CanUserAddRows="False"
                           SelectionMode="Single"
                           />
 
-                </Grid>
-            </TabItem>
-        </TabControl>
+                    </Grid>
+                </TabItem>
+            </TabControl>
         </Grid>
     </DockPanel>
 </Window>

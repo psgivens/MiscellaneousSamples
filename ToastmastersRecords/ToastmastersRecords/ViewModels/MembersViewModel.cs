@@ -9,7 +9,7 @@ using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
 
 namespace ToastmastersRecords.ViewModels {
-    public class MembersViewModel : ViewModelBase {
+    public class MembersViewModel : DataViewModelBase {
         public MembersViewModel(TIDbContext context) : base(context) {            
             Members = context.Members.ToList();
             Member = Members.First();
@@ -27,8 +27,8 @@ namespace ToastmastersRecords.ViewModels {
             set { _roleRequestsViewModel = value; Notify("RoleRequestsVM"); }
         }
 
-        private Member _member;
-        public Member Member {
+        private ClubMember _member;
+        public ClubMember Member {
             get {
                 return _member;
             }
@@ -37,7 +37,7 @@ namespace ToastmastersRecords.ViewModels {
                 ReloadUserInfo();
             }
         }
-        public IList<Member> Members { get; private set; }
+        public IList<ClubMember> Members { get; private set; }
                 
         private IList<RoleAssignment> _roleAssignments;
         public IList<RoleAssignment> RoleAssignments {

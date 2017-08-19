@@ -22,7 +22,7 @@ namespace ToastmastersRecords {
         public ApplicationViewModel App { get { return ApplicationViewModel.Instance; } }
 
         private void usersDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            App.MembersViewModel.Member = e.AddedItems.Count > 0 ? (Member)e.AddedItems[0] : null;
+            App.MembersViewModel.Member = e.AddedItems.Count > 0 ? (ClubMember)e.AddedItems[0] : null;
         }
 
 

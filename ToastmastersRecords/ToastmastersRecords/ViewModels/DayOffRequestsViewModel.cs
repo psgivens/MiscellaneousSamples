@@ -8,9 +8,9 @@ using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
 
 namespace ToastmastersRecords.ViewModels {
-    public class DayOffRequestsViewModel : ViewModelBase {
+    public class DayOffRequestsViewModel : DataViewModelBase {
         private MemberMessage _message;
-        private Member _member;
+        private ClubMember _member;
 
         private DayOffRequestsViewModel(TIDbContext context) : base(context) {
             OpenMessageCommand = new ActionCommand(OpenMessage);
@@ -24,7 +24,7 @@ namespace ToastmastersRecords.ViewModels {
                 where req.Message.Id == message.Id
                 select req).ToList();            
         }
-        public DayOffRequestsViewModel(TIDbContext context, Member member) : this(context) {
+        public DayOffRequestsViewModel(TIDbContext context, ClubMember member) : this(context) {
             _member = member;
 
             DayOffRequests = (

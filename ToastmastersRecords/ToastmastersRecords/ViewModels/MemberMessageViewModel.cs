@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using ToastmastersRecords.Data;
 
 namespace ToastmastersRecords.ViewModels {
-    public class MemberMessageViewModel : Infrastructure.ViewModelBase {
+    public class MemberMessageViewModel : Infrastructure.DataViewModelBase {
         
         public MemberMessageViewModel(TIDbContext context, MemberMessage message) : base(context) {
             Load(message);
         }
 
-        public MemberMessageViewModel(TIDbContext context, Member member) : base(context) {
+        public MemberMessageViewModel(TIDbContext context, ClubMember member) : base(context) {
             var message = context.MemberMessages.Create();
             message.Member = member;
             message.DateEntered = DateTime.Now;

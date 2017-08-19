@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ToastmastersRecords.Data {
 
-    public class Member {
+    public class ClubMember {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public virtual int Id { get; set; }
@@ -32,7 +32,7 @@ namespace ToastmastersRecords.Data {
     }
     public class MemberSpeech : BaseEntity {
         public virtual int MemberId { get; set; }
-        public virtual Member Member { get; set; }
+        public virtual ClubMember Member { get; set; }
         [Column(TypeName = "Date")]
         public virtual DateTime DateDelivered { get; set; }
         public virtual string Title { get; set; }
@@ -42,7 +42,7 @@ namespace ToastmastersRecords.Data {
     }
     public class MemberTitle : BaseEntity {
         public virtual int MemberId { get; set; }
-        public virtual Member Member { get; set; }
+        public virtual ClubMember Member { get; set; }
         public virtual string Title { get; set; }
     }
     public class ClubMeeting : BaseEntity {
@@ -60,7 +60,7 @@ namespace ToastmastersRecords.Data {
     }
     public class MemberMessage : BaseEntity {
         public virtual int MemberId { get; set; }
-        public virtual Member Member { get; set; }
+        public virtual ClubMember Member { get; set; }
         [Column(TypeName = "Date")]
         public virtual DateTime DateEntered { get; set; }
         public virtual string Text { get; set; }
@@ -78,7 +78,7 @@ namespace ToastmastersRecords.Data {
     }
     public class RoleAssignment : BaseEntity {
         public virtual int MemberId { get; set; }
-        public virtual Member Member { get; set; }
+        public virtual ClubMember Member { get; set; }
         [Column(TypeName = "Date")]
         public virtual DateTime Date { get; set; }
         public virtual int RoleTypeId { get; set; }

@@ -8,10 +8,10 @@ using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
 
 namespace ToastmastersRecords.ViewModels {
-    public class RoleRequestsViewModel : ViewModelBase {
-        private readonly Member _member;
+    public class RoleRequestsViewModel : DataViewModelBase {
+        private readonly ClubMember _member;
         private readonly MemberMessage _message;
-        public RoleRequestsViewModel(TIDbContext context, Member member) : base(context) {
+        public RoleRequestsViewModel(TIDbContext context, ClubMember member) : base(context) {
             _member = member;
 
             RoleTypes = new ObservableCollection<MeetingRoleType>(context.MeetingRoleTypes);

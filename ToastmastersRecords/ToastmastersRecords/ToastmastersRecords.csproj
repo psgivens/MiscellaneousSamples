@@ -66,12 +66,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\MeetingAgendaUserControl.xaml.cs">
+      <DependentUpon>MeetingAgendaUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NewMeetingWorkflowUserControl.xaml.cs">
+      <DependentUpon>NewMeetingWorkflowUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RoleRequestsUserControl.xaml.cs">
       <DependentUpon>RoleRequestsUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\UserControlBase.cs" />
     <Compile Include="Infrastructure\ActionCommand.cs" />
     <Compile Include="Infrastructure\DebugDataBindingConverter.cs" />
+    <Compile Include="ViewModels\NewMeetingWorkflowViewModel.cs" />
+    <Compile Include="Infrastructure\ViewModelBase.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
     <Compile Include="Controls\DayOffRequestsUserControl.xaml.cs">
       <DependentUpon>DayOffRequestsUserControl.xaml</DependentUpon>
@@ -84,8 +92,25 @@
     <Compile Include="ViewModels\DayOffRequestsViewModel.cs" />
     <Compile Include="ViewModels\MeetingViewModel.cs" />
     <Compile Include="ViewModels\RoleRequestsViewModel.cs" />
-    <Compile Include="Infrastructure\ViewModelBase.cs" />
+    <Compile Include="Infrastructure\DataViewModelBase.cs" />
+    <Compile Include="ViewModels\Scheduler\MemberToSchedule.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleFunctionariesViewModel.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleEvaluatorsViewModel.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleGeneralEvaluatorViewModel.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleMinorSpeakingRolesViewModel.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleRoleViewModelBase.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleSpeakersViewModel.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleTableTopicsMasterViewModel.cs" />
+    <Compile Include="ViewModels\Scheduler\ScheduleToastMasterVewModel.cs" />
     <Page Include="Controls\DayOffRequestsUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MeetingAgendaUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NewMeetingWorkflowUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
