@@ -30,3 +30,6 @@ C:\Users\psgivens\Documents\Visual Studio 2013\Projects\SampleExplorer\SampleExp
 C:\R2\Proofs\WPF.TfsLikeExplorer\SampleExplorer\bin\Debug\SampleExplorer.exe.config
 C:\R2\Proofs\WPF.TfsLikeExplorer\SampleExplorer\obj\Debug\SampleExplorer.exe
 C:\R2\Proofs\WPF.TfsLikeExplorer\SampleExplorer\obj\Debug\SampleExplorer.pdb
+C:\Repos\GH\MiscellaneousSamples\WPF.TfsLikeExplorer\SampleExplorer\bin\Debug\SampleExplorer.exe.config
+C:\Repos\GH\MiscellaneousSamples\WPF.TfsLikeExplorer\SampleExplorer\obj\Debug\SampleExplorer.exe
+C:\Repos\GH\MiscellaneousSamples\WPF.TfsLikeExplorer\SampleExplorer\obj\Debug\SampleExplorer.pdb

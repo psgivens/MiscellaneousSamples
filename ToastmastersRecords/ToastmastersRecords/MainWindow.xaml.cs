@@ -10,7 +10,6 @@ namespace ToastmastersRecords {
     /// </summary>
     public partial class MainWindow : Window {
         public MainWindow() {
-
             InitializeComponent();
             var grid = this.mainPanel;
             ApplicationViewModel.Instance = new ApplicationViewModel(new DialogManager(grid, Dispatcher));

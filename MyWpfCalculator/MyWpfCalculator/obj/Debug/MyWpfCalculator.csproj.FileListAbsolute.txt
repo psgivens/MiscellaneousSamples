@@ -34,3 +34,6 @@ C:\R2\Products\MyWpfApplications\MyWpfCalculator\obj\Debug\MyWpfCalculator.Prope
 C:\R2\Products\MyWpfApplications\MyWpfCalculator\obj\Debug\MyWpfCalculator.csproj.GenerateResource.Cache
 C:\R2\Products\MyWpfApplications\MyWpfCalculator\obj\Debug\MyWpfCalculator.exe
 C:\R2\Products\MyWpfApplications\MyWpfCalculator\obj\Debug\MyWpfCalculator.pdb
+C:\Repos\GH\MiscellaneousSamples\MyWpfCalculator\MyWpfCalculator\bin\Debug\MyWpfCalculator.exe.config
+C:\Repos\GH\MiscellaneousSamples\MyWpfCalculator\MyWpfCalculator\obj\Debug\MyWpfCalculator.exe
+C:\Repos\GH\MiscellaneousSamples\MyWpfCalculator\MyWpfCalculator\obj\Debug\MyWpfCalculator.pdb

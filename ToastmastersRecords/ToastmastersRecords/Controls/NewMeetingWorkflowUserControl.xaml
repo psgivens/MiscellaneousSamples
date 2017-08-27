@@ -6,11 +6,21 @@
              xmlns:local="clr-namespace:ToastmastersRecords.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Width="1000px">
+    <Grid Width="1000px" Height="350px">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <local:MeetingAgendaUserControl Grid.Column="1" />
+        <ScrollViewer>
+            <DataGrid x:Name="userRoleRequestsDataGrid"                           
+                              ItemsSource="{Binding Samples}" 
+                              HorizontalAlignment="Stretch" 
+                              AutoGenerateColumns="True"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              >
+            </DataGrid>
+        </ScrollViewer>
+        <local:MeetingAgendaUserControl Grid.Column="1" DataContext="{Binding Meeting}" />
     </Grid>
 </UserControl>

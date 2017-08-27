@@ -20,6 +20,7 @@
                               CellEditEnding="userRoleRequestsDataGrid_CellEditEnding"                              
                           >
             <DataGrid.Resources>
+                <local:RoleTypeToStringConverter x:Key="RoleTypeToString"/>
                 <Style x:Key="RoleListSource"  TargetType="ComboBox">
                     <Setter Property="ItemsSource" Value="{Binding DataContext.RoleTypes, ElementName=roleRequestsUserControl}"/>
                 </Style>
@@ -27,11 +28,11 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Entered" IsReadOnly="True" Binding="{Binding Message.DateEntered, StringFormat=MM/dd/yyyy}"/>
                 <DataGridTextColumn Header="Requested" Binding="{Binding DateRequested, StringFormat=MM/dd/yyyy}"/>
-                <DataGridCheckBoxColumn Header="Is Fullfilled" Binding="{Binding RequestedFullfiled}"/>
+                <!--<DataGridCheckBoxColumn Header="Is Fullfilled" IsReadOnly="True" Binding="{Binding RequestedFullfiled}"/>-->
                 <DataGridComboBoxColumn
                                 Header="Role"                                                                                                
                                 DisplayMemberPath="Role"                        
-                                SelectedItemBinding="{Binding Path=RoleType, NotifyOnSourceUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedItemBinding="{Binding RoleType, Converter={StaticResource RoleTypeToString}, Mode=TwoWay}"
                                 ElementStyle="{StaticResource RoleListSource}"
                                 EditingElementStyle="{StaticResource RoleListSource}"/>
                 <DataGridTextColumn Header="Message" IsReadOnly="True" Binding="{Binding Message.Text}"/>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
+using ToastmastersRecords.ViewModels.History;
 using ToastmastersRecords.ViewModels.Scheduler;
 using ToastmastersRecords.ViewModels.SchedulingSteps;
 
@@ -16,29 +17,43 @@ namespace ToastmastersRecords.ViewModels {
 
         public NewMeetingWorkflowViewModel(Data.TIDbContext context) : base(context) {
             _roleTypes = context.MeetingRoleTypes.ToList();
+            var lowerDate = DateTime.Now - TimeSpan.FromDays(28);
+            _members = (from m in context.Members
+                        select new MemberToSchedule {
+                            Member = m,
+                            History = (from ra in context.RoleAssignments
+                                       where ra.Member == m && ra.Date > lowerDate
+                                       select ra).ToList()
+                        }).ToList();
             Meeting = new MeetingViewModel();
             SchedulingStep = new ScheduleSpeakersViewModel(this);
             Members = new ObservableCollection<MemberToSchedule>();
+            foreach(var member in _members) {
+                Samples.Add(new MemberHistory(member.Member, member.History.ToDictionary(i => i.Date)));
+            }
+            
             FilterMembers();
         }
+
+        public ObservableCollection<MemberHistory> Samples { get; private set; } = new ObservableCollection<MemberHistory>();
 
         public MeetingViewModel Meeting { get; private set; }
 
         public ViewModelBase SchedulingStep { get; private set; }
 
         public ObservableCollection<MemberToSchedule> Members { get; private set; }
-
+        
         private void ScheduleMember(ClubMember member, string speakerRole) {
             var role = _roleTypes.First(r => r.Role == speakerRole);
             var sMember = _members.First(i => i.Member == member);
             sMember.SelectedRole = role;
             Members.Remove(sMember);
         }
-        private void FilterMembers(int qualifyQty=0) {
+        private void FilterMembers(int qualifyQty = 0) {
             Members.Clear();
-            foreach(var memberMeta in _members) {
+            foreach (var memberMeta in _members) {
                 var m = memberMeta.Member;
-                if (memberMeta.SelectedRole != null) continue;                
+                if (memberMeta.SelectedRole != null) continue;
                 if (!m.HasCompetentCommunicator && m.SpeechesSinceAward < qualifyQty) continue;
                 Members.Add(memberMeta);
             }
@@ -80,6 +95,6 @@ namespace ToastmastersRecords.ViewModels {
             ScheduleMember(jokeMaster, "Joke Master");
             Meeting.ClosingThought = closingThought;
             ScheduleMember(closingThought, "Closing Thought and Greeter");
-        }        
+        }
     }
 }

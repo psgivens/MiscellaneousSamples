@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToastmastersRecords.Data;
 using ToastmastersRecords.Infrastructure;
+using ToastmastersRecords.ViewModels.Scheduler;
+using ToastmastersRecords.ViewModels.History;
 
 namespace ToastmastersRecords {
     public class MeetingViewModel : ViewModelBase {
+        
         
         private DateTime _selectedDate;
         public DateTime SelectedDate {

@@ -7,8 +7,9 @@ using ToastmastersRecords.Data;
 
 namespace ToastmastersRecords.ViewModels.Scheduler {
     public class MemberToSchedule {
-        public ClubMember Member { get; private set; }
-        public Dictionary<DateTime, RoleAssignment> History { get; set; }
+        
+        public ClubMember Member { get; set; }
+        public IEnumerable<RoleAssignment> History { get; set; }
         public IList<RoleRequest> Requests { get; set; }
         public MeetingRoleType SelectedRole { get; set; }
     }

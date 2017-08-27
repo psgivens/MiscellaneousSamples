@@ -45,10 +45,11 @@ namespace ToastmastersRecords.ViewModels {
         public ICommand SampleMessageDialog { get; private set; }
         private void ShowSampleMessageDialog() {
             var control = new Controls.NewMeetingWorkflowUserControl();
-            var viewModel = new MeetingViewModel(Context);
-            viewModel.TableTopicsMaster = new ClubMember {
+            var viewModel = new NewMeetingWorkflowViewModel(Context);
+            viewModel.Meeting.TableTopicsMaster = new ClubMember {
                 Name = "Bob Ross"
             };
+            
             control.DataContext = viewModel;
             //var viewModel = new MemberMessageViewModel(Context, MembersViewModel.Member);
             //control.DataContext = viewModel;

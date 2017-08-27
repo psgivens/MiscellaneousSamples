@@ -77,7 +77,11 @@
     </Compile>
     <Compile Include="Controls\UserControlBase.cs" />
     <Compile Include="Infrastructure\ActionCommand.cs" />
+    <Compile Include="Infrastructure\RoleTypeToStringConverter.cs" />
     <Compile Include="Infrastructure\DebugDataBindingConverter.cs" />
+    <Compile Include="ViewModels\History\MeetingRolePropertyDescriptor.cs" />
+    <Compile Include="ViewModels\History\MemberHistoryDescriptionProvider.cs" />
+    <Compile Include="ViewModels\History\MemberHIstoryDescriptor.cs" />
     <Compile Include="ViewModels\NewMeetingWorkflowViewModel.cs" />
     <Compile Include="Infrastructure\ViewModelBase.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
@@ -93,6 +97,7 @@
     <Compile Include="ViewModels\MeetingViewModel.cs" />
     <Compile Include="ViewModels\RoleRequestsViewModel.cs" />
     <Compile Include="Infrastructure\DataViewModelBase.cs" />
+    <Compile Include="ViewModels\History\MemberHistory.cs" />
     <Compile Include="ViewModels\Scheduler\MemberToSchedule.cs" />
     <Compile Include="ViewModels\Scheduler\ScheduleFunctionariesViewModel.cs" />
     <Compile Include="ViewModels\Scheduler\ScheduleEvaluatorsViewModel.cs" />

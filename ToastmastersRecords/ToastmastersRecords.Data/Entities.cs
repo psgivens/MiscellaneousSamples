@@ -74,7 +74,7 @@ namespace ToastmastersRecords.Data {
     public class RoleRequest : DayOffRequest {
         public virtual int RoleTypeId { get; set; }
         public virtual MeetingRoleType RoleType { get; set; }
-        public virtual bool RequestedFullfiled { get; set; }
+        public virtual RoleAssignment Assigned { get; set; }
     }
     public class RoleAssignment : BaseEntity {
         public virtual int MemberId { get; set; }
