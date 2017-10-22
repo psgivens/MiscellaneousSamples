@@ -21,7 +21,8 @@ namespace ToastmastersRecord.Data.Entities {
         [Key, Column(Order = 1)]
         public virtual Guid RoleRequestId { get; set; }
         public virtual RoleRequestEntity RoleRequest { get; set; }
-        [Key, Column(Order = 2)]
+        [Key, Column(Order = 2, TypeName = "Date")]
+        [DataType(DataType.Date)]
         public virtual DateTime Date { get; set; }
     }
 }

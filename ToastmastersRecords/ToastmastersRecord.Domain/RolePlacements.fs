@@ -31,22 +31,21 @@ let (|MatchStateValue|_|) state =
     | _ -> None 
 
 let handle raise (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) = 
-    raise (match state, cmdenv.Item with
-            | None, RolePlacementCommand.Open(rid, mid) -> RolePlacementEvent.Opened(rid,mid)
-            | MatchStateValue (RolePlacementStateValue.Open, _), RolePlacementCommand.Assign (mid,rrid) -> RolePlacementEvent.Assigned (mid,rrid)
-            | MatchStateValue (RolePlacementStateValue.Assigned _, _), RolePlacementCommand.Unassign -> RolePlacementEvent.Unassigned
-            | MatchStateValue (RolePlacementStateValue.Assigned _, _), RolePlacementCommand.Complete -> RolePlacementEvent.Completed
-            | MatchStateValue (RolePlacementStateValue.Assigned (pmid,_), _), RolePlacementCommand.Reassign (pmid', mid, rrid) -> 
-                if pmid = pmid' then RolePlacementEvent.Reassigned (mid, rrid)
-                else failwith "Expected previous member id is incorrect"
-            | MatchStateValue (RolePlacementStateValue.Complete _, _), _-> failwith "Once complete, the placement cannot be altered"
-            | _, RolePlacementCommand.Assign _ -> failwith "Can only assign to an open slot"
-            | _, RolePlacementCommand.Complete -> failwith "Can only complete an assigned position"
-            | _, RolePlacementCommand.Unassign -> failwith "Can only unassign an assigned position"
-            | _, RolePlacementCommand.Open _ -> failwith "Cannot open an open position"
-            | _, RolePlacementCommand.Reassign _ -> failwith "Cannot reassign a role if it is not assigned"
-            )
-    |> ignore
+    match state, cmdenv.Item with
+    | None, RolePlacementCommand.Open(rid, mid) -> RolePlacementEvent.Opened(rid,mid)
+    | MatchStateValue (RolePlacementStateValue.Open, _), RolePlacementCommand.Assign (mid,rrid) -> RolePlacementEvent.Assigned (mid,rrid)
+    | MatchStateValue (RolePlacementStateValue.Assigned _, _), RolePlacementCommand.Unassign -> RolePlacementEvent.Unassigned
+    | MatchStateValue (RolePlacementStateValue.Assigned _, _), RolePlacementCommand.Complete -> RolePlacementEvent.Completed
+    | MatchStateValue (RolePlacementStateValue.Assigned (pmid,_), _), RolePlacementCommand.Reassign (pmid', mid, rrid) -> 
+        if pmid = pmid' then RolePlacementEvent.Reassigned (mid, rrid)
+        else failwith "Expected previous member id is incorrect"
+    | MatchStateValue (RolePlacementStateValue.Complete _, _), _-> failwith "Once complete, the placement cannot be altered"
+    | _, RolePlacementCommand.Assign _ -> failwith "Can only assign to an open slot"
+    | _, RolePlacementCommand.Complete -> failwith "Can only complete an assigned position"
+    | _, RolePlacementCommand.Unassign -> failwith "Can only unassign an assigned position"
+    | _, RolePlacementCommand.Open _ -> failwith "Cannot open an open position"
+    | _, RolePlacementCommand.Reassign _ -> failwith "Cannot reassign a role if it is not assigned"
+    |> Seq.head raise |> ignore
 
 // TODO write 'evolve' function
 let evolve (state:RolePlacementState option) (event:RolePlacementEvent) = 

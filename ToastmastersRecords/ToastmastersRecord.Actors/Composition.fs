@@ -17,7 +17,7 @@ let spawnEventSourcingActors
     name,
     eventStore,
     buildState:'TState option -> 'TEvent list -> 'TState option,
-    handle:('TEvent -> ('TEvent -> unit) seq)  -> 'TState option -> Envelope<'TCommand> -> unit,
+    handle:(('TEvent -> unit) seq)  -> 'TState option -> Envelope<'TCommand> -> unit,
     persist:UserId -> StreamId -> 'TState option -> unit) = 
 
     // Create a subject so that the next step can subscribe. 
@@ -64,24 +64,36 @@ let spawnCrudPersistActors<'TState>
      Events=persistEntitySubject;
      Errors=errorSubject }
 
-let spawnRequestReplyActor<'TCommand,'TEvent> sys name (actors:ActorIO) =
+
+let spawnRequestReplyConditionalActor<'TCommand,'TEvent> inFilter outFilter sys name (actors:ActorIO) =
     let actor = spawn sys (name + "_requestreply") <| fun (mailbox:Actor<obj>) ->
         let rec loop senders = actor {
             let! msg = mailbox.Receive ()
             match msg with
-            | :? Envelope<'TCommand> as cmdenv ->                                 
-                actors.In <! cmdenv
-                return! loop (senders |> Map.add cmdenv.StreamId (mailbox.Sender ()))
-                
+            | :? Envelope<'TCommand> as cmdenv ->        
+                if inFilter cmdenv then                          
+                    actors.In <! cmdenv
+                    return! loop (senders |> Map.add cmdenv.StreamId (mailbox.Sender ()))                
+                else return! loop senders
             | :? Envelope<'TEvent> as evtenv ->
-                senders 
-                |> Map.find evtenv.StreamId
-                |> fun sender -> sender <! evtenv
-                return! loop (senders |> Map.remove evtenv.StreamId)
+                if outFilter evtenv then 
+                    senders 
+                    |> Map.find evtenv.StreamId
+                    |> fun sender -> sender <! evtenv
+                    return! loop (senders |> Map.remove evtenv.StreamId)
+                return! loop senders
+            | :? string as value ->
+                match value with 
+                | "Unsubscribe" -> mailbox.Self |> SubjectActor.unsubscribeFrom actors.Events
+                | _ -> return! loop senders
             | _ -> return! loop senders
         }
         loop Map.empty<StreamId, IActorRef> 
     actor |> SubjectActor.subscribeTo actors.Events
     actor
 
-
+let spawnRequestReplyActor<'TCommand,'TEvent> sys name (actors:ActorIO) =
+    spawnRequestReplyConditionalActor<'TCommand,'TEvent> 
+        (fun x -> true)
+        (fun x -> true)
+        sys name (actors:ActorIO) 

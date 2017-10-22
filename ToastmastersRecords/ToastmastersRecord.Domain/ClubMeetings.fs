@@ -28,28 +28,25 @@ let (|MatchStateValue|_|) state =
     | Some(value) -> Some(value.State, value)
     | _ -> None 
 
-let handle (createRole: Envelope<ClubMeetingCommand> -> RoleTypeId -> Task<obj>) raise (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
-    let raiseOnce = raise >> ignore
+let handle (createRole: Envelope<ClubMeetingCommand> -> RoleTypeId -> Task<obj>) raiseFunctions (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
+    let raiseOnce = Seq.head raiseFunctions >> ignore
     match state, cmdenv.Item with
     | None, ClubMeetingCommand.Create date -> 
         async {
-            let raiseSeq = 
-                ClubMeetingEvent.Created date
-                |> raise 
+            let raise, raiseFunctions = (Seq.head raiseFunctions, Seq.tail raiseFunctions)
+            ClubMeetingEvent.Created date |> raise 
 
             do! [1..13] 
                 |> List.map (fun i -> 
-                    RoleTypeId.box i
+                    enum<RoleTypeId> i 
                     |> createRole cmdenv
                     :> Task) 
                 |> List.toArray
                 |> Task.WhenAll
                 |> Async.AwaitTask
-            
-            raiseSeq
-            |> Seq.head
-            |> fun raise -> raise <| ClubMeetingEvent.Initialized 
-            |> ignore
+
+            let raise, raiseFunctions = (Seq.head raiseFunctions, Seq.tail raiseFunctions)
+            ClubMeetingEvent.Initialized |> raise
         } 
         |> Async.Start
     | MatchStateValue (ClubMeetingStateValue.Pending, _), ClubMeetingCommand.Cancel -> raiseOnce <| ClubMeetingEvent.Canceled

@@ -27,6 +27,12 @@ let persist (userId:UserId) (streamId:StreamId) (state:ClubMeetingState option) 
     
 let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
-    context.Members.Find (StreamId.unbox streamId)
+    let id = StreamId.unbox streamId
+    query { for meeting in context.ClubMeetings do
+            where (meeting.Id = id)
+            select meeting}
+//    |> fun meetings -> meetings.Include "RolePlacements"
+    |> Seq.head
+
 
 

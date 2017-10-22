@@ -8,6 +8,7 @@ open ToastmastersRecord.Domain.RolePlacements
 
 open Newtonsoft.Json
 open System.Data.Entity
+open System
 
 let persist (userId:UserId) (streamId:StreamId) (state:RolePlacementState option) =
     use context = new ToastmastersEFDbContext () 
@@ -27,7 +28,7 @@ let persist (userId:UserId) (streamId:StreamId) (state:RolePlacementState option
                 State = state, 
                 MemberId = memberId,
                 RoleRequestId = roleRequestId,
-                RoleTypeId = RoleTypeId.unbox item.RoleTypeId,
+                RoleTypeId = int item.RoleTypeId,
                 MeetingId = MeetingId.unbox item.MeetingId
             )) |> ignore
     | _, Option.None -> context.RolePlacements.Remove entity |> ignore        
@@ -39,4 +40,9 @@ let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.RolePlacements.Find (StreamId.unbox streamId)
 
-
+let findMeetingPlacements id = 
+    use context = new ToastmastersEFDbContext () 
+    query { for placement in context.RolePlacements do
+            where (placement.MeetingId = id)
+            select placement}
+    |> Seq.toList

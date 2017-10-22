@@ -10,9 +10,11 @@ namespace ToastmastersRecord.Data.Entities {
         [Key]
         public virtual Guid Id { get; set; }
         public virtual Guid MemberId { get; set; }
+//        public virtual MemberEntity Member { get; set; }
         public virtual Guid RoleRequestId { get; set; }
         public virtual int State { get; set; }
         public virtual int RoleTypeId { get; set; }        
         public virtual Guid MeetingId { get; set; }
+//        public virtual ClubMeetingEntity Meeting { get; set; }
     }
 }

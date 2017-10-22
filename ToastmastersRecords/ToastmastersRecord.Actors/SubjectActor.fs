@@ -43,5 +43,8 @@ let create<'TMessage> system name =
     subject', post
 
 
-let subscribeTo<'TEvent> (events:IActorRef)  =
+let subscribeTo (events:IActorRef)  =
     Subscribe >> events.Tell
+
+let unsubscribeFrom (events:IActorRef)  =
+    Unsubscribe >> events.Tell

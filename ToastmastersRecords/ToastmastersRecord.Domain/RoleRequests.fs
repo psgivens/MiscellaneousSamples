@@ -31,19 +31,18 @@ let (|HasStateValue|_|) expected state =
     | _ -> None 
         
 let handle raise (state:RoleRequestState option) (cmdenv:Envelope<RoleRequestCommand>) = 
-    raise (match state, cmdenv.Item with
-            | None, Request(mbrid, msgid, rab, dtl) -> RoleRequestEvent.Requested(mbrid,msgid, rab, dtl)
-            | HasStateValue RoleRequestStateValue.Unassigned _, RoleRequestCommand.Assign -> RoleRequestEvent.Assigned
-            | HasStateValue RoleRequestStateValue.Unassigned _, RoleRequestCommand.Cancel -> RoleRequestEvent.Canceled
-            | HasStateValue RoleRequestStateValue.Assigned _, RoleRequestCommand.Unassign -> RoleRequestEvent.Unassigned
-            | HasStateValue RoleRequestStateValue.Assigned _, RoleRequestCommand.Complete -> RoleRequestEvent.Completed    
-            | _, RoleRequestCommand.Complete -> failwith "Request must be assigned to be completed"
-            | _, RoleRequestCommand.Unassign -> failwith "Request must be assigned to be unassigned"
-            | _, RoleRequestCommand.Assign -> failwith "Request must be unassigned to be assigned"
-            | _, RoleRequestCommand.Cancel -> failwith "Request must be unassigned to be canceled"
-            | Some(_), Request(_) -> failwith "Cannot make a request on existing request"
-            ) 
-    |> ignore
+    match state, cmdenv.Item with
+    | None, Request(mbrid, msgid, rab, dtl) -> RoleRequestEvent.Requested(mbrid,msgid, rab, dtl)
+    | HasStateValue RoleRequestStateValue.Unassigned _, RoleRequestCommand.Assign -> RoleRequestEvent.Assigned
+    | HasStateValue RoleRequestStateValue.Unassigned _, RoleRequestCommand.Cancel -> RoleRequestEvent.Canceled
+    | HasStateValue RoleRequestStateValue.Assigned _, RoleRequestCommand.Unassign -> RoleRequestEvent.Unassigned
+    | HasStateValue RoleRequestStateValue.Assigned _, RoleRequestCommand.Complete -> RoleRequestEvent.Completed    
+    | _, RoleRequestCommand.Complete -> failwith "Request must be assigned to be completed"
+    | _, RoleRequestCommand.Unassign -> failwith "Request must be assigned to be unassigned"
+    | _, RoleRequestCommand.Assign -> failwith "Request must be unassigned to be assigned"
+    | _, RoleRequestCommand.Cancel -> failwith "Request must be unassigned to be canceled"
+    | Some(_), Request(_) -> failwith "Cannot make a request on existing request"
+    |> Seq.head raise |> ignore
 
 let evolve (state:RoleRequestState option) (event:RoleRequestEvent) : RoleRequestState= 
     match state, event with

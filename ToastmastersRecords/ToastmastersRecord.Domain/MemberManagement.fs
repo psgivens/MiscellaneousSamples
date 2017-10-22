@@ -2,8 +2,24 @@
 
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
+open System
 
-type MemberDetails = { Name:string; MemberId:TMMemberId }
+type MemberDetails = { 
+    Name:string; 
+    DisplayName:string; 
+    Awards:string;
+    ToastmasterId:TMMemberId; 
+    Email:string; 
+    HomePhone:string; 
+    MobilePhone:string;
+    PaidUntil:DateTime;
+    ClubMemberSince:DateTime;
+    OriginalJoinDate:DateTime;
+    PaidStatus:string;
+    CurrentPosition:string;
+    SpeechCountConfirmedDate:DateTime;
+    }
+
 type MemberManagementCommand =
     | Create of MemberDetails
     | Activate 
@@ -28,18 +44,17 @@ let (|HasStateValue|_|) expected state =
     | Some(value) when value.State = expected -> Some value
     | _ -> None 
 
-let handle raise (state:MemberManagementState option) (cmdenv:Envelope<MemberManagementCommand>) =
-    raise (match state, cmdenv.Item with 
-            | None, Create user -> Created user
-            | _, Create _ -> failwith "Cannot create a user which already exists"
-            | HasStateValue MemberManagementStateValue.Inactive _, MemberManagementCommand.Activate -> MemberManagementEvent.Activated
-            | _, MemberManagementCommand.Activate -> failwith "Member must exist and be inactive to activate"
-            | HasStateValue MemberManagementStateValue.Active _, MemberManagementCommand.Deactivate -> MemberManagementEvent.Deactivated
-            | _, MemberManagementCommand.Deactivate -> failwith "Member must exist and be active to deactivate"
-            | Some _, MemberManagementCommand.Update details -> MemberManagementEvent.Updated details
-            | None, MemberManagementCommand.Update _ -> failwith "Cannot update a user which does not exist"
-            ) 
-    |> ignore
+let handle raise (state:MemberManagementState option) (cmdenv:Envelope<MemberManagementCommand>) =    
+    match state, cmdenv.Item with 
+    | None, Create user -> Created user
+    | _, Create _ -> failwith "Cannot create a user which already exists"
+    | HasStateValue MemberManagementStateValue.Inactive _, MemberManagementCommand.Activate -> MemberManagementEvent.Activated
+    | _, MemberManagementCommand.Activate -> failwith "Member must exist and be inactive to activate"
+    | HasStateValue MemberManagementStateValue.Active _, MemberManagementCommand.Deactivate -> MemberManagementEvent.Deactivated
+    | _, MemberManagementCommand.Deactivate -> failwith "Member must exist and be active to deactivate"
+    | Some _, MemberManagementCommand.Update details -> MemberManagementEvent.Updated details
+    | None, MemberManagementCommand.Update _ -> failwith "Cannot update a user which does not exist"             
+    |> Seq.head raise |> ignore
 
 let evolve (state:MemberManagementState option) (event:MemberManagementEvent) =
     match state, event with 
