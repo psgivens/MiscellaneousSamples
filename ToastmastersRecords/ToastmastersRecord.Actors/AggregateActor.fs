@@ -6,6 +6,7 @@ open Akka.FSharp
 
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.Infrastructure.Envelope
+open ToastmastersRecord.Domain.CommandHandler
 
 let create<'TState, 'TCommand, 'TEvent> 
     (   eventSubject:IActorRef,
@@ -50,9 +51,12 @@ let create<'TState, 'TCommand, 'TEvent>
                     Some(raiseVersioned i, i+1s)
                     )
 
+            let handlers = CommandHandlers raiseVersioned
+            //let handler = commandHandler raiseVersioned
             // 'handle' current cmd
             handle raise state cmdenv
 
+        // TODO: Move exception handing into 'handle' functions
         with
         | :? InvalidEvent as ex -> invalidMessageSubject <! ex
         | :? InvalidCommand as ex -> invalidMessageSubject <! ex

@@ -74,19 +74,19 @@ let spawnRequestReplyConditionalActor<'TCommand,'TEvent> inFilter outFilter sys 
                 if inFilter cmdenv then                          
                     actors.In <! cmdenv
                     return! loop (senders |> Map.add cmdenv.StreamId (mailbox.Sender ()))                
-                else return! loop senders
             | :? Envelope<'TEvent> as evtenv ->
                 if outFilter evtenv then 
-                    senders 
-                    |> Map.find evtenv.StreamId
-                    |> fun sender -> sender <! evtenv
-                    return! loop (senders |> Map.remove evtenv.StreamId)
-                return! loop senders
+                    match senders |> Map.tryFind evtenv.StreamId with
+                    | Some(sender) -> 
+                        sender <! evtenv
+                        return! loop (senders |> Map.remove evtenv.StreamId)
+                    | None -> ()
             | :? string as value ->
                 match value with 
                 | "Unsubscribe" -> mailbox.Self |> SubjectActor.unsubscribeFrom actors.Events
-                | _ -> return! loop senders
-            | _ -> return! loop senders
+                | _ -> ()
+            | _ -> ()
+            return! loop senders
         }
         loop Map.empty<StreamId, IActorRef> 
     actor |> SubjectActor.subscribeTo actors.Events

@@ -46,12 +46,14 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="Script.fsx" />
     <Compile Include="Infrastructure.fs" />
+    <Compile Include="CommandHandler.fs" />
     <Compile Include="DomainTypes.fs" />
     <Compile Include="RoleRequests.fs" />
     <Compile Include="RolePlacements.fs" />
     <Compile Include="MemberManagement.fs" />
     <Compile Include="MemberMessages.fs" />
     <Compile Include="ClubMeetings.fs" />
+    <Compile Include="MemberHistory.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

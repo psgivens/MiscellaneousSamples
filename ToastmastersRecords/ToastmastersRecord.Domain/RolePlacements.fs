@@ -7,9 +7,12 @@ open System
 type RolePlacementCommand = 
     | Open of RoleTypeId * MeetingId
     | Assign of MemberId * RoleRequestId
+//    | Confirm
+//    | Unconfirm
     | Unassign
     | Reassign of MemberId * MemberId * RoleRequestId
     | Complete
+    | Cancel
 
 type RolePlacementEvent =
     | Opened of RoleTypeId * MeetingId
@@ -17,11 +20,13 @@ type RolePlacementEvent =
     | Unassigned
     | Reassigned of MemberId * RoleRequestId
     | Completed
+    | Canceled
 
 type RolePlacementStateValue =
     | Open
     | Assigned of MemberId * RoleRequestId
     | Complete of MemberId * RoleRequestId
+    | Canceled
 
 type RolePlacementState = { State:RolePlacementStateValue; RoleTypeId:RoleTypeId; MeetingId:MeetingId  }
 
@@ -40,11 +45,14 @@ let handle raise (state:RolePlacementState option) (cmdenv:Envelope<RolePlacemen
         if pmid = pmid' then RolePlacementEvent.Reassigned (mid, rrid)
         else failwith "Expected previous member id is incorrect"
     | MatchStateValue (RolePlacementStateValue.Complete _, _), _-> failwith "Once complete, the placement cannot be altered"
+    | MatchStateValue (RolePlacementStateValue.Open _, _), RolePlacementCommand.Cancel -> RolePlacementEvent.Canceled
+    | MatchStateValue (RolePlacementStateValue.Assigned _, _), RolePlacementCommand.Cancel -> RolePlacementEvent.Canceled
     | _, RolePlacementCommand.Assign _ -> failwith "Can only assign to an open slot"
     | _, RolePlacementCommand.Complete -> failwith "Can only complete an assigned position"
     | _, RolePlacementCommand.Unassign -> failwith "Can only unassign an assigned position"
     | _, RolePlacementCommand.Open _ -> failwith "Cannot open an open position"
     | _, RolePlacementCommand.Reassign _ -> failwith "Cannot reassign a role if it is not assigned"
+    | _, RolePlacementCommand.Cancel _ -> failwith "Cannot cancel a role if does not exist or is complete"
     |> Seq.head raise |> ignore
 
 // TODO write 'evolve' function
@@ -55,9 +63,12 @@ let evolve (state:RolePlacementState option) (event:RolePlacementEvent) =
     | MatchStateValue (RolePlacementStateValue.Assigned _, st) , RolePlacementEvent.Unassigned -> { st with State=Open }
     | MatchStateValue (RolePlacementStateValue.Assigned (mid,rrid), st), RolePlacementEvent.Completed -> { st with State=Complete(mid,rrid) }
     | MatchStateValue (RolePlacementStateValue.Complete _, _), _-> failwith "Once complete, the placement cannot be altered"
-    | MatchStateValue (RolePlacementStateValue.Assigned (_,_), st), RolePlacementEvent.Reassigned (mid, rrid) -> { st with State=Assigned (mid, rrid) }
+    | MatchStateValue (RolePlacementStateValue.Assigned (_, _), st), RolePlacementEvent.Reassigned (mid, rrid) -> { st with State=Assigned (mid, rrid) }
+    | MatchStateValue (RolePlacementStateValue.Open _, st), RolePlacementEvent.Canceled -> { st with State=Canceled }
+    | MatchStateValue (RolePlacementStateValue.Assigned _, st), RolePlacementEvent.Canceled -> { st with State=Canceled }
     | _, RolePlacementEvent.Assigned _ -> failwith "Can only assign to an open slot"
     | _, RolePlacementEvent.Completed -> failwith "Can only complete an assigned position"
     | _, RolePlacementEvent.Unassigned -> failwith "Can only unassign an assigned position"
     | _, RolePlacementEvent.Opened _ -> failwith "Cannot open an open position"
     | _, RolePlacementEvent.Reassigned _ -> failwith "Cannot reassign a role that has not been assigned"
+    | _, RolePlacementEvent.Canceled _ -> failwith "Cannot cancel a role if does not exist or is complete"

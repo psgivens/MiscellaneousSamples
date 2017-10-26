@@ -17,6 +17,8 @@ open ToastmastersRecord.Actors
 open ToastmastersRecord.Actors.Composition
 open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
 
+open System.Threading.Tasks
+
 let onEvents sys name events =
     actorOf2 
     >> spawn sys (name + "_onEvents")
@@ -67,7 +69,14 @@ let composeActors system =
              RolePlacements.handle,
              Persistence.RolePlacements.persist)   
 
-    let placementRequestReply = spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> system "rolePlacement" rolePlacementActors
+    let placementRequestReplyCreate = 
+        spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
+            (fun cmd -> true)
+            (fun evt -> 
+                match evt.Item with
+                | RolePlacementEvent.Opened _ -> true
+                | _ -> false)
+            system "rolePlacement_create" rolePlacementActors
     let createRolePlacement meetingEnv roleTypeId = 
         ((roleTypeId, MeetingId.box <| StreamId.unbox meetingEnv.StreamId)
         |> RolePlacementCommand.Open
@@ -76,7 +85,30 @@ let composeActors system =
             (meetingEnv.TransactionId)
             (StreamId.create ())
             (Version.box 0s))
-        |> placementRequestReply.Ask
+        |> placementRequestReplyCreate.Ask
+
+    let placementRequestReplyCancel = 
+        spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
+            (fun cmd -> true)
+            (fun evt -> 
+                match evt.Item with
+                | RolePlacementEvent.Canceled _ -> true
+                | _ -> false)
+            system "rolePlacement_cancel" rolePlacementActors
+
+    let cancelRolePlacement findMeetingPlacements meetingEnv =         
+        findMeetingPlacements meetingEnv.Id 
+        |> List.map (fun placement ->
+            RolePlacementCommand.Cancel
+            |> envelopWithDefaults
+                (meetingEnv.UserId)
+                (meetingEnv.TransactionId)
+                (StreamId.create ())
+                (Version.box 0s)
+            |> placementRequestReplyCancel.Ask
+            :> Task)
+        |> List.toArray
+        |> Task.WhenAll
         
     // Create member management actors
     let clubMeetingActors = 
@@ -85,7 +117,9 @@ let composeActors system =
              "clubMeetings", 
              ClubMeetingEventStore (),
              buildState ClubMeetings.evolve,
-             (ClubMeetings.handle createRolePlacement),
+             (ClubMeetings.handle {
+                RoleActions.createRole=createRolePlacement
+                RoleActions.cancelRoles=cancelRolePlacement Persistence.RolePlacements.findMeetingPlacements}),
              Persistence.ClubMeetings.persist)    
              
     { MemberManagementActors=memberManagementActors
@@ -224,23 +258,7 @@ let doig system actorGroups =
     // TODO: Query: Verify that role placement is marked assigned
 
 open FSharp.Data
-
-[<EntryPoint>]
-let main argv =
-
-    // System set up
-    NewtonsoftHack.resolveNewtonsoft ()    
-    let system = Configuration.defaultConfig () |> System.create "sample-system"
-            
-    let actorGroups = composeActors system
-
-    // Sample data
-    let userId = UserId.create ()
-//    let memberId = TMMemberId.box 456123
-//    let memberStreamId = StreamId.create ()
-//    let roleRequesStreamId = StreamId.create ()
-//    let meetingStreamId = StreamId.create ()
-
+let ingestMembers system userId actorGroups =
     let memberRequestReply = spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent > system "memberManagement" actorGroups.MemberManagementActors
     // Download the stock prices
     let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171002.csv").Cache()
@@ -288,11 +306,13 @@ let main argv =
     |> System.Threading.Tasks.Task.WaitAll
     memberRequestReply <! "Unsubscribe"
 
-    let meetingRequestReply = 
+let createMeetings system userId actorGroups =
+    let meetingRequestReplyCreate = 
         spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
             (fun x -> true)
             (fun x -> x.Item = Initialized)
-            system "clubMeeting" actorGroups.ClubMeetingActors
+            system "clubMeeting_initialized" actorGroups.ClubMeetingActors
+
     System.DateTime.Parse("07/11/2017")           
     |> Seq.unfold (fun d -> 
         if d < System.DateTime.Now then Some(d, d.AddDays 7.0)
@@ -306,31 +326,77 @@ let main argv =
             (TransId.create ())
             (StreamId.create ())
             (Version.box 0s)
-        |> meetingRequestReply.Ask
+        |> meetingRequestReplyCreate.Ask
         |> fun t -> t :> System.Threading.Tasks.Task)
     |> Seq.toArray
     |> System.Threading.Tasks.Task.WaitAll
 
-    meetingRequestReply <! "Unsubscribe"
+    meetingRequestReplyCreate <! "Unsubscribe"
 
+    let meetingRequestReplyCanceled = 
+        spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
+            (fun x -> true)
+            (fun x -> x.Item = Canceled)
+            system "clubMeeting_canceled" actorGroups.ClubMeetingActors
+
+    ["9/12/2017";"9/26/2017"]
+    |> List.map System.DateTime.Parse
+    |> List.map Persistence.ClubMeetings.findByDate
+    |> Seq.map (fun meeting -> 
+        ClubMeetings.ClubMeetingCommand.Cancel
+        |> envelopWithDefaults
+            (userId)
+            (TransId.create ())
+            (StreamId.box meeting.Id)
+            (Version.box 0s)
+        |> meetingRequestReplyCanceled.Ask
+        |> fun t -> t :> Task)
+    |> Seq.toArray
+    |> Task.WaitAll
+
+    meetingRequestReplyCanceled <! "Unsubscribe"
+
+let ingestHistory system userId actorGroups =
     (* *** Instructions for ingesting history ****
        [x] Create weekly meetings since the begining of the term (7/1)
-       Find and cancel weeks which had holidays
-       Read history from file
-       Filter bad data (missing role, participant, etc.)
-       Trigger to automatically complete/confirm all roles
+       [x] Find and cancel weeks which had holidays or special events
+       Subscribe trigger to automatically complete/confirm all roles
+       [x] Read history from file
+       Filter bad data (missing role, participant, etc.)       
        Foreach row
          - Lookup placement by Role and Date
          - Lookup user by name (will have to clean data by hand)
          - Assign user to placement
        Smart Proxy to wait for all role replacement logic to complete
-       Trigger calculation of speech counts *)
+       Subscribe trigger calculation of speech counts *)
        
     let history = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\FilledRoles.csv").Cache()
     // Print the prices in the HLOC format
     for row in history.Rows do
         printfn "History: (%s, %s, %s, %s)" 
             (row.GetColumn "Role") (row.GetColumn "Person") (row.GetColumn "Date") (row.GetColumn "Source")
+
+
+[<EntryPoint>]
+let main argv =
+
+    // System set up
+    NewtonsoftHack.resolveNewtonsoft ()    
+    let system = Configuration.defaultConfig () |> System.create "sample-system"
+            
+    let actorGroups = composeActors system
+
+    // Sample data
+    let userId = UserId.create ()
+//    let memberId = TMMemberId.box 456123
+//    let memberStreamId = StreamId.create ()
+//    let roleRequesStreamId = StreamId.create ()
+//    let meetingStreamId = StreamId.create ()
+    
+    actorGroups |> ingestMembers system userId
+    actorGroups |> createMeetings system userId
+    actorGroups |> ingestHistory system userId
+
        
     printfn "Press enter to continue"
     System.Console.ReadLine () |> ignore
