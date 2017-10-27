@@ -2,6 +2,7 @@
 
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
+open ToastmastersRecord.Domain.CommandHandler
 open System
 
 type MemberDetails = { 
@@ -44,7 +45,7 @@ let (|HasStateValue|_|) expected state =
     | Some(value) when value.State = expected -> Some value
     | _ -> None 
 
-let handle raise (state:MemberManagementState option) (cmdenv:Envelope<MemberManagementCommand>) =    
+let handle (command:CommandHandlers<MemberManagementEvent>) (state:MemberManagementState option) (cmdenv:Envelope<MemberManagementCommand>) =    
     match state, cmdenv.Item with 
     | None, Create user -> Created user
     | _, Create _ -> failwith "Cannot create a user which already exists"
@@ -54,7 +55,7 @@ let handle raise (state:MemberManagementState option) (cmdenv:Envelope<MemberMan
     | _, MemberManagementCommand.Deactivate -> failwith "Member must exist and be active to deactivate"
     | Some _, MemberManagementCommand.Update details -> MemberManagementEvent.Updated details
     | None, MemberManagementCommand.Update _ -> failwith "Cannot update a user which does not exist"             
-    |> Seq.head raise |> ignore
+    |> command.event
 
 let evolve (state:MemberManagementState option) (event:MemberManagementEvent) =
     match state, event with 

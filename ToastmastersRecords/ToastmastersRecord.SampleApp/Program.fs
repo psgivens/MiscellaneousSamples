@@ -25,11 +25,11 @@ let onEvents sys name events =
     >> SubjectActor.subscribeTo events
 
 type ActorGroups = {
-    MemberManagementActors:ActorIO
-    MessageActors:ActorIO
-    RoleRequestActors:ActorIO    
-    RolePlacementActors:ActorIO
-    ClubMeetingActors:ActorIO
+    MemberManagementActors:ActorIO<MemberManagementCommand>
+    MessageActors:ActorIO<MemberMessageCommand>
+    RoleRequestActors:ActorIO<RoleRequestCommand>
+    RolePlacementActors:ActorIO<RolePlacementCommand>
+    ClubMeetingActors:ActorIO<ClubMeetingCommand>
     }
 
 let composeActors system =
@@ -44,7 +44,7 @@ let composeActors system =
              Persistence.MemberManagement.persist)    
 
     let messageActors = 
-        spawnCrudPersistActors 
+        spawnCrudPersistActors<MemberMessageCommand>
             (system, 
              "memberMessage", 
              Persistence.MemberMessages.persist)
@@ -142,7 +142,7 @@ let scriptInteractions roleRequesStreamId system actorGroups =
                     cmdenv.TransactionId
                     (StreamId.create ())
                     (Version.box 0s))
-                |> actorGroups.MessageActors.In.Tell
+                |> actorGroups.MessageActors.Tell
             | _ -> ()
     
         // Wire up the Role Request actors    
@@ -150,8 +150,7 @@ let scriptInteractions roleRequesStreamId system actorGroups =
         <| fun (mailbox:Actor<Envelope<MemberMessageCommand>>) cmdenv ->        
             printfn "onMessageCreated_createRolerequest"
             match cmdenv.Item with
-            | MemberMessageCommand.Create (mbrid, message) ->
-                actorGroups.RoleRequestActors.In <!
+            | MemberMessageCommand.Create (mbrid, message) ->                
                 ((mbrid, cmdenv.StreamId,"S,TM",[])
                     |> RoleRequestCommand.Request
                     |> envelopWithDefaults
@@ -159,6 +158,7 @@ let scriptInteractions roleRequesStreamId system actorGroups =
                         cmdenv.TransactionId
                         roleRequesStreamId
                         (Version.box 0s))
+                |> actorGroups.RoleRequestActors.Tell
        
 let debugger system name errorActor =
     let p mailbox cmdenv =
@@ -199,29 +199,29 @@ let doig system actorGroups =
                 signal.Set () |> ignore
             | _ -> ()
 
-    // Start by creating a member
-    actorGroups.MemberManagementActors.In <!
-        ({ MemberDetails.ToastmasterId = memberId;
-           Name = "Phillip Scott Givens";             
-           DisplayName = "Phillip Scott Givens";
-           Awards="CC";
-           Email="psgivens@gmail.com";
-           HomePhone="949.394.2349";
-           MobilePhone="949.394.2349";
-           PaidUntil=System.DateTime.Now;
-           ClubMemberSince=System.DateTime.Now;
-           OriginalJoinDate=System.DateTime.Now;
-           PaidStatus="paid";
-           CurrentPosition="Vice President Education";
-           SpeechCountConfirmedDate=System.DateTime.Now;
-           }
-         |> MemberManagementCommand.Create
-         |> envelopWithDefaults
-            (userId)
-            (TransId.create ())
-            (memberStreamId)
-            (Version.box 0s))
-   
+    // Start by creating a member    
+    ({ MemberDetails.ToastmasterId = memberId;
+        Name = "Phillip Scott Givens";             
+        DisplayName = "Phillip Scott Givens";
+        Awards="CC";
+        Email="psgivens@gmail.com";
+        HomePhone="949.394.2349";
+        MobilePhone="949.394.2349";
+        PaidUntil=System.DateTime.Now;
+        ClubMemberSince=System.DateTime.Now;
+        OriginalJoinDate=System.DateTime.Now;
+        PaidStatus="paid";
+        CurrentPosition="Vice President Education";
+        SpeechCountConfirmedDate=System.DateTime.Now;
+        }
+        |> MemberManagementCommand.Create
+        |> envelopWithDefaults
+        (userId)
+        (TransId.create ())
+        (memberStreamId)
+        (Version.box 0s))
+    |> actorGroups.MemberManagementActors.Tell
+
     printfn "waiting on role request"
     signal.WaitOne -1 |> ignore
     printfn "role request created, done waiting"
@@ -234,17 +234,17 @@ let doig system actorGroups =
     let requestEntity = Persistence.RoleRequests.find userId roleRequesStreamId
     if requestEntity = null then failwith "Role request was not created"
 
-    // Create a meeting    
-    actorGroups.ClubMeetingActors.In <!
-        ((2017,10,24)
-        |> System.DateTime
-        |> ClubMeetings.ClubMeetingCommand.Create
-        |> envelopWithDefaults
-            (userId)
-            (TransId.create ())
-            (meetingStreamId)
-            (Version.box 0s))
-   
+    // Create a meeting        
+    ((2017,10,24)
+    |> System.DateTime
+    |> ClubMeetings.ClubMeetingCommand.Create
+    |> envelopWithDefaults
+        (userId)
+        (TransId.create ())
+        (meetingStreamId)
+        (Version.box 0s))
+    |> actorGroups.ClubMeetingActors.Tell
+
     printfn "waiting on club meeting"
     signal.WaitOne -1 |> ignore
     printfn "club meeting initialized, done waiting"
@@ -369,12 +369,55 @@ let ingestHistory system userId actorGroups =
          - Assign user to placement
        Smart Proxy to wait for all role replacement logic to complete
        Subscribe trigger calculation of speech counts *)
-       
+
     let history = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\FilledRoles.csv").Cache()
     // Print the prices in the HLOC format
     for row in history.Rows do
         printfn "History: (%s, %s, %s, %s)" 
             (row.GetColumn "Role") (row.GetColumn "Person") (row.GetColumn "Date") (row.GetColumn "Source")
+
+    let confirmationActor = 
+        (fun (mailbox:Actor<Envelope<RolePlacementEvent>>) cmdenv -> 
+            match cmdenv.Item with
+            // TODO: Respond to the event
+            | _ -> ()) 
+        |> actorOf2
+        |> spawn system "RoleConfirmation" 
+
+    confirmationActor
+    |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
+    
+    let getMeetingId date = MeetingId.create ()
+    let getRoleplacmentId typeTypeId meetingId = StreamId.create ()
+    let getMemberId name = MemberId.create ()
+    let getRoleTypeId roleName = RoleTypeId.Toastmaster
+
+    let rolePlacementRequestReply =
+        spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
+            system "rolePlacementRequestReply" actorGroups.RolePlacementActors
+
+    history.Rows
+    |> Seq.map (fun row -> ((row.GetColumn "Role"), (row.GetColumn "Person"), (row.GetColumn "Date"), (row.GetColumn "Source")))
+    |> Seq.where (fun (role, person, date, source) -> role <> "" && person <> "" && date <> "" && source <> "")
+    |> Seq.map (fun (role, person, date, source) -> 
+        let meetingId = getMeetingId date
+        let roleTypeId = getRoleTypeId role
+        getRoleplacmentId roleTypeId meetingId, getMemberId person)
+    |> Seq.map (fun (streamId, memberId) ->
+        (memberId, RoleRequestId.Empty)
+        |> RolePlacementCommand.Assign
+        |> envelopWithDefaults
+            (userId) 
+            (TransId.create ()) 
+            (streamId) 
+            (Version.box 0s) 
+        |> rolePlacementRequestReply.Ask
+        |> fun t -> t :> System.Threading.Tasks.Task)
+    |> Seq.toArray
+    |> System.Threading.Tasks.Task.WaitAll
+
+    confirmationActor
+    |> SubjectActor.unsubscribeFrom actorGroups.RolePlacementActors.Events 
 
 
 [<EntryPoint>]
@@ -385,7 +428,7 @@ let main argv =
     let system = Configuration.defaultConfig () |> System.create "sample-system"
             
     let actorGroups = composeActors system
-
+    
     // Sample data
     let userId = UserId.create ()
 //    let memberId = TMMemberId.box 456123

@@ -64,45 +64,42 @@ let handleProto
 
     | _ -> command.event ClubMeetingEvent.Occurred 
 
-let handle (roleActions:RoleActions) raiseFunctions (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
-    let raiseOnce = Seq.head raiseFunctions >> ignore
+let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
 
     let createMeeting date =
-        async {
-            let raise, raiseFunctions = (Seq.head raiseFunctions, Seq.tail raiseFunctions)
-            ClubMeetingEvent.Created date |> raise 
+        command.block {
+            do! ClubMeetingEvent.Created date |> raise 
+            return async {
+                do! [1..12] 
+                    |> List.map (fun i -> 
+                        enum<RoleTypeId> i 
+                        |> roleActions.createRole cmdenv
+                        :> Task) 
+                    |> List.toArray
+                    |> Task.WhenAll
+                    |> Async.AwaitTask
 
-            do! [1..12] 
-                |> List.map (fun i -> 
-                    enum<RoleTypeId> i 
-                    |> roleActions.createRole cmdenv
-                    :> Task) 
-                |> List.toArray
-                |> Task.WhenAll
-                |> Async.AwaitTask
-
-            let raise, raiseFunctions = (Seq.head raiseFunctions, Seq.tail raiseFunctions)
-            ClubMeetingEvent.Initialized |> raise
-        } 
-        |> Async.Start
+                return ClubMeetingEvent.Initialized    
+            }
+        }
 
     let cancelMeeting () = 
-        async {
-            let raise, raiseFunctions = (Seq.head raiseFunctions, Seq.tail raiseFunctions)
-            ClubMeetingEvent.Canceling |> raise 
+        command.block {
+            do! ClubMeetingEvent.Canceling |> raise 
 
-            do! roleActions.cancelRoles cmdenv 
-                |> Async.AwaitTask 
+            return async {
+                do! roleActions.cancelRoles cmdenv 
+                    |> Async.AwaitTask 
 
-            let raise, raiseFunctions = (Seq.head raiseFunctions, Seq.tail raiseFunctions)
-            ClubMeetingEvent.Canceled |> raise
+            
+                return ClubMeetingEvent.Canceled
+            }
         } 
-        |> Async.Start
 
     match state, cmdenv.Item with
     | None, ClubMeetingCommand.Create date -> createMeeting date
     | MatchStateValue (ClubMeetingStateValue.Pending, _), ClubMeetingCommand.Cancel -> cancelMeeting ()
-    | MatchStateValue (ClubMeetingStateValue.Pending, _), ClubMeetingCommand.Occur -> raiseOnce <| ClubMeetingEvent.Occurred
+    | MatchStateValue (ClubMeetingStateValue.Pending, _), ClubMeetingCommand.Occur -> command.event <| ClubMeetingEvent.Occurred
     | None, _ -> failwith "A meeting must first be created to cancel or occur"
     | Some _, ClubMeetingCommand.Create _ -> failwith "cannot create a meeting which already exists"
     | MatchStateValue (ClubMeetingStateValue.Occurred, _), _ -> failwith "Occurred is an ending state"

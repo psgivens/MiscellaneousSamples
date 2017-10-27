@@ -2,6 +2,7 @@
 
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
+open ToastmastersRecord.Domain.CommandHandler
 open System
 
 type RoleRequestCommand = 
@@ -30,7 +31,7 @@ let (|HasStateValue|_|) expected state =
     | Some(value) when value.State = expected -> Some value
     | _ -> None 
         
-let handle raise (state:RoleRequestState option) (cmdenv:Envelope<RoleRequestCommand>) = 
+let handle (command:CommandHandlers<RoleRequestEvent>) (state:RoleRequestState option) (cmdenv:Envelope<RoleRequestCommand>) = 
     match state, cmdenv.Item with
     | None, Request(mbrid, msgid, rab, dtl) -> RoleRequestEvent.Requested(mbrid,msgid, rab, dtl)
     | HasStateValue RoleRequestStateValue.Unassigned _, RoleRequestCommand.Assign -> RoleRequestEvent.Assigned
@@ -42,7 +43,7 @@ let handle raise (state:RoleRequestState option) (cmdenv:Envelope<RoleRequestCom
     | _, RoleRequestCommand.Assign -> failwith "Request must be unassigned to be assigned"
     | _, RoleRequestCommand.Cancel -> failwith "Request must be unassigned to be canceled"
     | Some(_), Request(_) -> failwith "Cannot make a request on existing request"
-    |> Seq.head raise |> ignore
+    |> command.event
 
 let evolve (state:RoleRequestState option) (event:RoleRequestEvent) : RoleRequestState= 
     match state, event with

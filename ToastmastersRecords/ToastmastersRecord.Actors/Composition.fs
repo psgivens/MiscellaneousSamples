@@ -8,16 +8,17 @@ open ToastmastersRecord.Domain
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Domain.Infrastructure.Envelope
+open ToastmastersRecord.Domain.CommandHandler
 open ToastmastersRecord.Actors
 
-type ActorIO = { In:IActorRef; Events:IActorRef; Errors:IActorRef }
+type ActorIO<'a> = { Tell:Envelope<'a> -> unit; Events:IActorRef; Errors:IActorRef }
 
 let spawnEventSourcingActors 
    (sys,
     name,
     eventStore,
     buildState:'TState option -> 'TEvent list -> 'TState option,
-    handle:(('TEvent -> unit) seq)  -> 'TState option -> Envelope<'TCommand> -> unit,
+    handle:CommandHandlers<'TEvent> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<'TEvent>,
     persist:UserId -> StreamId -> 'TState option -> unit) = 
 
     // Create a subject so that the next step can subscribe. 
@@ -42,7 +43,7 @@ let spawnEventSourcingActors
              handle
              )      
         |> spawn sys (name + "_AggregateActor")
-    { In=aggregateActor; 
+    { Tell=aggregateActor.Tell; 
       Events=persistEventSubject;
       Errors=errorSubject }
 
@@ -60,19 +61,19 @@ let spawnCrudPersistActors<'TState>
             persist)
        |> spawn sys (name + "_PersistingActor")
 
-   { In=messagePersisting; 
+   { Tell=fun (env:Envelope<'TState>) -> env |> messagePersisting.Tell; 
      Events=persistEntitySubject;
      Errors=errorSubject }
 
 
-let spawnRequestReplyConditionalActor<'TCommand,'TEvent> inFilter outFilter sys name (actors:ActorIO) =
+let spawnRequestReplyConditionalActor<'TCommand,'TEvent> inFilter outFilter sys name (actors:ActorIO<'TCommand>) =
     let actor = spawn sys (name + "_requestreply") <| fun (mailbox:Actor<obj>) ->
         let rec loop senders = actor {
             let! msg = mailbox.Receive ()
             match msg with
             | :? Envelope<'TCommand> as cmdenv ->        
                 if inFilter cmdenv then                          
-                    actors.In <! cmdenv
+                    cmdenv |> actors.Tell
                     return! loop (senders |> Map.add cmdenv.StreamId (mailbox.Sender ()))                
             | :? Envelope<'TEvent> as evtenv ->
                 if outFilter evtenv then 
@@ -92,8 +93,8 @@ let spawnRequestReplyConditionalActor<'TCommand,'TEvent> inFilter outFilter sys 
     actor |> SubjectActor.subscribeTo actors.Events
     actor
 
-let spawnRequestReplyActor<'TCommand,'TEvent> sys name (actors:ActorIO) =
+let spawnRequestReplyActor<'TCommand,'TEvent> sys name (actors:ActorIO<'TCommand>) =
     spawnRequestReplyConditionalActor<'TCommand,'TEvent> 
         (fun x -> true)
         (fun x -> true)
-        sys name (actors:ActorIO) 
+        sys name (actors:ActorIO<'TCommand>) 

@@ -2,6 +2,7 @@
 
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
+open ToastmastersRecord.Domain.CommandHandler
 open System
 
 type RolePlacementCommand = 
@@ -35,7 +36,7 @@ let (|MatchStateValue|_|) state =
     | Some(value) -> Some(value.State, value)
     | _ -> None 
 
-let handle raise (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) = 
+let handle (command:CommandHandlers<RolePlacementEvent>) (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) = 
     match state, cmdenv.Item with
     | None, RolePlacementCommand.Open(rid, mid) -> RolePlacementEvent.Opened(rid,mid)
     | MatchStateValue (RolePlacementStateValue.Open, _), RolePlacementCommand.Assign (mid,rrid) -> RolePlacementEvent.Assigned (mid,rrid)
@@ -53,7 +54,7 @@ let handle raise (state:RolePlacementState option) (cmdenv:Envelope<RolePlacemen
     | _, RolePlacementCommand.Open _ -> failwith "Cannot open an open position"
     | _, RolePlacementCommand.Reassign _ -> failwith "Cannot reassign a role if it is not assigned"
     | _, RolePlacementCommand.Cancel _ -> failwith "Cannot cancel a role if does not exist or is complete"
-    |> Seq.head raise |> ignore
+    |> command.event
 
 // TODO write 'evolve' function
 let evolve (state:RolePlacementState option) (event:RolePlacementEvent) = 

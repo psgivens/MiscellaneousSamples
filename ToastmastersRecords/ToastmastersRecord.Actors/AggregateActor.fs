@@ -2,7 +2,6 @@
 
 open Akka.Actor
 open Akka.FSharp
-//open ToastmastersRecord.Actors.SubjectActor
 
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.Infrastructure.Envelope
@@ -13,7 +12,7 @@ let create<'TState, 'TCommand, 'TEvent>
         invalidMessageSubject:IActorRef,
         store:IEventStore<Envelope<'TEvent>>, 
         buildState:'TState option -> 'TEvent list -> 'TState option,
-        handle:(('TEvent -> unit) seq) ->'TState option -> Envelope<'TCommand> -> unit) =         
+        handle:CommandHandlers<'TEvent> ->'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<'TEvent>) =         
     
     let processMessage (mailbox:Actor<Envelope<'TCommand>>) cmdenv=
         let events = 
@@ -45,16 +44,12 @@ let create<'TState, 'TCommand, 'TEvent>
                 store.AppendEvent cmdenv.StreamId envelope 
                 eventSubject <! envelope
 
-            let raise =
-                version + 1s
-                |> Seq.unfold (fun i ->
-                    Some(raiseVersioned i, i+1s)
-                    )
-
             let handlers = CommandHandlers raiseVersioned
-            //let handler = commandHandler raiseVersioned
-            // 'handle' current cmd
-            handle raise state cmdenv
+            
+            (version, []) 
+            |> handle handlers state cmdenv 
+            |> Async.RunSynchronously
+            |> ignore
 
         // TODO: Move exception handing into 'handle' functions
         with
