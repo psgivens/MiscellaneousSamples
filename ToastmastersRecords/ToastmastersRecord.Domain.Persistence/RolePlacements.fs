@@ -46,3 +46,19 @@ let findMeetingPlacements id =
             where (placement.MeetingId = id)
             select placement}
     |> Seq.toList
+
+let getPlacmentByMeetingAndRole roleTypeId meetingId = 
+    use context = new ToastmastersEFDbContext () 
+    query { for placement in context.RolePlacements do
+            where (placement.RoleTypeId = roleTypeId 
+            && placement.MeetingId = meetingId)
+            select placement
+            exactlyOne }
+            
+let getRoleTypeId name =
+    use context = new ToastmastersEFDbContext ()
+    query { for roleType in context.RoleTypes do 
+            where (roleType.Title = name)
+            select roleType.Id 
+            exactlyOne }
+                

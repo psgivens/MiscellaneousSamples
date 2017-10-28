@@ -339,20 +339,20 @@ let createMeetings system userId actorGroups =
             (fun x -> x.Item = Canceled)
             system "clubMeeting_canceled" actorGroups.ClubMeetingActors
 
-    ["9/12/2017";"9/26/2017"]
-    |> List.map System.DateTime.Parse
-    |> List.map Persistence.ClubMeetings.findByDate
-    |> Seq.map (fun meeting -> 
-        ClubMeetings.ClubMeetingCommand.Cancel
-        |> envelopWithDefaults
-            (userId)
-            (TransId.create ())
-            (StreamId.box meeting.Id)
-            (Version.box 0s)
-        |> meetingRequestReplyCanceled.Ask
-        |> fun t -> t :> Task)
-    |> Seq.toArray
-    |> Task.WaitAll
+//    ["9/12/2017";"9/26/2017"]
+//    |> List.map System.DateTime.Parse
+//    |> List.map Persistence.ClubMeetings.findByDate
+//    |> Seq.map (fun meeting -> 
+//        ClubMeetings.ClubMeetingCommand.Cancel
+//        |> envelopWithDefaults
+//            (userId)
+//            (TransId.create ())
+//            (StreamId.box meeting.Id)
+//            (Version.box 0s)
+//        |> meetingRequestReplyCanceled.Ask
+//        |> fun t -> t :> Task)
+//    |> Seq.toArray
+//    |> Task.WaitAll
 
     meetingRequestReplyCanceled <! "Unsubscribe"
 
@@ -386,30 +386,32 @@ let ingestHistory system userId actorGroups =
 
     confirmationActor
     |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
-    
-    let getMeetingId date = MeetingId.create ()
-    let getRoleplacmentId typeTypeId meetingId = StreamId.create ()
-    let getMemberId name = MemberId.create ()
-    let getRoleTypeId roleName = RoleTypeId.Toastmaster
-
+        
     let rolePlacementRequestReply =
         spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
 
     history.Rows
     |> Seq.map (fun row -> ((row.GetColumn "Role"), (row.GetColumn "Person"), (row.GetColumn "Date"), (row.GetColumn "Source")))
-    |> Seq.where (fun (role, person, date, source) -> role <> "" && person <> "" && date <> "" && source <> "")
+    |> Seq.where (fun (role, person, date, source) -> 
+        role <> "" && person <> "" && date <> "" && source <> "" && role <> "Speaker" && role <> "Evaluator")
+
     |> Seq.map (fun (role, person, date, source) -> 
-        let meetingId = getMeetingId date
-        let roleTypeId = getRoleTypeId role
-        getRoleplacmentId roleTypeId meetingId, getMemberId person)
+        let meetingId = 
+            date 
+            |> System.DateTime.Parse 
+            |> Persistence.ClubMeetings.findByDate 
+        let roleTypeId = Persistence.RolePlacements.getRoleTypeId role
+        let placement = Persistence.RolePlacements.getPlacmentByMeetingAndRole roleTypeId meetingId.Id
+        let clubMember = Persistence.MemberManagement.findMemberByDisplayName person
+        placement.Id , clubMember.Id)
     |> Seq.map (fun (streamId, memberId) ->
-        (memberId, RoleRequestId.Empty)
+        (MemberId.box memberId, RoleRequestId.Empty)
         |> RolePlacementCommand.Assign
         |> envelopWithDefaults
             (userId) 
             (TransId.create ()) 
-            (streamId) 
+            (StreamId.box streamId) 
             (Version.box 0s) 
         |> rolePlacementRequestReply.Ask
         |> fun t -> t :> System.Threading.Tasks.Task)
@@ -419,6 +421,8 @@ let ingestHistory system userId actorGroups =
     confirmationActor
     |> SubjectActor.unsubscribeFrom actorGroups.RolePlacementActors.Events 
 
+
+let calculateHistory system userId actorGroups = ()
 
 [<EntryPoint>]
 let main argv =
@@ -431,15 +435,11 @@ let main argv =
     
     // Sample data
     let userId = UserId.create ()
-//    let memberId = TMMemberId.box 456123
-//    let memberStreamId = StreamId.create ()
-//    let roleRequesStreamId = StreamId.create ()
-//    let meetingStreamId = StreamId.create ()
     
     actorGroups |> ingestMembers system userId
     actorGroups |> createMeetings system userId
     actorGroups |> ingestHistory system userId
-
+    actorGroups |> calculateHistory system userId
        
     printfn "Press enter to continue"
     System.Console.ReadLine () |> ignore

@@ -41,4 +41,10 @@ let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.Members.Find (StreamId.unbox streamId)
 
+let findMemberByDisplayName name =
+    use context = new ToastmastersEFDbContext () 
+    query { for clubMember in context.Members do
+            where (clubMember.DisplayName = name)
+            select clubMember
+            exactlyOne }
 
