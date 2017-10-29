@@ -27,5 +27,6 @@ namespace ToastmastersRecord.Data {
         public virtual DbSet<ClubMeetingEntity> ClubMeetings { get; set; }
         public virtual DbSet<RolePlacementEntity> RolePlacements { get; set; }
         public virtual DbSet<RoleTypeEntity> RoleTypes { get; set; }
+        public virtual DbSet<MemberHistoryAggregate> MemberHistories { get; set; }
     }
 }

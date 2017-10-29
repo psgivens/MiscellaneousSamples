@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ToastmastersRecord.Data.Entities;
 
 namespace ToastmastersRecord.Data {
-    internal class ToastmastersEFDbInitializer : DropCreateDatabaseIfModelChanges<ToastmastersEFDbContext> {
+    internal class ToastmastersEFDbInitializer : DropCreateDatabaseAlways<ToastmastersEFDbContext> { // DropCreateDatabaseIfModelChanges<ToastmastersEFDbContext> {
         protected override void Seed(ToastmastersEFDbContext context) {
             //var x = new RoleRequestEnvelopeEntity {
             //    StreamId = Guid.NewGuid(),

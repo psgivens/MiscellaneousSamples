@@ -36,16 +36,46 @@ type RoleActions = {
     createRole: Envelope<ClubMeetingCommand> -> RoleTypeId -> Task<obj>
     cancelRoles: Envelope<ClubMeetingCommand> -> Task
     }
+//
+//let handleProto 
+//        (roleActions:RoleActions) 
+//        (command:CommandHandlers<ClubMeetingEvent>)
+//        (state:ClubMeetingState option) 
+//        (cmdenv:Envelope<ClubMeetingCommand>) 
+//            : CommandHandlerFunction<ClubMeetingEvent>=
+//
+//    match cmdenv.Item with 
+//    | ClubMeetingCommand.Create date  ->
+//        command.block {
+//            do! ClubMeetingEvent.Created date |> raise 
+//            return async {
+//                do! [1..12] 
+//                    |> List.map (fun i -> 
+//                        enum<RoleTypeId> i 
+//                        |> roleActions.createRole cmdenv
+//                        :> Task) 
+//                    |> List.toArray
+//                    |> Task.WhenAll
+//                    |> Async.AwaitTask
+//
+//                do! [RoleTypeId.Speaker;RoleTypeId.Speaker;RoleTypeId.Evaluator;RoleTypeId.Evaluator] 
+//                    |> List.map (fun roleId -> 
+//                        roleId
+//                        |> roleActions.createRole cmdenv
+//                        :> Task) 
+//                    |> List.toArray
+//                    |> Task.WhenAll
+//                    |> Async.AwaitTask
+//
+//                return ClubMeetingEvent.Initialized    
+//            }
+//        }
+//
+//    | _ -> command.event ClubMeetingEvent.Occurred 
 
-let handleProto 
-        (roleActions:RoleActions) 
-        (command:CommandHandlers<ClubMeetingEvent>)
-        (state:ClubMeetingState option) 
-        (cmdenv:Envelope<ClubMeetingCommand>) 
-            : CommandHandlerFunction<ClubMeetingEvent>=
+let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
 
-    match cmdenv.Item with 
-    | ClubMeetingCommand.Create date  ->
+    let createMeeting date =
         command.block {
             do! ClubMeetingEvent.Created date |> raise 
             return async {
@@ -58,21 +88,9 @@ let handleProto
                     |> Task.WhenAll
                     |> Async.AwaitTask
 
-                return ClubMeetingEvent.Initialized    
-            }
-        }
-
-    | _ -> command.event ClubMeetingEvent.Occurred 
-
-let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
-
-    let createMeeting date =
-        command.block {
-            do! ClubMeetingEvent.Created date |> raise 
-            return async {
-                do! [1..12] 
-                    |> List.map (fun i -> 
-                        enum<RoleTypeId> i 
+                do! [RoleTypeId.Speaker;RoleTypeId.Speaker;RoleTypeId.Evaluator;RoleTypeId.Evaluator] 
+                    |> List.map (fun roleId -> 
+                        roleId
                         |> roleActions.createRole cmdenv
                         :> Task) 
                     |> List.toArray

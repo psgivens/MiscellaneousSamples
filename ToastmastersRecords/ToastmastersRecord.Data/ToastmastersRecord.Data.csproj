@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\ClubMeetingEntity.cs" />
+    <Compile Include="Entities\MemberHistoryAggregate.cs" />
     <Compile Include="Entities\MemberMessageEntity.cs" />
     <Compile Include="Entities\RolePlacementEntity.cs" />
     <Compile Include="Entities\RoleRequestEntity.cs" />

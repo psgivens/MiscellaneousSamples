@@ -9,6 +9,7 @@ open ToastmastersRecord.Data.Entities
 open Newtonsoft.Json
 open System.Data.Entity
 
+let defaultDT = "1/1/1900" |> System.DateTime.Parse
 let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState option) =
     use context = new ToastmastersEFDbContext () 
     let entity = context.Members.Find (StreamId.unbox streamId)
@@ -30,9 +31,20 @@ let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState opt
                 ClubMemberSince=details.ClubMemberSince,
                 OriginalJoinDate=details.OriginalJoinDate,
                 PaidStatus=details.PaidStatus,
-                CurrentPosition=details.CurrentPosition,
-                SpeechCountConfirmedDate = details.SpeechCountConfirmedDate
+                CurrentPosition=details.CurrentPosition                
                 )) |> ignore
+        context.MemberHistories.Add (
+            MemberHistoryAggregate (
+                Id = StreamId.unbox streamId,
+                SpeechCountConfirmedDate = details.SpeechCountConfirmedDate,
+                ConfirmedSpeechCount = 0,
+                AggregateCalculationDate = defaultDT,
+                CalculatedSpeechCount = 0,
+                DateAsToastmaster = defaultDT,
+                DateAsGeneralEvaluator = defaultDT,
+                DateAsTableTopicsMaster = defaultDT
+            )
+         ) |> ignore
     | _, Option.None -> context.Members.Remove entity |> ignore        
     | _, Some(item) -> entity.Name <- item.Details.Name
     context.SaveChanges () |> ignore

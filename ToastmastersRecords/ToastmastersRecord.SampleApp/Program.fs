@@ -257,6 +257,33 @@ let doig system actorGroups =
     // TODO: Query: Verify that role request is marked assigned
     // TODO: Query: Verify that role placement is marked assigned
 
+
+let spawnPlacementManager system userId (rolePlacmentRequestReply:IActorRef) =
+    spawn system "rolePlacement_IngestManager" <| fun (mailbox:Actor<RoleTypeId * MeetingId * MemberId * RoleRequestId>) ->
+        let placements =     
+            use context = new ToastmastersRecord.Data.ToastmastersEFDbContext () 
+            context.RolePlacements
+            |> Seq.toList
+        let rec loop (placements:ToastmastersRecord.Data.Entities.RolePlacementEntity list) = actor {
+            let! roleTypeId, MeetingId.Id(meetingId), memberId, roleRequestId = mailbox.Receive ()
+            let placement = placements |> List.find (fun p -> p.MeetingId = meetingId && p.RoleTypeId = int roleTypeId)
+
+            (memberId, roleRequestId)
+            |> RolePlacementCommand.Assign
+            |> envelopWithDefaults
+                (userId) 
+                (TransId.create ()) 
+                (StreamId.box placement.Id) 
+                (Version.box 0s) 
+            |> rolePlacmentRequestReply.Ask
+            |> fun t -> mailbox.Sender () <! t.Result
+
+            return! loop (placements |> List.where (fun p -> p <> placement))
+        }        
+        loop placements
+
+
+
 open FSharp.Data
 let ingestMembers system userId actorGroups =
     let memberRequestReply = spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent > system "memberManagement" actorGroups.MemberManagementActors
@@ -387,34 +414,53 @@ let ingestHistory system userId actorGroups =
     confirmationActor
     |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
         
+    
     let rolePlacementRequestReply =
         spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
+//            {
+//                Tell=rolePlacementManager.Tell
+//                Actor=rolePlacementManager
+//                Events=actorGroups.RolePlacementActors.Events
+//                Errors=actorGroups.RolePlacementActors.Errors }
+
+    //RoleTypeId * MeetingId * MemberId * RoleRequestId
+    let rolePlacementManager = spawnPlacementManager system userId rolePlacementRequestReply
 
     history.Rows
     |> Seq.map (fun row -> ((row.GetColumn "Role"), (row.GetColumn "Person"), (row.GetColumn "Date"), (row.GetColumn "Source")))
     |> Seq.where (fun (role, person, date, source) -> 
-        role <> "" && person <> "" && date <> "" && source <> "" && role <> "Speaker" && role <> "Evaluator")
+        role <> "" && person <> "" && date <> "" && source <> "")
 
     |> Seq.map (fun (role, person, date, source) -> 
-        let meetingId = 
+        let meeting = 
             date 
             |> System.DateTime.Parse 
             |> Persistence.ClubMeetings.findByDate 
         let roleTypeId = Persistence.RolePlacements.getRoleTypeId role
-        let placement = Persistence.RolePlacements.getPlacmentByMeetingAndRole roleTypeId meetingId.Id
+        //let placement = Persistence.RolePlacements.getPlacmentByMeetingAndRole roleTypeId meeting.Id
         let clubMember = Persistence.MemberManagement.findMemberByDisplayName person
-        placement.Id , clubMember.Id)
-    |> Seq.map (fun (streamId, memberId) ->
-        (MemberId.box memberId, RoleRequestId.Empty)
-        |> RolePlacementCommand.Assign
-        |> envelopWithDefaults
-            (userId) 
-            (TransId.create ()) 
-            (StreamId.box streamId) 
-            (Version.box 0s) 
-        |> rolePlacementRequestReply.Ask
+        roleTypeId, meeting.Id, clubMember.Id, RoleRequestId.Empty)        
+//        placement.Id , clubMember.Id)
+    
+
+    |> Seq.map (fun (roleTypeId, meetingId, clubMemberId, roleRequestId) ->
+        (enum<RoleTypeId> roleTypeId, MeetingId.box meetingId, MemberId.box clubMemberId, roleRequestId)
+        |> rolePlacementManager.Ask
         |> fun t -> t :> System.Threading.Tasks.Task)
+        
+//        
+//    |> Seq.map (fun (streamId, memberId) ->
+//        (MemberId.box memberId, RoleRequestId.Empty)
+//        |> RolePlacementCommand.Assign
+//        |> envelopWithDefaults
+//            (userId) 
+//            (TransId.create ()) 
+//            (StreamId.box streamId) 
+//            (Version.box 0s) 
+//
+//        |> rolePlacementRequestReply.Ask
+//        |> fun t -> t :> System.Threading.Tasks.Task)
     |> Seq.toArray
     |> System.Threading.Tasks.Task.WaitAll
 

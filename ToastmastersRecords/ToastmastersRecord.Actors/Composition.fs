@@ -11,7 +11,7 @@ open ToastmastersRecord.Domain.Infrastructure.Envelope
 open ToastmastersRecord.Domain.CommandHandler
 open ToastmastersRecord.Actors
 
-type ActorIO<'a> = { Tell:Envelope<'a> -> unit; Events:IActorRef; Errors:IActorRef }
+type ActorIO<'a> = { Tell:Envelope<'a> -> unit; Actor:IActorRef; Events:IActorRef; Errors:IActorRef }
 
 let spawnEventSourcingActors 
    (sys,
@@ -40,10 +40,12 @@ let spawnEventSourcingActors
              errorPoster,
              eventStore,
              buildState,
-             handle
+             handle,
+             persist
              )      
         |> spawn sys (name + "_AggregateActor")
     { Tell=aggregateActor.Tell; 
+      Actor=aggregateActor;
       Events=persistEventSubject;
       Errors=errorSubject }
 
@@ -62,6 +64,7 @@ let spawnCrudPersistActors<'TState>
        |> spawn sys (name + "_PersistingActor")
 
    { Tell=fun (env:Envelope<'TState>) -> env |> messagePersisting.Tell; 
+     Actor=messagePersisting;
      Events=persistEntitySubject;
      Errors=errorSubject }
 

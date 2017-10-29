@@ -34,10 +34,5 @@ namespace ToastmastersRecord.Data.Entities {
         public virtual string PaidStatus { get; set; }
         public virtual string CurrentPosition { get; set; }
         public virtual string FuturePosition { get; set; }
-        [DataType(DataType.Date)]
-        [Column(TypeName = "Date")]
-        public virtual DateTime SpeechCountConfirmedDate { get; set; }
-        public virtual int ConfirmedSpeechCount { get; set; }
-        public virtual int CalculatedSpeechCount { get; set; }
     }
 }

@@ -10,7 +10,8 @@ type MemberRoleHistory = { RoleTypeId:RoleTypeId; Date:DateTime }
 type MemberRoleHistoryCommand =
     | Calculate
 
-type MemberRoleHistoryState = { LastTM:DateTime; TotalSpeeches:int }
+type MemberRoleHistoryState = { LastTM:DateTime; LastTTM:DateTime; LastGE:DateTime; TotalSpeeches:int }
+let defaultDT = "1/1/1900" |> DateTime.Parse
 
 type MemberRoleHistoryEvent =
     | Calculating of MemberRoleHistoryState
@@ -29,7 +30,7 @@ let handle evtSeq (state:MemberRoleHistoryEvent option) (cmdenv:Envelope<MemberR
 
             evtSeq 
             |> raise (MemberRoleHistoryEvent.Calculating 
-                     { LastTM=DateTime.Now; TotalSpeeches=0 } )
+                     { LastTM=defaultDT; LastTTM=defaultDT; LastGE=defaultDT; TotalSpeeches=0 } )
 
             |> raise (MemberRoleHistoryEvent.DataAcquired [])
 

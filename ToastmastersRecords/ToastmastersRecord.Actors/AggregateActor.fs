@@ -12,7 +12,8 @@ let create<'TState, 'TCommand, 'TEvent>
         invalidMessageSubject:IActorRef,
         store:IEventStore<Envelope<'TEvent>>, 
         buildState:'TState option -> 'TEvent list -> 'TState option,
-        handle:CommandHandlers<'TEvent> ->'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<'TEvent>) =         
+        handle:CommandHandlers<'TEvent> ->'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<'TEvent>,
+        persist:UserId -> StreamId -> 'TState option -> unit) =
     
     let processMessage (mailbox:Actor<Envelope<'TCommand>>) cmdenv=
         let events = 
@@ -42,6 +43,10 @@ let create<'TState, 'TCommand, 'TEvent>
                         nevent
 
                 store.AppendEvent cmdenv.StreamId envelope 
+
+                //state = ...
+                //persist cmdenv.UserId cmdenv.StreamId state
+
                 eventSubject <! envelope
 
             let handlers = CommandHandlers raiseVersioned

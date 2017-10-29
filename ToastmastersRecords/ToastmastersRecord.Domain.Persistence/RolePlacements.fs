@@ -33,6 +33,14 @@ let persist (userId:UserId) (streamId:StreamId) (state:RolePlacementState option
             )) |> ignore
     | _, Option.None -> context.RolePlacements.Remove entity |> ignore        
     | _, Some(item) -> 
+        let state, memberId, roleRequestId = 
+            match item.State with
+            | Assigned (mid, rrid) -> 1, MemberId.unbox mid, RoleRequestId.unbox rrid
+            | Complete (mid, rrid) -> 2, MemberId.unbox mid, RoleRequestId.unbox rrid
+            | _ -> 0, System.Guid.Empty, System.Guid.Empty
+
+        entity.State <- 1
+
         () // TODO: update
     context.SaveChanges () |> ignore
     
@@ -51,9 +59,10 @@ let getPlacmentByMeetingAndRole roleTypeId meetingId =
     use context = new ToastmastersEFDbContext () 
     query { for placement in context.RolePlacements do
             where (placement.RoleTypeId = roleTypeId 
-            && placement.MeetingId = meetingId)
+            && placement.MeetingId = meetingId
+            && placement.State = 0)
             select placement
-            exactlyOne }
+            } |> Seq.head
             
 let getRoleTypeId name =
     use context = new ToastmastersEFDbContext ()
