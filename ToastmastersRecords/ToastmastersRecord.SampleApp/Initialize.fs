@@ -13,8 +13,9 @@ open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.Actors
 
-open ToastmastersRecord.Actors.Composition
 open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
+open ToastmastersRecord.Actors.Infrastructure
+open ToastmastersRecord.Actors
 
 open System.Threading.Tasks
 
@@ -29,7 +30,7 @@ type ActorGroups = {
 let composeActors system =
     // Create member management actors
     let memberManagementActors = 
-        spawnEventSourcingActors 
+        EventSourcingActors.spawnEventSourcingActors 
             (system,
              "memberManagement", 
              MemberManagementEventStore (),
@@ -38,14 +39,14 @@ let composeActors system =
              Persistence.MemberManagement.persist)    
 
     let messageActors = 
-        spawnCrudPersistActors<MemberMessageCommand>
+        CrudMessagePersistanceActor.spawn<MemberMessageCommand>
             (system, 
              "memberMessage", 
              Persistence.MemberMessages.persist)
 
     // Create role request actors
     let roleRequestActors =
-        spawnEventSourcingActors
+        EventSourcingActors.spawnEventSourcingActors
             (system,
              "roleRequests",
              RoleRequestEventStore (),
@@ -55,7 +56,7 @@ let composeActors system =
 
     // Create role request actors
     let rolePlacementActors =
-        spawnEventSourcingActors
+        EventSourcingActors.spawnEventSourcingActors
             (system,
              "rolePlacements",
              RolePlacementEventStore (),
@@ -64,7 +65,7 @@ let composeActors system =
              Persistence.RolePlacements.persist)   
 
     let placementRequestReplyCreate = 
-        spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
+        RequestReplyActor.spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
             (fun cmd -> true)
             (fun evt -> 
                 match evt.Item with
@@ -82,7 +83,7 @@ let composeActors system =
         |> placementRequestReplyCreate.Ask
 
     let placementRequestReplyCancel = 
-        spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
+        RequestReplyActor.spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
             (fun cmd -> true)
             (fun evt -> 
                 match evt.Item with
@@ -106,7 +107,7 @@ let composeActors system =
         
     // Create member management actors
     let clubMeetingActors = 
-        spawnEventSourcingActors 
+        EventSourcingActors.spawnEventSourcingActors 
             (system,
              "clubMeetings", 
              ClubMeetingEventStore (),

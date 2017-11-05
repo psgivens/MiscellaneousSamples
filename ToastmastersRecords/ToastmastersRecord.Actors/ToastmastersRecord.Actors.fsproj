@@ -51,6 +51,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Infrastructure.fs" />
     <Compile Include="SubjectActor.fs" />
     <Compile Include="AggregateActor.fs" />
     <Compile Include="PersistanceActor.fs" />
@@ -58,8 +59,9 @@
     <Content Include="App.config" />
     <Compile Include="NewtonsoftHack.fs" />
     <Compile Include="CrudMessagePersistanceActor.fs" />
-    <Compile Include="Composition.fs" />
     <Compile Include="RolePlacements.fs" />
+    <Compile Include="RequestReplyActor.fs" />
+    <Compile Include="EventSourcingActors.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Akka">

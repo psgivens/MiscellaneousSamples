@@ -17,19 +17,13 @@ open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.Actors
 
-open ToastmastersRecord.Actors.Composition
 open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
-
 open System.Threading.Tasks
-
-        
-
 open ToastmastersRecord.Actors.RolePlacements
-
 
 open FSharp.Data
 let ingestMembers system userId actorGroups =
-    let memberRequestReply = spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent> system "memberManagement" actorGroups.MemberManagementActors
+    let memberRequestReply = RequestReplyActor.spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent> system "memberManagement" actorGroups.MemberManagementActors
     
     let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171002.csv").Cache()
     
@@ -102,7 +96,7 @@ let ingestSpeechCount  system userId actorGroups =
 
 let createMeetings system userId actorGroups =
     let meetingRequestReplyCreate = 
-        spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
+        RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
             (fun x -> true)
             (fun x -> x.Item = Initialized)
             system "clubMeeting_initialized" actorGroups.ClubMeetingActors
@@ -128,7 +122,7 @@ let createMeetings system userId actorGroups =
     meetingRequestReplyCreate <! "Unsubscribe"
 
     let meetingRequestReplyCanceled = 
-        spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
+        RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
             (fun x -> true)
             (fun x -> x.Item = Canceled)
             system "clubMeeting_canceled" actorGroups.ClubMeetingActors
@@ -154,7 +148,7 @@ let ingestHistory system userId actorGroups =
 
     let roleConfirmationReaction = spawnRoleConfirmationReaction system
     let rolePlacementRequestReply =
-        spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
+        RequestReplyActor.spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
     let rolePlacementManager = spawnPlacementManager system userId rolePlacementRequestReply
 

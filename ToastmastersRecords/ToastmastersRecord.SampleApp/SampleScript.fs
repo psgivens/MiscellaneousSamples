@@ -13,7 +13,6 @@ open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.Actors
 
-open ToastmastersRecord.Actors.Composition
 open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
 
 open ToastmastersRecord.SampleApp.Initialize

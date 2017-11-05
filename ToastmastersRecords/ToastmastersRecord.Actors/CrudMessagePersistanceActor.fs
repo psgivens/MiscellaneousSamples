@@ -24,3 +24,23 @@ let create<'TCommand>
                                         
     actorOf2 persistEntity
 
+open ToastmastersRecord.Actors.Infrastructure
+let spawn<'TState> 
+   (sys,
+    name,
+    persist:UserId -> StreamId -> Envelope<'TState> option -> unit) = 
+    // Create a subject so that the next step can subscribe. 
+   let persistEntitySubject = SubjectActor.create sys (name + "_Events")
+   let errorSubject = SubjectActor.create sys (name + "_Errors")
+   let messagePersisting = 
+       create<'TState>
+           (persistEntitySubject,
+            errorSubject,
+            persist)
+       |> spawn sys (name + "_PersistingActor")
+
+   { Tell=fun (env:Envelope<'TState>) -> env |> messagePersisting.Tell; 
+     Actor=messagePersisting;
+     Events=persistEntitySubject;
+     Errors=errorSubject }
+

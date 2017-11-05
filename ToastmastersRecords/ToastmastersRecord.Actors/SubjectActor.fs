@@ -9,7 +9,7 @@ type SubjectAction =
     | Unsubscribe of IActorRef
 
 let create system name =     
-    spawn system name (fun (mailbox:Actor<obj>) -> 
+    spawn system name <| fun (mailbox:Actor<obj>) -> 
         let rec loop subscribers = actor {
             let! message = mailbox.Receive ()
             match message with
@@ -32,7 +32,7 @@ let create system name =
                 subscribers |> List.iter (fun actor -> actor.Tell message)
                 return! loop subscribers
         }        
-        loop []) 
+        loop []
     
 
 let subscribeTo (events:IActorRef)  =
