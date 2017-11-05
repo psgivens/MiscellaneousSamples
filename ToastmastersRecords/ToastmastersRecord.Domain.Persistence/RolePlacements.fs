@@ -39,9 +39,11 @@ let persist (userId:UserId) (streamId:StreamId) (state:RolePlacementState option
             | Complete (mid, rrid) -> 2, MemberId.unbox mid, RoleRequestId.unbox rrid
             | _ -> 0, System.Guid.Empty, System.Guid.Empty
 
-        entity.State <- 1
+        entity.State <- state
+        entity.MemberId <- memberId
+        entity.RoleRequestId <- roleRequestId
+        printfn "Persist: (%A, %A, %A)" state roleRequestId memberId 
 
-        () // TODO: update
     context.SaveChanges () |> ignore
     
 let find (userId:UserId) (streamId:StreamId) =
@@ -70,4 +72,26 @@ let getRoleTypeId name =
             where (roleType.Title = name)
             select roleType.Id 
             exactlyOne }
-                
+
+let getRolePlacmentsByMember memberId =
+    use context = new ToastmastersEFDbContext ()
+    query { for placement in context.RolePlacements do
+            join meeting in context.ClubMeetings
+                on (placement.MeetingId = meeting.Id)
+            sortBy meeting.Date 
+            where (placement.MemberId = memberId)
+            select placement 
+            }
+    |> Seq.toList                
+
+let getRolePlacementsByMemberSinceDate date memberId =
+    use context = new ToastmastersEFDbContext ()
+    query { for placement in context.RolePlacements do
+            join meeting in context.ClubMeetings
+                on (placement.MeetingId = meeting.Id)
+            sortBy meeting.Date 
+            where (placement.MemberId = memberId)
+            where (meeting.Date > date)
+            select (meeting.Date, placement)
+            }
+    |> Seq.toList                

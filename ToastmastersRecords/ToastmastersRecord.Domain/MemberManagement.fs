@@ -40,6 +40,13 @@ type MemberManagementStateValue =
 type MemberManagementState =
     { State:MemberManagementStateValue; Details:MemberDetails}
 
+type MemberHistoryState = {
+    SpeechCount:int
+    LastToastmaster:System.DateTime
+    LastTableTopicsMaster:System.DateTime
+    LastGeneralEvaluator:System.DateTime
+    }    
+
 let (|HasStateValue|_|) expected state =
     match state with 
     | Some(value) when value.State = expected -> Some value

@@ -24,38 +24,15 @@ open System.Threading.Tasks
 
         
 
-let spawnPlacementManager system userId (rolePlacmentRequestReply:IActorRef) =
-    spawn system "rolePlacement_IngestManager" <| fun (mailbox:Actor<RoleTypeId * MeetingId * MemberId * RoleRequestId>) ->
-        let placements =     
-            use context = new ToastmastersRecord.Data.ToastmastersEFDbContext () 
-            context.RolePlacements
-            |> Seq.toList
-        let rec loop (placements:ToastmastersRecord.Data.Entities.RolePlacementEntity list) = actor {
-            let! roleTypeId, MeetingId.Id(meetingId), memberId, roleRequestId = mailbox.Receive ()
-            let placement = placements |> List.find (fun p -> p.MeetingId = meetingId && p.RoleTypeId = int roleTypeId)
-
-            (memberId, roleRequestId)
-            |> RolePlacementCommand.Assign
-            |> envelopWithDefaults
-                (userId) 
-                (TransId.create ()) 
-                (StreamId.box placement.Id) 
-                (Version.box 0s) 
-            |> rolePlacmentRequestReply.Ask
-            |> fun t -> mailbox.Sender () <! t.Result
-
-            return! loop (placements |> List.where (fun p -> p <> placement))
-        }        
-        loop placements
-
+open ToastmastersRecord.Actors.RolePlacements
 
 
 open FSharp.Data
 let ingestMembers system userId actorGroups =
-    let memberRequestReply = spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent > system "memberManagement" actorGroups.MemberManagementActors
-    // Download the stock prices
+    let memberRequestReply = spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent> system "memberManagement" actorGroups.MemberManagementActors
+    
     let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171002.csv").Cache()
-    // Print the prices in the HLOC format
+    
     roster.Rows 
     |> Seq.map (fun row ->
         printfn "Roster: (%s, %s, %s)" 
@@ -86,8 +63,8 @@ let ingestMembers system userId actorGroups =
             PaidStatus = row.GetColumn "status (*)";
             CurrentPosition = row.GetColumn "Current Position";
             })
-    |> Seq.map (fun item -> 
-        item
+    |> Seq.map (fun memberDetails -> 
+        memberDetails
         |> MemberManagementCommand.Create
         |> envelopWithDefaults
             (userId)
@@ -99,6 +76,14 @@ let ingestMembers system userId actorGroups =
     |> Seq.toArray
     |> System.Threading.Tasks.Task.WaitAll
     memberRequestReply <! "Unsubscribe"
+
+let ingestSpeechCount  system userId actorGroups = 
+    let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\ConfirmedSpeechCount.csv").Cache()
+    
+    roster.Rows 
+    |> Seq.iter (fun row ->
+        printfn "Count: (%s, %s, %s)" 
+            (row.GetColumn "Name") (row.GetColumn "Count") (row.GetColumn "Date"))
 
 let createMeetings system userId actorGroups =
     let meetingRequestReplyCreate = 
@@ -151,49 +136,32 @@ let createMeetings system userId actorGroups =
     meetingRequestReplyCanceled <! "Unsubscribe"
 
 let ingestHistory system userId actorGroups =
-    (* *** Instructions for ingesting history ****
-       [x] Create weekly meetings since the begining of the term (7/1)
-       [x] Find and cancel weeks which had holidays or special events
-       Subscribe trigger to automatically complete/confirm all roles
-       [x] Read history from file
-       Filter bad data (missing role, participant, etc.)       
-       Foreach row
-         - Lookup placement by Role and Date
-         - Lookup user by name (will have to clean data by hand)
-         - Assign user to placement
-       Smart Proxy to wait for all role replacement logic to complete
-       Subscribe trigger calculation of speech counts *)
 
-    let history = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\FilledRoles.csv").Cache()
-    // Print the prices in the HLOC format
-    for row in history.Rows do
-        printfn "History: (%s, %s, %s, %s)" 
-            (row.GetColumn "Role") (row.GetColumn "Person") (row.GetColumn "Date") (row.GetColumn "Source")
-
-    let confirmationActor = 
-        (fun (mailbox:Actor<Envelope<RolePlacementEvent>>) cmdenv -> 
-            match cmdenv.Item with
-            // TODO: Respond to the event
-            | _ -> ()) 
-        |> actorOf2
-        |> spawn system "RoleConfirmation" 
-
-    confirmationActor
-    |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
-        
-    
+    let roleConfirmationReaction = spawnRoleConfirmationReaction system
     let rolePlacementRequestReply =
         spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
-
-    // RoleTypeId * MeetingId * MemberId * RoleRequestId
     let rolePlacementManager = spawnPlacementManager system userId rolePlacementRequestReply
 
+    let history = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\FilledRoles.csv").Cache()
+    
+    for row in history.Rows do
+        printfn "History: (%s, %s, %s, %s)" 
+            (row.GetColumn "Role") (row.GetColumn "Person") (row.GetColumn "Date") (row.GetColumn "Source")
+            
+    // Register activity related post action
+    roleConfirmationReaction
+    |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
+
+    // Get data
     history.Rows
     |> Seq.map (fun row -> ((row.GetColumn "Role"), (row.GetColumn "Person"), (row.GetColumn "Date"), (row.GetColumn "Source")))
+
+    // Filter data
     |> Seq.where (fun (role, person, date, source) -> 
         role <> "" && person <> "" && date <> "" && source <> "")
 
+    // Munge and enrich data
     |> Seq.map (fun (role, person, date, source) -> 
         let meeting = 
             date 
@@ -201,21 +169,44 @@ let ingestHistory system userId actorGroups =
             |> Persistence.ClubMeetings.findByDate 
         let roleTypeId = Persistence.RolePlacements.getRoleTypeId role
         let clubMember = Persistence.MemberManagement.findMemberByDisplayName person
-        roleTypeId, meeting.Id, clubMember.Id, RoleRequestId.Empty)    
+        roleTypeId |> enum<RoleTypeId>, 
+        meeting.Id |> MeetingId.box, 
+        clubMember.Id |> MemberId.box , 
+        RoleRequestId.Empty)    
 
+    // Process data
     |> Seq.map (fun (roleTypeId, meetingId, clubMemberId, roleRequestId) ->
-        (enum<RoleTypeId> roleTypeId, MeetingId.box meetingId, MemberId.box clubMemberId, roleRequestId)
+        (roleTypeId, meetingId, clubMemberId, roleRequestId)
         |> rolePlacementManager.Ask
         |> fun t -> t :> System.Threading.Tasks.Task)
         
+    // Collect data
     |> Seq.toArray
     |> System.Threading.Tasks.Task.WaitAll
 
-    confirmationActor
+    // Unregister activity related post action
+    roleConfirmationReaction
     |> SubjectActor.unsubscribeFrom actorGroups.RolePlacementActors.Events 
 
-
-let calculateHistory system userId actorGroups = ()
+let calculateHistory system userId actorGroups = 
+    Persistence.MemberManagement.getMemberHistories ()
+    |> Seq.iter (fun history ->        
+        history.Id 
+        |> Persistence.RolePlacements.getRolePlacementsByMemberSinceDate history.SpeechCountConfirmedDate
+        |> Seq.fold (fun state (date,placement) -> 
+            match placement.RoleTypeId |> enum<RoleTypeId> with
+            | RoleTypeId.Speaker ->           { state with MemberHistoryState.SpeechCount = state.SpeechCount + 1 }
+            | RoleTypeId.Toastmaster ->       { state with MemberHistoryState.LastToastmaster = date }
+            | RoleTypeId.TableTopicsMaster -> { state with MemberHistoryState.LastTableTopicsMaster = date }
+            | RoleTypeId.GeneralEvaluator  -> { state with MemberHistoryState.LastGeneralEvaluator = date }
+            | _ -> state
+            ) {
+                MemberHistoryState.SpeechCount = history.ConfirmedSpeechCount
+                MemberHistoryState.LastToastmaster = history.DateAsToastmaster
+                MemberHistoryState.LastTableTopicsMaster = history.DateAsTableTopicsMaster
+                MemberHistoryState.LastGeneralEvaluator = history.DateAsGeneralEvaluator
+            }
+        |> Persistence.MemberManagement.persistHistory userId (StreamId.box history.Id))
 
 [<EntryPoint>]
 let main argv =
@@ -230,6 +221,7 @@ let main argv =
     let userId = UserId.create ()
     
     actorGroups |> ingestMembers system userId
+    actorGroups |> ingestSpeechCount system userId
     actorGroups |> createMeetings system userId
     actorGroups |> ingestHistory system userId
     actorGroups |> calculateHistory system userId

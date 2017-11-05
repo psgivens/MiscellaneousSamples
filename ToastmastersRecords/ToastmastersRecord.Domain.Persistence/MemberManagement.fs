@@ -45,10 +45,21 @@ let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState opt
                 DateAsTableTopicsMaster = defaultDT
             )
          ) |> ignore
+        printfn "Persist: (%A, %A, %A)" details.DisplayName details.Awards details.ClubMemberSince
     | _, Option.None -> context.Members.Remove entity |> ignore        
     | _, Some(item) -> entity.Name <- item.Details.Name
     context.SaveChanges () |> ignore
     
+let persistHistory (userId:UserId) (streamId:StreamId) (state:MemberHistoryState) =
+    use context = new ToastmastersEFDbContext () 
+    let entity = context.MemberHistories.Find (StreamId.unbox streamId)
+    entity.AggregateCalculationDate <- System.DateTime.Now.Date
+    entity.CalculatedSpeechCount <- state.SpeechCount
+    entity.DateAsToastmaster <- state.LastToastmaster
+    entity.DateAsTableTopicsMaster <- state.LastTableTopicsMaster
+    entity.DateAsGeneralEvaluator <- state.LastGeneralEvaluator
+    context.SaveChanges () |> ignore
+
 let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.Members.Find (StreamId.unbox streamId)
@@ -60,3 +71,13 @@ let findMemberByDisplayName name =
             select clubMember
             exactlyOne }
 
+let getMemberHistories () =
+    use context = new ToastmastersEFDbContext ()
+    query { for clubMember in context.Members do
+            leftOuterJoin history in context.MemberHistories 
+                on (clubMember.Id = history.Id) into result
+            for history in result  do            
+            select history
+        } 
+        |> Seq.where (fun history -> not <| obj.ReferenceEquals (history, null))
+        |> Seq.toList 

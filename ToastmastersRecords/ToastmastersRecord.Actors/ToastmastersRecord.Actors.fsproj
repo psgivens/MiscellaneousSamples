@@ -59,6 +59,7 @@
     <Compile Include="NewtonsoftHack.fs" />
     <Compile Include="CrudMessagePersistanceActor.fs" />
     <Compile Include="Composition.fs" />
+    <Compile Include="RolePlacements.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Akka">

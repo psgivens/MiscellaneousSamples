@@ -22,14 +22,14 @@ let spawnEventSourcingActors
     persist:UserId -> StreamId -> 'TState option -> unit) = 
 
     // Create a subject so that the next step can subscribe. 
-    let persistEventSubject, persistEventPoster = SubjectActor.create<'TEvent> sys (name + "_Events")
-    let errorSubject, errorPoster = SubjectActor.create<'TEvent> sys (name + "_Errors")
+    let persistEventSubject = SubjectActor.create sys (name + "_Events")
+    let errorSubject = SubjectActor.create sys (name + "_Errors")
 
     // Create member management actors: aggregate !> persist !> subjects
     let persistingActor =
         PersistanceActor.create
-            (persistEventPoster ,
-             errorPoster,
+            (persistEventSubject,
+             errorSubject,
              eventStore,
              buildState,
              persist)
@@ -37,7 +37,7 @@ let spawnEventSourcingActors
     let aggregateActor =
         AggregateActor.create
             (persistingActor,
-             errorPoster,
+             errorSubject,
              eventStore,
              buildState,
              handle,
@@ -54,12 +54,12 @@ let spawnCrudPersistActors<'TState>
     name,
     persist:UserId -> StreamId -> Envelope<'TState> option -> unit) = 
     // Create a subject so that the next step can subscribe. 
-   let persistEntitySubject, persistEntityPoster = SubjectActor.create<'TState> sys (name + "_Events")
-   let errorSubject, errorPoster = SubjectActor.create<'TState> sys (name + "_Errors")
+   let persistEntitySubject = SubjectActor.create sys (name + "_Events")
+   let errorSubject = SubjectActor.create sys (name + "_Errors")
    let messagePersisting = 
        CrudMessagePersistanceActor.create<'TState>
-           (persistEntityPoster,
-            errorPoster,
+           (persistEntitySubject,
+            errorSubject,
             persist)
        |> spawn sys (name + "_PersistingActor")
 
