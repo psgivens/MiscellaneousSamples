@@ -85,6 +85,21 @@ let ingestSpeechCount  system userId actorGroups =
         printfn "Count: (%s, %s, %s)" 
             (row.GetColumn "Name") (row.GetColumn "Count") (row.GetColumn "Date"))
 
+    roster.Rows
+    |> Seq.map (fun row -> 
+        row.GetColumn "Name", 
+        row.GetColumn "Count" |> System.Int32.Parse, 
+        row.GetColumn "Date" |> System.DateTime.Parse)
+    |> Seq.map (fun (name, count, date) ->        
+        let clubMember = Persistence.MemberManagement.findMemberByDisplayName name
+        
+        clubMember.Id |> StreamId.box,
+        {   MemberHistoryConfirmation.SpeechCount = count
+            MemberHistoryConfirmation.ConfirmationDate = date })
+    |> Seq.iter (fun (id, confirmation) ->
+        Persistence.MemberManagement.persistConfirmation userId id confirmation)
+
+
 let createMeetings system userId actorGroups =
     let meetingRequestReplyCreate = 
         spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 

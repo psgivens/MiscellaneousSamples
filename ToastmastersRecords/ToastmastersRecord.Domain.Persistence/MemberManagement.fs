@@ -60,6 +60,14 @@ let persistHistory (userId:UserId) (streamId:StreamId) (state:MemberHistoryState
     entity.DateAsGeneralEvaluator <- state.LastGeneralEvaluator
     context.SaveChanges () |> ignore
 
+let persistConfirmation (userId:UserId) (streamId:StreamId) (confirmation:MemberHistoryConfirmation) =
+    use context = new ToastmastersEFDbContext () 
+    let entity = context.MemberHistories.Find (StreamId.unbox streamId)
+    entity.AggregateCalculationDate <- System.DateTime.Now.Date
+    entity.ConfirmedSpeechCount <- confirmation.SpeechCount
+    entity.SpeechCountConfirmedDate <- confirmation.ConfirmationDate
+    context.SaveChanges () |> ignore
+
 let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.Members.Find (StreamId.unbox streamId)
@@ -70,6 +78,17 @@ let findMemberByDisplayName name =
             where (clubMember.DisplayName = name)
             select clubMember
             exactlyOne }
+
+//let findMemberHistoryByDisplayName name =
+//    use context = new ToastmastersEFDbContext () 
+//    query { for clubMember in context.Members do
+//            leftOuterJoin history in context.MemberHistories    
+//                on (clubMember.Id = history.Id) into result
+//            where (clubMember.DisplayName = name)
+//            for history in result do
+//            select history
+//            exactlyOne }
+
 
 let getMemberHistories () =
     use context = new ToastmastersEFDbContext ()

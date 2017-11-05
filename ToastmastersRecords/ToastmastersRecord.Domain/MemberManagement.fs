@@ -45,7 +45,12 @@ type MemberHistoryState = {
     LastToastmaster:System.DateTime
     LastTableTopicsMaster:System.DateTime
     LastGeneralEvaluator:System.DateTime
-    }    
+    }
+
+type MemberHistoryConfirmation = {
+    SpeechCount:int
+    ConfirmationDate:System.DateTime
+    }        
 
 let (|HasStateValue|_|) expected state =
     match state with 
