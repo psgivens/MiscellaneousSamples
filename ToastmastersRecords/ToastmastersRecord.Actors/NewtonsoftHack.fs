@@ -1,7 +1,8 @@
-﻿module NewtonsoftHack
+﻿[<RequireQualifiedAccess>]
+module NewtonsoftHack
 
 open System
-let resolveAnyVersion assemblyName = 
+let private resolveAnyVersion assemblyName = 
     let resolveA (o:Object) (a:ResolveEventArgs) :Reflection.Assembly =
         let name = a.Name.Split(',').[0]
         match name with

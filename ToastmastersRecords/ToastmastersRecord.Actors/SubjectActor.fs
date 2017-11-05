@@ -1,4 +1,5 @@
-﻿module ToastmastersRecord.Actors.SubjectActor
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.SubjectActor
 
 open Akka.Actor
 open Akka.FSharp
@@ -8,7 +9,7 @@ type SubjectAction =
     | Subscribe of IActorRef
     | Unsubscribe of IActorRef
 
-let create system name =     
+let spawn system name =     
     spawn system name <| fun (mailbox:Actor<obj>) -> 
         let rec loop subscribers = actor {
             let! message = mailbox.Receive ()

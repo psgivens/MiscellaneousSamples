@@ -1,4 +1,5 @@
-﻿module ToastmastersRecord.Actors.RequestReplyActor
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.RequestReplyActor
 
 open Akka.Actor
 open Akka.FSharp
@@ -26,7 +27,9 @@ let spawnRequestReplyConditionalActor<'TCommand,'TEvent> inFilter outFilter sys 
                     | None -> ()
             | :? string as value ->
                 match value with 
-                | "Unsubscribe" -> mailbox.Self |> SubjectActor.unsubscribeFrom actors.Events
+                | "Unsubscribe" -> 
+                    mailbox.Self |> SubjectActor.unsubscribeFrom actors.Events
+                    mailbox.Self |> mailbox.Context.Stop 
                 | _ -> ()
             | _ -> ()
             return! loop senders

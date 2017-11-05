@@ -1,9 +1,9 @@
-﻿module ToastmastersRecord.Actors.PersistanceActor
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.PersistanceActor
 
 open Akka.Actor
 open Akka.FSharp
 
-open ToastmastersRecord.Actors.SubjectActor
 open ToastmastersRecord.Domain.Infrastructure
 
 let create<'TState, 'TCommand, 'TEvent> 

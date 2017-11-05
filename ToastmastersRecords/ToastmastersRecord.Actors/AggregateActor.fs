@@ -1,4 +1,5 @@
-﻿module ToastmastersRecord.Actors.AggregateActor
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.AggregateActor
 
 open Akka.Actor
 open Akka.FSharp

@@ -1,12 +1,12 @@
-﻿module ToastmastersRecord.Actors.CrudMessagePersistanceActor
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.CrudMessagePersistanceActor
 
 open Akka.Actor
 open Akka.FSharp
 
-open ToastmastersRecord.Actors.SubjectActor
 open ToastmastersRecord.Domain.Infrastructure
 
-let create<'TCommand> 
+let private create<'TCommand> 
     (   eventSubject:IActorRef,
         errorSubject:IActorRef,
         persist:UserId -> StreamId -> Envelope<'TCommand> option -> unit) =
@@ -30,8 +30,8 @@ let spawn<'TState>
     name,
     persist:UserId -> StreamId -> Envelope<'TState> option -> unit) = 
     // Create a subject so that the next step can subscribe. 
-   let persistEntitySubject = SubjectActor.create sys (name + "_Events")
-   let errorSubject = SubjectActor.create sys (name + "_Errors")
+   let persistEntitySubject = SubjectActor.spawn sys (name + "_Events")
+   let errorSubject = SubjectActor.spawn sys (name + "_Errors")
    let messagePersisting = 
        create<'TState>
            (persistEntitySubject,

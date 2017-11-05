@@ -30,7 +30,7 @@ type ActorGroups = {
 let composeActors system =
     // Create member management actors
     let memberManagementActors = 
-        EventSourcingActors.spawnEventSourcingActors 
+        EventSourcingActors.spawn 
             (system,
              "memberManagement", 
              MemberManagementEventStore (),
@@ -46,7 +46,7 @@ let composeActors system =
 
     // Create role request actors
     let roleRequestActors =
-        EventSourcingActors.spawnEventSourcingActors
+        EventSourcingActors.spawn
             (system,
              "roleRequests",
              RoleRequestEventStore (),
@@ -56,7 +56,7 @@ let composeActors system =
 
     // Create role request actors
     let rolePlacementActors =
-        EventSourcingActors.spawnEventSourcingActors
+        EventSourcingActors.spawn
             (system,
              "rolePlacements",
              RolePlacementEventStore (),
@@ -107,7 +107,7 @@ let composeActors system =
         
     // Create member management actors
     let clubMeetingActors = 
-        EventSourcingActors.spawnEventSourcingActors 
+        EventSourcingActors.spawn 
             (system,
              "clubMeetings", 
              ClubMeetingEventStore (),

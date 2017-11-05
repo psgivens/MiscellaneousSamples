@@ -19,7 +19,6 @@ open ToastmastersRecord.Actors
 
 open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
 open System.Threading.Tasks
-open ToastmastersRecord.Actors.RolePlacements
 
 open FSharp.Data
 let ingestMembers system userId actorGroups =
@@ -27,6 +26,7 @@ let ingestMembers system userId actorGroups =
     
     let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171002.csv").Cache()
     
+    // Map CSV rows to Member Details
     roster.Rows 
     |> Seq.map (fun row ->
         printfn "Roster: (%s, %s, %s)" 
@@ -42,7 +42,6 @@ let ingestMembers system userId actorGroups =
             |> System.Int32.Parse 
             |> TMMemberId.box;
 
-        // Start by creating members        
         {   MemberDetails.ToastmasterId = toastmasterId
             Name = name
             DisplayName = name
@@ -57,6 +56,8 @@ let ingestMembers system userId actorGroups =
             PaidStatus = row.GetColumn "status (*)";
             CurrentPosition = row.GetColumn "Current Position";
             })
+
+    // Use the member details to send envelope with command to actor and wait for reply
     |> Seq.map (fun memberDetails -> 
         memberDetails
         |> MemberManagementCommand.Create
@@ -67,8 +68,12 @@ let ingestMembers system userId actorGroups =
             (Version.box 0s)
         |> memberRequestReply.Ask)
     |> Seq.map (fun t -> t :> System.Threading.Tasks.Task)
+
+    // Wait for responses
     |> Seq.toArray
     |> System.Threading.Tasks.Task.WaitAll
+
+    // Unsubscribe and stop the actor
     memberRequestReply <! "Unsubscribe"
 
 let ingestSpeechCount  system userId actorGroups = 
@@ -95,19 +100,22 @@ let ingestSpeechCount  system userId actorGroups =
 
 
 let createMeetings system userId actorGroups =
+    // Create an request-reply actor that we can wait on. 
     let meetingRequestReplyCreate = 
         RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
             (fun x -> true)
             (fun x -> x.Item = Initialized)
             system "clubMeeting_initialized" actorGroups.ClubMeetingActors
 
+    // Create a sequence of dates
     System.DateTime.Parse("07/11/2017")           
-    |> Seq.unfold (fun d -> 
-        if d < System.DateTime.Now then Some(d, d.AddDays 7.0)
+    |> Seq.unfold (fun date -> 
+        if date < System.DateTime.Now then Some(date, date.AddDays 7.0)
         else None)
-    |> Seq.map (fun d -> 
-        // Create a meeting    
-        d
+
+    // Create a meeting and wait for creation
+    |> Seq.map (fun date -> 
+        date
         |> ClubMeetings.ClubMeetingCommand.Create
         |> envelopWithDefaults
             (userId)
@@ -116,11 +124,15 @@ let createMeetings system userId actorGroups =
             (Version.box 0s)
         |> meetingRequestReplyCreate.Ask
         |> fun t -> t :> System.Threading.Tasks.Task)
+
+    // Wait for completion of all meeting creations
     |> Seq.toArray
     |> System.Threading.Tasks.Task.WaitAll
 
+    // Unsubscribe and stop request-reply
     meetingRequestReplyCreate <! "Unsubscribe"
 
+    // Create a request-reply which waits for the canceled event
     let meetingRequestReplyCanceled = 
         RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
             (fun x -> true)
@@ -142,15 +154,17 @@ let createMeetings system userId actorGroups =
 //    |> Seq.toArray
 //    |> Task.WaitAll
 
+    // Unsubscribe and stop the canceled event waiter
     meetingRequestReplyCanceled <! "Unsubscribe"
+
 
 let ingestHistory system userId actorGroups =
 
-    let roleConfirmationReaction = spawnRoleConfirmationReaction system
+    let roleConfirmationReaction = RolePlacementActors.spawnRoleConfirmationReaction system
     let rolePlacementRequestReply =
         RequestReplyActor.spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
-    let rolePlacementManager = spawnPlacementManager system userId rolePlacementRequestReply
+    let rolePlacementManager = RolePlacementActors.spawnPlacementManager system userId rolePlacementRequestReply
 
     let history = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\FilledRoles.csv").Cache()
     

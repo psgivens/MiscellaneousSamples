@@ -1,4 +1,5 @@
-﻿module ToastmastersRecord.Actors.RolePlacements
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.RolePlacementActors
 
 open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Domain.RolePlacements

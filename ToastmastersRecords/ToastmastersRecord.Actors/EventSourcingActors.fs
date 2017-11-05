@@ -1,4 +1,5 @@
-﻿module ToastmastersRecord.Actors.EventSourcingActors
+﻿[<RequireQualifiedAccess>]
+module ToastmastersRecord.Actors.EventSourcingActors
 
 open Akka.Actor
 open Akka.FSharp
@@ -12,7 +13,7 @@ open ToastmastersRecord.Domain.CommandHandler
 open ToastmastersRecord.Actors
 open ToastmastersRecord.Actors.Infrastructure
 
-let spawnEventSourcingActors 
+let spawn 
    (sys,
     name,
     eventStore,
@@ -21,8 +22,8 @@ let spawnEventSourcingActors
     persist:UserId -> StreamId -> 'TState option -> unit) = 
 
     // Create a subject so that the next step can subscribe. 
-    let persistEventSubject = SubjectActor.create sys (name + "_Events")
-    let errorSubject = SubjectActor.create sys (name + "_Errors")
+    let persistEventSubject = SubjectActor.spawn sys (name + "_Events")
+    let errorSubject = SubjectActor.spawn sys (name + "_Errors")
 
     // Create member management actors: aggregate !> persist !> subjects
     let persistingActor =
