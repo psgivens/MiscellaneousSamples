@@ -18,7 +18,7 @@ let spawn
     name,
     eventStore,
     buildState:'TState option -> 'TEvent list -> 'TState option,
-    handle:CommandHandlers<'TEvent> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<'TEvent>,
+    handle:CommandHandlers<'TEvent, 'TState> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<'TEvent, 'TState>,
     persist:UserId -> StreamId -> 'TState option -> unit) = 
 
     // Create a subject so that the next step can subscribe. 
@@ -26,17 +26,17 @@ let spawn
     let errorSubject = SubjectActor.spawn sys (name + "_Errors")
 
     // Create member management actors: aggregate !> persist !> subjects
-    let persistingActor =
-        PersistanceActor.create
-            (persistEventSubject,
-             errorSubject,
-             eventStore,
-             buildState,
-             persist)
-        |> spawn sys (name + "_PersistingActor")
+//    let persistingActor =
+//        PersistanceActor.create
+//            (persistEventSubject,
+//             errorSubject,
+//             eventStore,
+//             buildState,
+//             persist)
+//        |> spawn sys (name + "_PersistingActor")
     let aggregateActor =
         AggregateActor.create
-            (persistingActor,
+            (persistEventSubject,
              errorSubject,
              eventStore,
              buildState,

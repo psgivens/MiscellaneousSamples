@@ -19,9 +19,6 @@ type Version = FsType<int16>
 
 let buildState evolve = List.fold (fun st evt -> Some (evolve st evt))
 
-type IEventStore<'T> = 
-    abstract member GetEvents: StreamId -> 'T list
-    abstract member AppendEvent: StreamId -> 'T -> unit
 
 
 [<AutoOpen>]
@@ -87,3 +84,7 @@ type InvalidCommand (state:obj, command:obj) =
    
 type InvalidEvent (state:obj, event: obj) =
     inherit System.Exception(sprintf "Invalid event.\n\event: %A\n\tstate: %A" event state)
+
+type IEventStore<'T> = 
+    abstract member GetEvents: StreamId -> Envelope<'T> list
+    abstract member AppendEvent: Envelope<'T> -> unit

@@ -28,14 +28,14 @@ type ToastmastersEFDbContext with
 
 open ToastmastersRecord.Domain.MemberManagement
 type MemberManagementEventStore () =
-    interface IEventStore<Envelope<MemberManagementEvent>> with
+    interface IEventStore<MemberManagementEvent> with
         member this.GetEvents (streamId:StreamId) =
             use context = new  ToastmastersEFDbContext ()
             streamId
             |> context.GetAggregateEvents (fun i -> i.MemberEvents) 
             |> Seq.toList 
             |> List.sortBy(fun x -> x.Version)
-        member this.AppendEvent (streamId:StreamId) (envelope:Envelope<MemberManagementEvent>) =
+        member this.AppendEvent (envelope:Envelope<MemberManagementEvent>) =
             try
                 use context = new ToastmastersEFDbContext ()
                 context.MemberEvents.Add (
@@ -56,14 +56,14 @@ type MemberManagementEventStore () =
 
 open ToastmastersRecord.Domain.RoleRequests
 type RoleRequestEventStore () =
-    interface IEventStore<Envelope<RoleRequestEvent>> with
+    interface IEventStore<RoleRequestEvent> with
         member this.GetEvents (streamId:StreamId) =
             use context = new  ToastmastersEFDbContext ()
             streamId
             |> context.GetAggregateEvents (fun i -> i.RoleRequestEvents) 
             |> Seq.toList 
             |> List.sortBy(fun x -> x.Version)
-        member this.AppendEvent (streamId:StreamId) (envelope:Envelope<RoleRequestEvent>) =
+        member this.AppendEvent (envelope:Envelope<RoleRequestEvent>) =
             try
                 use context = new ToastmastersEFDbContext ()
                 context.RoleRequestEvents.Add (
@@ -82,14 +82,14 @@ type RoleRequestEventStore () =
 
 open ToastmastersRecord.Domain.RolePlacements
 type RolePlacementEventStore () =
-    interface IEventStore<Envelope<RolePlacementEvent>> with
+    interface IEventStore<RolePlacementEvent> with
         member this.GetEvents (streamId:StreamId) =
             use context = new  ToastmastersEFDbContext ()
             streamId
             |> context.GetAggregateEvents (fun c -> c.RolePlacementEvents)
             |> Seq.toList 
             |> List.sortBy(fun x -> x.Version)
-        member this.AppendEvent (streamId:StreamId) (envelope:Envelope<RolePlacementEvent>) =
+        member this.AppendEvent (envelope:Envelope<RolePlacementEvent>) =
             try
                 use context = new ToastmastersEFDbContext ()
                 context.RolePlacementEvents.Add (
@@ -108,14 +108,14 @@ type RolePlacementEventStore () =
 
 open ToastmastersRecord.Domain.ClubMeetings
 type ClubMeetingEventStore () =
-    interface IEventStore<Envelope<ClubMeetingEvent>> with
+    interface IEventStore<ClubMeetingEvent> with
         member this.GetEvents (streamId:StreamId) =
             use context = new  ToastmastersEFDbContext ()
             streamId
             |> context.GetAggregateEvents (fun c -> c.ClubMeetingEvents)
             |> Seq.toList 
             |> List.sortBy(fun x -> x.Version)
-        member this.AppendEvent (streamId:StreamId) (envelope:Envelope<ClubMeetingEvent>) =
+        member this.AppendEvent (envelope:Envelope<ClubMeetingEvent>) =
             try
                 use context = new ToastmastersEFDbContext ()
                 context.ClubMeetingEvents.Add (

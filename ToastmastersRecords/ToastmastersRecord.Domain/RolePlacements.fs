@@ -36,7 +36,7 @@ let (|MatchStateValue|_|) state =
     | Some(value) -> Some(value.State, value)
     | _ -> None 
 
-let handle (command:CommandHandlers<RolePlacementEvent>) (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) = 
+let handle (command:CommandHandlers<RolePlacementEvent, RolePlacementState>) (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) = 
     match state, cmdenv.Item with
     | None, RolePlacementCommand.Open(rid, mid) -> RolePlacementEvent.Opened(rid,mid)
     | MatchStateValue (RolePlacementStateValue.Open, _), RolePlacementCommand.Assign (mid,rrid) -> RolePlacementEvent.Assigned (mid,rrid)
