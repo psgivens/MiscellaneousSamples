@@ -1,9 +1,9 @@
 ﻿module ToastmastersRecord.Domain.RoleRequests
 
+open System
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Domain.CommandHandler
-open System
 
 type RoleRequestCommand = 
     | Request of MemberId * MessageId * RequestAbbreviation * DateTime list
@@ -31,7 +31,7 @@ let (|HasStateValue|_|) expected state =
     | Some(value) when value.State = expected -> Some value
     | _ -> None 
         
-let handle (command:CommandHandlers<RoleRequestEvent, RoleRequestState>) (state:RoleRequestState option) (cmdenv:Envelope<RoleRequestCommand>) = 
+let handle (command:CommandHandlers<RoleRequestEvent, Version>) (state:RoleRequestState option) (cmdenv:Envelope<RoleRequestCommand>) = 
     match state, cmdenv.Item with
     | None, Request(mbrid, msgid, rab, dtl) -> RoleRequestEvent.Requested(mbrid,msgid, rab, dtl)
     | HasStateValue RoleRequestStateValue.Unassigned _, RoleRequestCommand.Assign -> RoleRequestEvent.Assigned

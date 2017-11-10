@@ -15,7 +15,11 @@ type FsType<'T> = Val of 'T with
 type StreamId = FsGuidType
 type TransId = FsGuidType
 type UserId = FsGuidType
-type Version = FsType<int16>
+type Version = FsType<int16> 
+
+let incrementVersion version = 
+    let value = Version.unbox version
+    Version.box <| value + 1s
 
 let buildState evolve = List.fold (fun st evt -> Some (evolve st evt))
 

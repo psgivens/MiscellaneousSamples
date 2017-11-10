@@ -37,7 +37,7 @@ type RoleActions = {
     cancelRoles: Envelope<ClubMeetingCommand> -> Task
     }
 
-let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, ClubMeetingState>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
+let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, Version>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
     let createMeeting date =
         command.block {
             do! ClubMeetingEvent.Created date |> raise 

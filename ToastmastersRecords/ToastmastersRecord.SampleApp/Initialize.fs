@@ -56,7 +56,7 @@ let composeActors system =
 
     // Create role request actors
     let rolePlacementActors =
-        EventSourcingActors.spawn
+        EventSourcingActors.spawn<RolePlacementCommand,RolePlacementEvent,RolePlacementState>
             (system,
              "rolePlacements",
              RolePlacementEventStore (),
