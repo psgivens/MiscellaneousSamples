@@ -18,8 +18,6 @@ open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
 open ToastmastersRecord.SampleApp.Initialize
 open ToastmastersRecord.SampleApp.Infrastructure
 
-open System.Threading.Tasks
-
 let scriptInteractions roleRequesStreamId system actorGroups =
         onEvents system "onMemberCreated_createMemberMessage" actorGroups.MemberManagementActors.Events 
         <| fun (mailbox:Actor<Envelope<MemberManagementEvent>>) cmdenv ->

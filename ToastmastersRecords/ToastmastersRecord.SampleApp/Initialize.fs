@@ -17,8 +17,6 @@ open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
 open ToastmastersRecord.Actors.Infrastructure
 open ToastmastersRecord.Actors
 
-open System.Threading.Tasks
-
 type ActorGroups = {
     MemberManagementActors:ActorIO<MemberManagementCommand>
     MessageActors:ActorIO<MemberMessageCommand>
@@ -81,6 +79,7 @@ let composeActors system =
             (StreamId.create ())
             (Version.box 0s))
         |> placementRequestReplyCreate.Ask
+        |> Async.AwaitTask
 
     let placementRequestReplyCancel = 
         RequestReplyActor.spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
@@ -101,9 +100,9 @@ let composeActors system =
                 (StreamId.create ())
                 (Version.box 0s)
             |> placementRequestReplyCancel.Ask
-            :> Task)
-        |> List.toArray
-        |> Task.WhenAll
+            |> Async.AwaitTask)
+        |> Async.Parallel
+        |> Async.Ignore
         
     // Create member management actors
     let clubMeetingActors = 

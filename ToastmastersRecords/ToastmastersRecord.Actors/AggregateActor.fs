@@ -56,26 +56,30 @@ let create<'TState, 'TCommand, 'TEvent>
             | :? Envelope<'TCommand> as cmdenv -> 
                 let state, version = getState states cmdenv.StreamId
             
-                let handlers = CommandHandlers <| raiseVersioned mailbox.Self cmdenv
+                let commands = CommandHandlers <| raiseVersioned mailbox.Self cmdenv
 
-                // TODO: Should not run synchronously. Consider state processing should be done by the event envelope. 
-                (version) 
-                |> handle handlers state cmdenv 
+                version
+                |> handle commands state cmdenv 
                 |> Async.Ignore
                 |> Async.Start
 
-                // TODO: Create timer for expiring cache
-                return! loop states // |> Map.add cmdenv.StreamId (state', version'))
+                return! loop states 
 
             | :? Envelope<'TEvent> as envelope -> 
                 let state, version = getState states envelope.StreamId
               
-                // Build and persist current state
+                // Build current state
                 let state' = buildState state [envelope.Item]
+
+                // Command side persistence, record the event
                 store.AppendEvent envelope         
+
+                // Query side persistence, record the state
                 persist envelope.UserId envelope.StreamId state'
                 
                 eventSubject <! envelope
+
+                // TODO: Create timer for expiring cache
                 return! loop (states |> Map.add envelope.StreamId (state', version))
 
             | _ -> 

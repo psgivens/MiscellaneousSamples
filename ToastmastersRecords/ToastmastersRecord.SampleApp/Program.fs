@@ -18,7 +18,6 @@ open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.Actors
 
 open ToastmastersRecord.Domain.Persistence.ToastmastersEventStore
-open System.Threading.Tasks
 
 open FSharp.Data
 let ingestMembers system userId actorGroups =

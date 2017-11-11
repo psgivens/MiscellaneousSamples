@@ -35,15 +35,23 @@ let spawn<'TCommand, 'TEvent, 'TState>
 //             persist)
 //        |> spawn sys (name + "_PersistingActor")
     let aggregateActor =
-        AggregateActor.create
-            (persistEventSubject,
-             errorSubject,
-             eventStore,
-             buildState,
-             handle,
-             persist
-             )      
-        |> spawn sys (name + "_AggregateActor")
+              
+        spawnOpt sys (name + "_AggregateActor") 
+        <| AggregateActor.create
+                (persistEventSubject,
+                 errorSubject,
+                 eventStore,
+                 buildState,
+                 handle,
+                 persist)
+        <| [Akka.Routing.ConsistentHashingPool (10, fun msg -> 
+                match msg with
+                | :? Envelope<'TCommand> as cmdenv -> cmdenv.StreamId :> obj
+                | :? Envelope<'TEvent> as evtenv -> evtenv.StreamId :> obj
+                | _ -> msg )
+            :> Akka.Routing.RouterConfig
+            |> SpawnOption.Router]
+    
     { Tell=aggregateActor.Tell; 
       Actor=aggregateActor;
       Events=persistEventSubject;

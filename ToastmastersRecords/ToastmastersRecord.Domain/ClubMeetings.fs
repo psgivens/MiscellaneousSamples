@@ -4,8 +4,6 @@ open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Domain.CommandHandler
 
-open System.Threading.Tasks
-
 type ClubMeetingCommand =
     | Create of System.DateTime
     | Cancel
@@ -33,8 +31,8 @@ let (|MatchStateValue|_|) state =
     | _ -> None 
 
 type RoleActions = { 
-    createRole: Envelope<ClubMeetingCommand> -> RoleTypeId -> Task<obj>
-    cancelRoles: Envelope<ClubMeetingCommand> -> Task
+    createRole: Envelope<ClubMeetingCommand> -> RoleTypeId -> Async<obj>
+    cancelRoles: Envelope<ClubMeetingCommand> -> Async<unit>
     }
 
 let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, Version>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
@@ -45,20 +43,16 @@ let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, 
                 do! [1..12] 
                     |> List.map (fun i -> 
                         enum<RoleTypeId> i 
-                        |> roleActions.createRole cmdenv
-                        :> Task) 
-                    |> List.toArray
-                    |> Task.WhenAll
-                    |> Async.AwaitTask
-
+                        |> roleActions.createRole cmdenv) 
+                    |> Async.Parallel
+                    |> Async.Ignore
+                    
                 do! [RoleTypeId.Speaker;RoleTypeId.Speaker;RoleTypeId.Evaluator;RoleTypeId.Evaluator] 
                     |> List.map (fun roleId -> 
                         roleId
-                        |> roleActions.createRole cmdenv
-                        :> Task) 
-                    |> List.toArray
-                    |> Task.WhenAll
-                    |> Async.AwaitTask
+                        |> roleActions.createRole cmdenv) 
+                    |> Async.Parallel
+                    |> Async.Ignore
 
                 return ClubMeetingEvent.Initialized    
             }
@@ -70,7 +64,6 @@ let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, 
 
             return async {
                 do! roleActions.cancelRoles cmdenv 
-                    |> Async.AwaitTask 
             
                 return ClubMeetingEvent.Canceled
             }
