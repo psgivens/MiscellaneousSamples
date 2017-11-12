@@ -4,16 +4,16 @@ module ToastmastersRecord.Actors.AggregateActor
 open Akka.Actor
 open Akka.FSharp
 
+open ToastmastersRecord.Domain.CommandHandlers
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.Infrastructure.Envelope
-open ToastmastersRecord.Domain.CommandHandler
 
 let create<'TState, 'TCommand, 'TEvent> 
     (   eventSubject:IActorRef,
         invalidMessageSubject:IActorRef,
         store:IEventStore<'TEvent>, 
         buildState:'TState option -> 'TEvent list -> 'TState option,
-        handle:CommandHandlers<'TEvent, Version> ->'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<Version>,
+        handle:'TState option -> Envelope<'TCommand> -> CommandHandlers<'TEvent, Version> -> CommandHandlerFunction<Version>,
         persist:UserId -> StreamId -> 'TState option -> unit) =
 
     let raiseVersioned (self:IActorRef) cmdenv (version:Version) nevent =
@@ -56,10 +56,10 @@ let create<'TState, 'TCommand, 'TEvent>
             | :? Envelope<'TCommand> as cmdenv -> 
                 let state, version = getState states cmdenv.StreamId
             
-                let commands = CommandHandlers <| raiseVersioned mailbox.Self cmdenv
-
-                version
-                |> handle commands state cmdenv 
+                raiseVersioned mailbox.Self cmdenv
+                |> CommandHandlers 
+                |> handle state cmdenv
+                |> Handler.Run version
                 |> Async.Ignore
                 |> Async.Start
 

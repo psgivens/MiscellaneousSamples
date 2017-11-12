@@ -28,9 +28,6 @@ let ingestMembers system userId actorGroups =
     // Map CSV rows to Member Details
     roster.Rows 
     |> Seq.map (fun row ->
-        printfn "Roster: (%s, %s, %s)" 
-            (row.GetColumn "Customer ID") (row.GetColumn "Name") (row.GetColumn "Addr L1")
-
         let recordName = row.GetColumn "Name"
         let commaIndex = recordName.IndexOf ','
         let name, awards = 
@@ -58,19 +55,31 @@ let ingestMembers system userId actorGroups =
 
     // Use the member details to send envelope with command to actor and wait for reply
     |> Seq.map (fun memberDetails -> 
-        memberDetails
-        |> MemberManagementCommand.Create
-        |> envelopWithDefaults
-            (userId)
-            (TransId.create ())
-            (StreamId.create ())
-            (Version.box 0s)
-        |> memberRequestReply.Ask)
-    |> Seq.map (fun t -> t :> System.Threading.Tasks.Task)
+        async {
+            printfn "Send: (%s, %s, %d)" 
+                memberDetails.DisplayName
+                memberDetails.Awards
+                (TMMemberId.unbox memberDetails.ToastmasterId)
 
-    // Wait for responses
-    |> Seq.toArray
-    |> System.Threading.Tasks.Task.WaitAll
+            do! memberDetails
+                |> MemberManagementCommand.Create
+                |> envelopWithDefaults
+                    (userId)
+                    (TransId.create ())
+                    (StreamId.create ())
+                    (Version.box 0s)
+                |> memberRequestReply.Ask
+                |> Async.AwaitTask
+                |> Async.Ignore
+
+            printfn "Created: (%s, %s, %d)" 
+                memberDetails.DisplayName
+                memberDetails.Awards
+                (TMMemberId.unbox memberDetails.ToastmasterId)
+        })
+    |> Async.Parallel
+    |> Async.Ignore
+    |> Async.RunSynchronously
 
     // Unsubscribe and stop the actor
     memberRequestReply <! "Unsubscribe"
@@ -122,11 +131,12 @@ let createMeetings system userId actorGroups =
             (StreamId.create ())
             (Version.box 0s)
         |> meetingRequestReplyCreate.Ask
-        |> fun t -> t :> System.Threading.Tasks.Task)
+        |> Async.AwaitTask)
 
     // Wait for completion of all meeting creations
-    |> Seq.toArray
-    |> System.Threading.Tasks.Task.WaitAll
+    |> Async.Parallel
+    |> Async.Ignore
+    |> Async.RunSynchronously
 
     // Unsubscribe and stop request-reply
     meetingRequestReplyCreate <! "Unsubscribe"
@@ -200,11 +210,12 @@ let ingestHistory system userId actorGroups =
     |> Seq.map (fun (roleTypeId, meetingId, clubMemberId, roleRequestId) ->
         (roleTypeId, meetingId, clubMemberId, roleRequestId)
         |> rolePlacementManager.Ask
-        |> fun t -> t :> System.Threading.Tasks.Task)
+        |> Async.AwaitTask)
         
     // Collect data
-    |> Seq.toArray
-    |> System.Threading.Tasks.Task.WaitAll
+    |> Async.Parallel
+    |> Async.Ignore
+    |> Async.RunSynchronously
 
     // Unregister activity related post action
     roleConfirmationReaction

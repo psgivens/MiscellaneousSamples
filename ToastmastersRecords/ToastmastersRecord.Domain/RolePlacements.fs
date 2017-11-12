@@ -1,9 +1,10 @@
 ﻿module ToastmastersRecord.Domain.RolePlacements 
 
 open System
+open ToastmastersRecord.Domain.CommandHandlers
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
-open ToastmastersRecord.Domain.CommandHandler
+
 
 type RolePlacementCommand = 
     | Open of RoleTypeId * MeetingId
@@ -36,7 +37,7 @@ let (|MatchStateValue|_|) state =
     | Some(value) -> Some(value.State, value)
     | _ -> None 
 
-let handle (command:CommandHandlers<RolePlacementEvent, Version>) (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) = 
+let handle (state:RolePlacementState option) (cmdenv:Envelope<RolePlacementCommand>) (command:CommandHandlers<RolePlacementEvent, Version>) = 
     match state, cmdenv.Item with
     | None, RolePlacementCommand.Open(rid, mid) -> RolePlacementEvent.Opened(rid,mid)
     | MatchStateValue (RolePlacementStateValue.Open, _), RolePlacementCommand.Assign (mid,rrid) -> RolePlacementEvent.Assigned (mid,rrid)

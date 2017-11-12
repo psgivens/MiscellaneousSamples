@@ -1,8 +1,8 @@
 ﻿module ToastmastersRecord.Domain.ClubMeetings
 
+open ToastmastersRecord.Domain.CommandHandlers
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
-open ToastmastersRecord.Domain.CommandHandler
 
 type ClubMeetingCommand =
     | Create of System.DateTime
@@ -35,10 +35,10 @@ type RoleActions = {
     cancelRoles: Envelope<ClubMeetingCommand> -> Async<unit>
     }
 
-let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, Version>) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) =
+let handle (roleActions:RoleActions) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) (command:CommandHandlers<ClubMeetingEvent, Version>) =
     let createMeeting date =
         command.block {
-            do! ClubMeetingEvent.Created date |> raise 
+            do! ClubMeetingEvent.Created date |> Handler.Raise 
             return async {
                 do! [1..12] 
                     |> List.map (fun i -> 
@@ -60,7 +60,7 @@ let handle (roleActions:RoleActions) (command:CommandHandlers<ClubMeetingEvent, 
 
     let cancelMeeting () = 
         command.block {
-            do! ClubMeetingEvent.Canceling |> raise 
+            do! ClubMeetingEvent.Canceling |> Handler.Raise
 
             return async {
                 do! roleActions.cancelRoles cmdenv 

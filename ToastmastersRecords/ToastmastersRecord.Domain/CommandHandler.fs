@@ -1,28 +1,30 @@
-﻿module ToastmastersRecord.Domain.CommandHandler
+﻿module ToastmastersRecord.Domain.CommandHandlers
 
 open ToastmastersRecord.Domain.Infrastructure
 
-(*** Infrastructure ***)
-//type CommandHandlerState<'a, 'b> = (Version * 'a list * 'b option)
-//type CommandHandlerFunction<'a, 'b> = (CommandHandlerState<'a, 'b> -> Async<CommandHandlerState<'a, 'b>>)
-type CommandHandlerFunction<'b> = ('b -> Async<'b>)
+type CommandHandlerFunction<'state> = ('state -> Async<'state>)
 
-type CommandHandlerBuilder<'a, 'b> (raise:'b -> 'a -> 'b) =
-    member this.Bind ((result:Async<'a>), (rest:unit -> CommandHandlerFunction<'b>)) =
+type CommandHandlerBuilder<'event, 'state> (raise:'state -> 'event -> 'state) =
+    member this.Bind ((result:Async<'event>), (rest:unit -> CommandHandlerFunction<'state>)) =
         fun version -> 
             async {
                 let! event = result                
                 return! (rest ()) (raise version event)
             }
-    member this.Return (result:Async<'a>) = 
+    member this.Return (result:Async<'event>) = 
         fun version -> 
             async { 
                 let! event = result
                 return raise version event
             }
-let raise event = async { return event }
 
-type CommandHandlers<'a,'b> (raiseVersionedEvent:'b -> 'a -> 'b) =
+[<RequireQualifiedAccess>]
+module Handler =
+    let Raise event = async { return event }
+    let Run initialState handler = handler initialState
+
+type CommandHandlers<'event,'state> (raiseVersionedEvent:'state -> 'event -> 'state) =
     member this.block = CommandHandlerBuilder raiseVersionedEvent
-    member this.event event = this.block { return event |> raise }
+    member this.event event = this.block { return event |> Handler.Raise }
+    
 
