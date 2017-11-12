@@ -35,25 +35,38 @@ type RoleActions = {
     cancelRoles: Envelope<ClubMeetingCommand> -> Async<unit>
     }
 
-let handle (roleActions:RoleActions) (state:ClubMeetingState option) (cmdenv:Envelope<ClubMeetingCommand>) (command:CommandHandlers<ClubMeetingEvent, Version>) =
+let handle 
+        (roleActions:RoleActions) 
+        (state:ClubMeetingState option) 
+        (cmdenv:Envelope<ClubMeetingCommand>) 
+        (command:CommandHandlers<ClubMeetingEvent, Version>) =
+
     let createMeeting date =
         command.block {
             do! ClubMeetingEvent.Created date |> Handler.Raise 
             return async {
-                do! [1..12] 
-                    |> List.map (fun i -> 
-                        enum<RoleTypeId> i 
-                        |> roleActions.createRole cmdenv) 
+
+                // Define a meeting
+                do! [RoleTypeId.Toastmaster
+                     RoleTypeId.TableTopicsMaster
+                     RoleTypeId.GeneralEvaluator
+                     RoleTypeId.Evaluator
+                     RoleTypeId.Evaluator
+                     RoleTypeId.Evaluator
+                     RoleTypeId.Speaker
+                     RoleTypeId.Speaker
+                     RoleTypeId.Speaker
+                     RoleTypeId.OpeningThoughtAndBallotCounter
+                     RoleTypeId.ClosingThoughtAndGreeter
+                     RoleTypeId.JokeMaster
+                     RoleTypeId.ErAhCounter
+                     RoleTypeId.Grammarian
+                     RoleTypeId.Timer
+                     RoleTypeId.Videographer ] 
+                    |> List.map (fun roleId -> roleId |> roleActions.createRole cmdenv) 
                     |> Async.Parallel
                     |> Async.Ignore
                     
-                do! [RoleTypeId.Speaker;RoleTypeId.Speaker;RoleTypeId.Evaluator;RoleTypeId.Evaluator] 
-                    |> List.map (fun roleId -> 
-                        roleId
-                        |> roleActions.createRole cmdenv) 
-                    |> Async.Parallel
-                    |> Async.Ignore
-
                 return ClubMeetingEvent.Initialized    
             }
         }
