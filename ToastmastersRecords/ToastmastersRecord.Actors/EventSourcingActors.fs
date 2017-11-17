@@ -18,7 +18,7 @@ let spawn<'TCommand, 'TEvent, 'TState>
     name,
     eventStore,
     buildState:'TState option -> 'TEvent list -> 'TState option,
-    handle:'TState option -> Envelope<'TCommand> -> CommandHandlers<'TEvent, Version> -> CommandHandlerFunction<Version>,
+    handle:CommandHandlers<'TEvent, Version> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<Version>,
     persist:UserId -> StreamId -> 'TState option -> unit) :ActorIO<'TCommand> = 
 
     // Create a subject so that the next step can subscribe. 

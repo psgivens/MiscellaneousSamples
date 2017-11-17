@@ -13,22 +13,8 @@ let create<'TState, 'TCommand, 'TEvent>
         invalidMessageSubject:IActorRef,
         store:IEventStore<'TEvent>, 
         buildState:'TState option -> 'TEvent list -> 'TState option,
-        handle:'TState option -> Envelope<'TCommand> -> CommandHandlers<'TEvent, Version> -> CommandHandlerFunction<Version>,
+        handle:CommandHandlers<'TEvent, Version> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<Version>,
         persist:UserId -> StreamId -> 'TState option -> unit) =
-
-    let raiseVersioned (self:IActorRef) cmdenv (version:Version) nevent =
-        let newVersion = incrementVersion version
-        // publish new event
-        let envelope = 
-            envelopWithDefaults 
-                cmdenv.UserId 
-                cmdenv.TransactionId 
-                cmdenv.StreamId 
-                newVersion
-                nevent
-
-        envelope |> self.Tell        
-        newVersion
 
     let getState states streamId =
         match states |> Map.tryFind streamId with
@@ -47,43 +33,58 @@ let create<'TState, 'TCommand, 'TEvent>
             // Build current state
             let state = buildState None (events |> List.map unpack)
             state, version
+
+    let raiseVersioned (self:IActorRef) cmdenv (version:Version) event =
+        let newVersion = incrementVersion version
+        // publish new event
+        let envelope = 
+            envelopWithDefaults 
+                cmdenv.UserId 
+                cmdenv.TransactionId 
+                cmdenv.StreamId 
+                newVersion
+                event
+
+        envelope |> self.Tell        
+        newVersion
     
+    let handleCommand states self cmdenv =
+        let state, version = getState states cmdenv.StreamId
+
+        cmdenv
+        |> handle (CommandHandlers <| raiseVersioned self cmdenv) state
+        |> Handler.Run version
+        |> Async.Ignore
+        |> Async.Start
+
+        states 
+
+    let processEvent states envelope = 
+        let state, version = getState states envelope.StreamId
+              
+        // Build current state
+        let state' = buildState state [envelope.Item]
+
+        // Command side persistence, record the event
+        store.AppendEvent envelope
+
+        // Query side persistence, record the state
+        persist envelope.UserId envelope.StreamId state'
+                
+        eventSubject <! envelope
+
+        // TODO: Create timer for expiring cache
+        states |> Map.add envelope.StreamId (state', version)
     
     fun (mailbox:Actor<obj>) ->
         let rec loop states = actor {
             let! msg = mailbox.Receive ()
-            match msg with 
-            | :? Envelope<'TCommand> as cmdenv -> 
-                let state, version = getState states cmdenv.StreamId
-            
-                raiseVersioned mailbox.Self cmdenv
-                |> CommandHandlers 
-                |> handle state cmdenv
-                |> Handler.Run version
-                |> Async.Ignore
-                |> Async.Start
-
-                return! loop states 
-
-            | :? Envelope<'TEvent> as envelope -> 
-                let state, version = getState states envelope.StreamId
-              
-                // Build current state
-                let state' = buildState state [envelope.Item]
-
-                // Command side persistence, record the event
-                store.AppendEvent envelope         
-
-                // Query side persistence, record the state
-                persist envelope.UserId envelope.StreamId state'
-                
-                eventSubject <! envelope
-
-                // TODO: Create timer for expiring cache
-                return! loop (states |> Map.add envelope.StreamId (state', version))
-
-            | _ -> 
-                return! loop states
+            return! 
+                match msg with 
+                | :? Envelope<'TCommand> as cmdenv -> cmdenv |> handleCommand states mailbox.Self 
+                | :? Envelope<'TEvent> as envelope -> envelope |> processEvent states 
+                | _ -> states
+                |> loop
         }
         loop Map.empty<StreamId, 'TState option * Version>
 

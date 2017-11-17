@@ -34,17 +34,17 @@ module RedBlackTree =
             function
             | E -> i
             | S -> failwith "Should not be counting with sentinels"
-            | T(c',x,T(B,y,a,b),E) 
-            | T(c',x,E,T(B,y,a,b)) -> failwith "Black cannot have an Empty sibbling"
-            | T(B,x,E,E) -> i + 1
-            | T(R,x,E,E) -> i            
-            | T(c',x,T(R,y,T(c'',z,a,b),c),E) -> failwith "Red sibling of Empty cannot have children"
-            | T(c',x,T(R,y,a,T(c'',z,b,c)),E) -> failwith "Red sibling of Empty cannot have children"
+            | T(_,_,T(B,_,_,_),E) 
+            | T(_,_,E,T(B,_,_,_)) -> failwith "Black cannot have an Empty sibbling"
+            | T(B,_,E,E) -> i + 1
+            | T(R,_,E,E) -> i            
+            | T(_,_,T(R,_,T(_),c),E) -> failwith "Red sibling of Empty cannot have children"
+            | T(_,_,T(R,_,_,T(_)),E) -> failwith "Red sibling of Empty cannot have children"
 
-            | T(B,x,T(R,y,a,b),E)  
-            | T(B,x,E,T(R,y,a,b)) -> i + 1
-            | T(R,x,E,T(R,y,a,b)) 
-            | T(R,x,T(R,y,a,b),E) -> i
+            | T(B,_,T(R,_,_,_),E)  
+            | T(B,_,E,T(R,_,_,_)) -> i + 1
+            | T(R,_,E,T(R,_,_,_)) 
+            | T(R,_,T(R,_,_,_),E) -> i
             
             | T(c',x,a,b) ->
                 let lcount = count i a 

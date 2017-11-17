@@ -58,7 +58,7 @@ let (|HasStateValue|_|) expected state =
     | Some(value) when value.State = expected -> Some value
     | _ -> None 
 
-let handle (state:MemberManagementState option) (cmdenv:Envelope<MemberManagementCommand>) (command:CommandHandlers<MemberManagementEvent, Version>) =    
+let handle (command:CommandHandlers<MemberManagementEvent, Version>) (state:MemberManagementState option) (cmdenv:Envelope<MemberManagementCommand>) =    
     match state, cmdenv.Item with 
     | None, Create user -> Created user
     | _, Create _ -> failwith "Cannot create a user which already exists"

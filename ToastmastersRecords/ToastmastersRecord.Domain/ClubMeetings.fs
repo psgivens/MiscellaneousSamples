@@ -35,11 +35,11 @@ type RoleActions = {
     cancelRoles: Envelope<ClubMeetingCommand> -> Async<unit>
     }
 
-let handle 
+let handle         
         (roleActions:RoleActions) 
+        (command:CommandHandlers<ClubMeetingEvent, Version>) 
         (state:ClubMeetingState option) 
-        (cmdenv:Envelope<ClubMeetingCommand>) 
-        (command:CommandHandlers<ClubMeetingEvent, Version>) =
+        (cmdenv:Envelope<ClubMeetingCommand>) =
 
     let createMeeting date =
         command.block {

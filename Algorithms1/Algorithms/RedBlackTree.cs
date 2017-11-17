@@ -197,16 +197,16 @@ namespace Algorithms {
         }
 
         private void NodeToString(StringBuilder builder, Node node, int level) {
-            builder.Append('|');
-            builder.Append('\t', level);
-            if (node == null) {
-                builder.AppendLine("null");
-            }
-            else {
-                builder.AppendLine(node.ToString());
-                NodeToString(builder, node[Side.Left], level + 1);
-                NodeToString(builder, node[Side.Right], level + 1);
-            }
+//            builder.Append('|');
+//            builder.Append('\t', level);
+//            if (node == null) {
+//                builder.AppendLine("null");
+//            }
+//            else {
+//                builder.AppendLine(node.ToString());
+//                NodeToString(builder, node[Side.Left], level + 1);
+//                NodeToString(builder, node[Side.Right], level + 1);
+//            }
         }
         #endregion
 
@@ -269,11 +269,16 @@ namespace Algorithms {
                         // Handle Left-Left or Right-Right
                         //http://www.geeksforgeeks.org/red-black-tree-set-2-insert/
 
+                        var newSibling = parentMeta.ParentMeta.Node;
                         nextMeta = RotateToChild(OtherSide(meta.SideFromParent), parentMeta.ParentMeta);
+                        //current.Color = Color.Black;
+                        SetRed(newSibling);
 
-                        nextMeta = RotateUpOne(parentMeta);
-                        parentMeta.Node.Color = Color.Black;
-                        SetRed(parentMeta.ParentMeta.Node);
+                        //// TODO: Scrutinize this code, Why am I throwing away 'nextMeta' after retrieving 
+                        //// it from Rotate. Also, isn't 'parentMeta' out of sync after the rotate. 
+                        //nextMeta = RotateUpOne(parentMeta);
+                        //parentMeta.Node.Color = Color.Black;
+                        //SetRed(parentMeta.ParentMeta.Node);
                     }
                     else {
                         // Handle Left-Right or Right-Left
@@ -323,7 +328,7 @@ namespace Algorithms {
             }
             else {
                 Node grandParent = grandParentMeta.Node;
-                grandParent[meta.ParentMeta.SideFromParent] = newParent;
+                grandParent[meta.SideFromParent] = newParent;
             }
 
             return grandParentMeta;

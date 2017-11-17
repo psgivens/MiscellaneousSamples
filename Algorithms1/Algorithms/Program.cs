@@ -22,8 +22,8 @@ namespace Algorithms
         static void Main(string[] args)
         {
             Experiment();
-            RunGraph();
-            //RunRedBlackTree();
+            //RunGraph();
+            RunRedBlackTree();
             //RunArrayHeap();
             //RunBTree();
             Console.WriteLine("Press Enter");

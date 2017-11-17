@@ -104,6 +104,8 @@ let ingestSpeechCount  system userId actorGroups =
         {   MemberHistoryConfirmation.SpeechCount = count
             MemberHistoryConfirmation.ConfirmationDate = date })
     |> Seq.iter (fun (id, confirmation) ->
+
+        // TODO: Create and post to a CRUD persistence actor
         Persistence.MemberManagement.persistConfirmation userId id confirmation)
 
 
