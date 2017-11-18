@@ -56,11 +56,12 @@ namespace Algorithms
             for (int i = 1; i <= 12; i++)
             {
                 tree.Insert(i);
+                Console.WriteLine(tree);
             }
             foreach(var value in new int[]{ 3, 7, 8 })
-            {
-                tree.ToString();
+            {                
                 tree.Delete(value);
+                Console.WriteLine(tree);
             }
         }
 

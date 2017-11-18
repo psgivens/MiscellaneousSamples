@@ -12,8 +12,7 @@ type Tree =
     // empty node which counts as two black. Rebalancing is 
     // in order to move one black to another location. 
     | S  
-
-
+    
 module RedBlackTree =
     let color = function 
         | E -> B
@@ -22,7 +21,7 @@ module RedBlackTree =
 
     let rec isMember value tree = 
         match value, tree with
-        | x, E -> false
+        | _, E -> false
         | x, T(_,y,a,b) ->
             if x < y then isMember x a
             else if x > x then isMember x b
@@ -46,9 +45,9 @@ module RedBlackTree =
             | T(R,_,E,T(R,_,_,_)) 
             | T(R,_,T(R,_,_,_),E) -> i
             
-            | T(c',x,a,b) ->
+            | T(c',_,a,b) ->
                 let lcount = count i a 
-                if lcount <> count i b then failwith "children must match"
+                if lcount <> count i b then failwith "Children branches must match in length."
                 else lcount
         count 0 tree |> ignore
         
@@ -62,7 +61,7 @@ module RedBlackTree =
         let balance' = balance f
         match tree with
         (* Double Red *)
-        | T(B,z,T(R,y,T(R,x,a,b),c),d) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
+        | T(B,z,T(R,y,T(R,x,a,b),s),d) -> T(R,y,T(B,x,a,b),T(B,z,s,d))
         | T(B,z,T(R,x,a,T(R,y,b,c)),d) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         | T(B,x,a,T(R,z,T(R,y,b,c),d)) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         | T(B,x,a,T(R,y,b,T(R,z,c,d))) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
@@ -101,6 +100,17 @@ module RedBlackTree =
         | T(DB,x,a,b) -> T(B,x,a,b)
         | T(R,x,a,b)  -> T(B,x,a,b)
         | tree -> tree
+
+    let insert tree element =
+        let rec insert' = function
+            | E ->                          T(R,element,E,E)
+            | T(color,y,a,b) ->
+                if element < y then         balance id (T(color,y,insert' a,b))
+                else if element > y then    balance id (T(color,y,a,insert' b))
+                // Ignore inserting duplicates
+                else                        T(color,y,a,b)
+            | S -> failwith "Cannot insert Sentinel into tree."
+        root <| insert' tree
 
     let remove element tree =
         let trySwap' = trySwap element
@@ -166,6 +176,7 @@ module RedBlackTree =
                 balance trySwap'' (T(c',x,balance trySwap'' t,c)),toBeSwappedUp
 
             | _ -> failwith "Unexpected case in swapAndRemoveLeftAdjacent"
+
         // Check one child right and it's left ancestors. 
         let swapAndRemoveRightAdjacent = function
 
@@ -190,14 +201,14 @@ module RedBlackTree =
             | T(R,x,E,E) when x = element -> E
 
             // Swap and remove left adjacent
-            | T(c',x,T(c'',y,a,b),c) when x = element -> 
+            | T(_,x,T(_),_) when x = element -> 
                 match swapAndRemoveLeftAdjacent tree with
                 | (T(c''',z,d,e),toBeSwappedUp) ->
                     balance (trySwap' toBeSwappedUp) (T(c''',z,d,e))
                 | x -> failwith "Unexpected non-tree element"
 
             // Swap and remove right adjacent
-            | T(c',x,a,T(c'',y,b,c)) when x = element -> 
+            | T(_,x,_,T(_)) when x = element -> 
                 match swapAndRemoveRightAdjacent tree with
                 | (T(c''',z,d,e),toBeSwappedUp) ->
                     balance (trySwap' toBeSwappedUp) (T(c''',z,d,e))
@@ -212,17 +223,6 @@ module RedBlackTree =
             | _ -> failwith "Attempting to remove from an empty sub-tree"
 
         root <| remove' tree
-
-    let insert tree element =
-        let rec insert' = function
-            | E ->                          T(R,element,E,E)
-            | T(color,y,a,b) ->
-                if element < y then         balance id (T(color,y,insert' a,b))
-                else if element > y then    balance id (T(color,y,a,insert' b))
-                // Ignore inserting duplicates
-                else                        T(color,y,a,b)
-            | S -> failwith "Cannot insert Sentinel into tree."
-        root <| insert' tree
 
     let print tree =
         let rec printit rb x =

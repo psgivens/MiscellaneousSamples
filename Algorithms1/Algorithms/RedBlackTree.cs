@@ -171,8 +171,7 @@ namespace Algorithms {
             // 1. Swap with Leaf
             // 2. Remove the node, replace with Sentinel
             // 3. Balance the tree. 
-
-
+            
             Node node = meta.Node;
             if (node.Value == value) {
                 return Remove(meta);
@@ -197,16 +196,16 @@ namespace Algorithms {
         }
 
         private void NodeToString(StringBuilder builder, Node node, int level) {
-//            builder.Append('|');
-//            builder.Append('\t', level);
-//            if (node == null) {
-//                builder.AppendLine("null");
-//            }
-//            else {
-//                builder.AppendLine(node.ToString());
-//                NodeToString(builder, node[Side.Left], level + 1);
-//                NodeToString(builder, node[Side.Right], level + 1);
-//            }
+            builder.Append('|');
+            builder.Append('\t', level);
+            if (node == null) {
+                builder.AppendLine("null");
+            }
+            else {
+                builder.AppendLine(node.ToString());
+                NodeToString(builder, node[Side.Left], level + 1);
+                NodeToString(builder, node[Side.Right], level + 1);
+            }
         }
         #endregion
 
@@ -242,16 +241,19 @@ namespace Algorithms {
                     else {
                         RemoveDoubleBlack(meta);
                         meta.Sibling.Color = Color.Red;
-                        meta.ParentMeta.Node.Color = meta.ParentMeta.Node.Color == Color.Red ? Color.Black : Color.DoubleBlack;
-                        //nextMeta =  new NodeMeta(meta.ParentMeta, meta.Sibling, OtherSide(meta.SideFromParent), meta.Sibling);
+                        var color = meta.ParentMeta.Node.Color == Color.Red ? Color.Black : Color.DoubleBlack;
+                        meta.ParentMeta.Node.Color = color;
+                        nextMeta = color == Color.DoubleBlack ? meta.ParentMeta : null;
                     }
                 }
                 else {
-                    RemoveDoubleBlack(meta);
                     nextMeta = RotateToChild(meta.SideFromParent, meta.ParentMeta);
                     meta.Sibling.Color = Color.Black;
-                    //meta.ParentMeta.Node.Color = Color.Red;
-                    if (proximalNephew != null) proximalNephew.Color = Color.Red;
+                    meta.ParentMeta.Node.Color = Color.Red;
+
+                    var gpmeta = nextMeta ?? new NodeMeta(root);
+                    var pmeta = new NodeMeta(gpmeta, meta.ParentMeta.Node, meta.SideFromParent, gpmeta.Node[otherSide]);
+                    nextMeta = new NodeMeta(pmeta, meta.Node, meta.SideFromParent, meta.ParentMeta.Node[otherSide]);
                 }
             }
             else if (current.Color == Color.Red) {
@@ -271,14 +273,8 @@ namespace Algorithms {
 
                         var newSibling = parentMeta.ParentMeta.Node;
                         nextMeta = RotateToChild(OtherSide(meta.SideFromParent), parentMeta.ParentMeta);
-                        //current.Color = Color.Black;
                         SetRed(newSibling);
-
-                        //// TODO: Scrutinize this code, Why am I throwing away 'nextMeta' after retrieving 
-                        //// it from Rotate. Also, isn't 'parentMeta' out of sync after the rotate. 
-                        //nextMeta = RotateUpOne(parentMeta);
-                        //parentMeta.Node.Color = Color.Black;
-                        //SetRed(parentMeta.ParentMeta.Node);
+                        meta.ParentMeta.Node.Color = Color.Black;
                     }
                     else {
                         // Handle Left-Right or Right-Left
@@ -287,17 +283,20 @@ namespace Algorithms {
                         // We know that our sibling is null 
                         // We know that we have a grandparent. 
                         nextMeta = RotateUpTwo(meta);
+                        if (nextMeta == null)
+                            SetRoot(meta.Node);
 
                         meta.Node.Color = Color.Black;
                         SetRed(meta.ParentMeta.ParentMeta.Node);
                     }
                 }
                 else if (meta.Sibling != null && meta.Sibling.Color == Color.Red) {
-                    meta.Node.Color = Color.Black;
-                    meta.Sibling.Color = Color.Black;
-                    SetRed(meta.ParentMeta.Node);
+                    //meta.Node.Color = Color.Black;
+                    //meta.Sibling.Color = Color.Black;
+                    //SetRed(meta.ParentMeta.Node);
                 }
             }
+            Console.WriteLine(this);
             BalanceTree(nextMeta);
         }
         #endregion
@@ -348,13 +347,9 @@ namespace Algorithms {
             NodeMeta parentMeta = meta.ParentMeta;
             NodeMeta grandParentMeta = parentMeta.ParentMeta;
             NodeMeta greatGrandParentMeta = grandParentMeta.ParentMeta;
-            if (greatGrandParentMeta == null) {
-                root = target;
-                root.Color = Color.Black;
-                return null;
-            }
-
-            greatGrandParentMeta.Node[grandParentMeta.SideFromParent] = target;
+            
+            if (greatGrandParentMeta != null)
+                greatGrandParentMeta.Node[grandParentMeta.SideFromParent] = target;
             return greatGrandParentMeta;
         }
 
@@ -383,10 +378,7 @@ namespace Algorithms {
             NodeMeta adjacentMeta = Adjacent(side, meta);
             Node adjacent = adjacentMeta.Node;
             Node toBeReplaced = meta.Node;
-
-
             Node adjacentParent = adjacentMeta.ParentMeta.Node;
-
 
             // Swap the nodes. 
             // Cache the children of item to be replaced. 
