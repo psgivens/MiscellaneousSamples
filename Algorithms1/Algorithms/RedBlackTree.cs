@@ -214,6 +214,14 @@ namespace Algorithms {
             if (meta == null)
                 return;
 
+            /* Five steps of any balance operation
+             * 1) Extract relatives from meta data
+             * 2) Decide on operation to perform
+             * 3) Rotate as appropriate
+             * 4) Change colors as appropriate
+             * 5) Pass along metadata for next balance operation
+             * */
+
             var current = meta.Node;
             var parentMeta = meta.ParentMeta;
             NodeMeta nextMeta = parentMeta;
@@ -224,14 +232,16 @@ namespace Algorithms {
 
                 if (meta.Sibling.Color == Color.Black) {
                     if (distalNephew != null && distalNephew.Color == Color.Red) {
-                        RemoveDoubleBlack(meta);
                         nextMeta = RotateToChild(meta.SideFromParent, meta.ParentMeta);
+
+                        RemoveDoubleBlack(meta);                        
                         meta.Sibling.Color = Color.Red;
                         distalNephew.Color = Color.Black;
                     }
                     else if (proximalNephew != null && proximalNephew.Color == Color.Red) {
                         var siblingMeta = new NodeMeta(meta.ParentMeta, meta.Sibling, otherSide, current);
                         nextMeta = RotateToChild(otherSide, siblingMeta);
+
                         proximalNephew.Color = Color.Black;
                         meta.Sibling.Color = Color.Red;
 
@@ -246,10 +256,11 @@ namespace Algorithms {
                         nextMeta = color == Color.DoubleBlack ? meta.ParentMeta : null;
                     }
                 }
-                else {
-                    nextMeta = RotateToChild(meta.SideFromParent, meta.ParentMeta);
+                else {                    
                     meta.Sibling.Color = Color.Black;
                     meta.ParentMeta.Node.Color = Color.Red;
+
+                    nextMeta = RotateToChild(meta.SideFromParent, meta.ParentMeta);
 
                     var gpmeta = nextMeta ?? new NodeMeta(root);
                     var pmeta = new NodeMeta(gpmeta, meta.ParentMeta.Node, meta.SideFromParent, gpmeta.Node[otherSide]);
@@ -270,9 +281,9 @@ namespace Algorithms {
                     else if (meta.SideFromParent == parentMeta.SideFromParent) {
                         // Handle Left-Left or Right-Right
                         //http://www.geeksforgeeks.org/red-black-tree-set-2-insert/
-
-                        var newSibling = parentMeta.ParentMeta.Node;
                         nextMeta = RotateToChild(OtherSide(meta.SideFromParent), parentMeta.ParentMeta);
+
+                        var newSibling = parentMeta.ParentMeta.Node;                        
                         SetRed(newSibling);
                         meta.ParentMeta.Node.Color = Color.Black;
                     }
@@ -290,11 +301,16 @@ namespace Algorithms {
                         SetRed(meta.ParentMeta.ParentMeta.Node);
                     }
                 }
-                else if (meta.Sibling != null && meta.Sibling.Color == Color.Red) {
-                    //meta.Node.Color = Color.Black;
-                    //meta.Sibling.Color = Color.Black;
-                    //SetRed(meta.ParentMeta.Node);
-                }
+                /* Node is red, and parent is black. 
+                 * If sibling is red, we can push the red up a node. 
+                 * This is not necessary, so I comment it out. 
+                 */
+
+                //else if (meta.Sibling != null && meta.Sibling.Color == Color.Red) {
+                //    meta.Node.Color = Color.Black;
+                //    meta.Sibling.Color = Color.Black;
+                //    SetRed(meta.ParentMeta.Node);
+                //}
             }
             Console.WriteLine(this);
             BalanceTree(nextMeta);

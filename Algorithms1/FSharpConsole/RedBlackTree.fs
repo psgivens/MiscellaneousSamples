@@ -43,7 +43,7 @@ module RedBlackTree =
             | T(B,_,T(R,_,_,_),E)  
             | T(B,_,E,T(R,_,_,_)) -> i + 1
             | T(R,_,E,T(R,_,_,_)) 
-            | T(R,_,T(R,_,_,_),E) -> i
+            | T(R,_,T(R,_,_,_),E) -> failwith "Red cannot have red children."
             
             | T(c',_,a,b) ->
                 let lcount = count i a 
@@ -61,7 +61,7 @@ module RedBlackTree =
         let balance' = balance f
         match tree with
         (* Double Red *)
-        | T(B,z,T(R,y,T(R,x,a,b),s),d) -> T(R,y,T(B,x,a,b),T(B,z,s,d))
+        | T(B,z,T(R,y,T(R,x,a,b),c),d) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         | T(B,z,T(R,x,a,T(R,y,b,c)),d) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         | T(B,x,a,T(R,z,T(R,y,b,c),d)) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
         | T(B,x,a,T(R,y,b,T(R,z,c,d))) -> T(R,y,T(B,x,a,b),T(B,z,c,d))
@@ -93,27 +93,27 @@ module RedBlackTree =
         // Otherwise return the same tree. 
         | tree -> tree
 
-    let private trySwap i j k =
+    let private swapIfMatch i j k =
         if i = k then j else k
         
     let private root = function
-        | T(DB,x,a,b) -> T(B,x,a,b)
-        | T(R,x,a,b)  -> T(B,x,a,b)
-        | tree -> tree
+        | T(_,x,a,b) -> T(B,x,a,b)
+        | E -> E
+        | S -> failwith "Sentinel cannot be the root node."
 
     let insert tree element =
-        let rec insert' = function
+        let rec insertCapturedElement = function
             | E ->                          T(R,element,E,E)
             | T(color,y,a,b) ->
-                if element < y then         balance id (T(color,y,insert' a,b))
-                else if element > y then    balance id (T(color,y,a,insert' b))
+                if element < y then         balance id (T(color,y,a |> insertCapturedElement,b))
+                else if element > y then    balance id (T(color,y,a,b |> insertCapturedElement))
                 // Ignore inserting duplicates
                 else                        T(color,y,a,b)
             | S -> failwith "Cannot insert Sentinel into tree."
-        root <| insert' tree
+        tree |> insertCapturedElement |> root
 
     let remove element tree =
-        let trySwap' = trySwap element
+        let swapIfSameAsElement = swapIfMatch element
 
         // The purpose of 'swap and remove' is to swap the element to be removed
         // with a leaf node element. The leaf is then easily removed by not building
@@ -127,7 +127,7 @@ module RedBlackTree =
             | T(B,x,a,T(R,toBeSwappedUp,b,E)) -> T(B,x,a,b),toBeSwappedUp
                
             // Remove Black with no children - Introduce sentinel
-            | T(c',x,a,T(B,toBeSwappedUp,E,E)) -> balance (trySwap' toBeSwappedUp) (T(c',x,a,S)),toBeSwappedUp
+            | T(c',x,a,T(B,toBeSwappedUp,E,E)) -> balance (swapIfSameAsElement toBeSwappedUp) (T(c',x,a,S)),toBeSwappedUp
 
             // Remove Black with Red child from any parent (*parent not shown) - Promote child and preserve blackness
             | T(B,toBeSwappedUp,T(R,z,E,E),E) -> T(B,z,E,E),toBeSwappedUp
@@ -135,8 +135,8 @@ module RedBlackTree =
             // Continue to the right most. 
             | T(c',x,a, T(c'',y,b,c)) -> 
                 let t,toBeSwappedUp = swapAndRemoveRightMost (T(c'',y,b,c))
-                let trySwap'' = trySwap' toBeSwappedUp
-                balance trySwap'' (T(c',x,a,balance trySwap'' t)),toBeSwappedUp
+                let trySwapWithValue = swapIfSameAsElement toBeSwappedUp
+                balance trySwapWithValue (T(c',x,a,balance trySwapWithValue t)),toBeSwappedUp
 
             | _ -> failwith "Unexpected case in swapAndRemoveRightMost"
         
@@ -148,7 +148,7 @@ module RedBlackTree =
             | T(B,x,T(R,toBeSwappedUp,E,a),b) -> T(B,x,a,b),toBeSwappedUp
                
             // Remove Black with no children - Introduce sentinel
-            | T(c',x,T(B,toBeSwappedUp,E,E),a) -> balance (trySwap' toBeSwappedUp) (T(c',x,S,a)),toBeSwappedUp
+            | T(c',x,T(B,toBeSwappedUp,E,E),a) -> balance (swapIfSameAsElement toBeSwappedUp) (T(c',x,S,a)),toBeSwappedUp
 
             // Remove Black with Red child from any parent (*parent not shown)
             | T(B,toBeSwappedUp,E,T(R,z,E,E)) -> T(B,z,E,E),toBeSwappedUp
@@ -156,7 +156,7 @@ module RedBlackTree =
             // Continue to the left most. 
             | T(c',x,T(c'',y,a,b),c) -> 
                 let t,toBeSwappedUp = swapAndRemoveLeftMost (T(c'',y,a,b))
-                let trySwap'' = trySwap' toBeSwappedUp
+                let trySwap'' = swapIfSameAsElement toBeSwappedUp
                 balance trySwap'' (T(c',x,balance trySwap'' t,c)),toBeSwappedUp
 
             | _ -> failwith "Unexpected case in swapAndRemoveLeftMost"
@@ -167,12 +167,12 @@ module RedBlackTree =
             | T(B,x,T(R,toBeSwappedUp,a,E),b) -> T(B,x,a,b),toBeSwappedUp 
                
             // Remove Black with no children 
-            | T(c',x,T(B,toBeSwappedUp,E,E),a) -> balance (trySwap' toBeSwappedUp) (T(c',x,S,a)),toBeSwappedUp
+            | T(c',x,T(B,toBeSwappedUp,E,E),a) -> balance (swapIfSameAsElement toBeSwappedUp) (T(c',x,S,a)),toBeSwappedUp
         
             // Continue to the right most. 
             | T(c',x,T(c'',y,a,b),c) -> 
                 let t,toBeSwappedUp = swapAndRemoveRightMost (T(c'',y,a,b))
-                let trySwap'' = trySwap' toBeSwappedUp
+                let trySwap'' = swapIfSameAsElement toBeSwappedUp
                 balance trySwap'' (T(c',x,balance trySwap'' t,c)),toBeSwappedUp
 
             | _ -> failwith "Unexpected case in swapAndRemoveLeftAdjacent"
@@ -184,12 +184,12 @@ module RedBlackTree =
             | T(B,x,a,T(R,toBeSwappedUp,E,b)) -> T(B,x,a,b),toBeSwappedUp
                
             // Remove Black with no children 
-            | T(c',x,a,T(B,toBeSwappedUp,E,E)) -> balance(trySwap' toBeSwappedUp) (T(c',x,a,S)),toBeSwappedUp
+            | T(c',x,a,T(B,toBeSwappedUp,E,E)) -> balance(swapIfSameAsElement toBeSwappedUp) (T(c',x,a,S)),toBeSwappedUp
         
             // Continue to the left most. 
             | T(c',x,a,T(c'',y,b,c)) -> 
                 let t,toBeSwappedUp = swapAndRemoveLeftMost (T(c'',y,b,c))
-                let trySwap'' = trySwap' toBeSwappedUp
+                let trySwap'' = swapIfSameAsElement toBeSwappedUp
                 balance trySwap'' (T(c',x,a,balance trySwap'' t)),toBeSwappedUp
 
             | _ -> failwith "Unexpected case in swapAndRemoveRightAdjacent"
@@ -204,14 +204,14 @@ module RedBlackTree =
             | T(_,x,T(_),_) when x = element -> 
                 match swapAndRemoveLeftAdjacent tree with
                 | (T(c''',z,d,e),toBeSwappedUp) ->
-                    balance (trySwap' toBeSwappedUp) (T(c''',z,d,e))
+                    balance (swapIfSameAsElement toBeSwappedUp) (T(c''',z,d,e))
                 | x -> failwith "Unexpected non-tree element"
 
             // Swap and remove right adjacent
             | T(_,x,_,T(_)) when x = element -> 
                 match swapAndRemoveRightAdjacent tree with
                 | (T(c''',z,d,e),toBeSwappedUp) ->
-                    balance (trySwap' toBeSwappedUp) (T(c''',z,d,e))
+                    balance (swapIfSameAsElement toBeSwappedUp) (T(c''',z,d,e))
                 | x -> failwith "Unexpected non-tree element"
  
             // Node is not a match. 
