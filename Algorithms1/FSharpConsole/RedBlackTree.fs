@@ -4,6 +4,7 @@ type Color =
     | R 
     | B 
     // Double black is a transitionsl state. It represents
+    // the removal of a black child from a black node. 
     | DB 
 type Tree = 
     | E 

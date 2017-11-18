@@ -312,7 +312,6 @@ namespace Algorithms {
                 //    SetRed(meta.ParentMeta.Node);
                 //}
             }
-            Console.WriteLine(this);
             BalanceTree(nextMeta);
         }
         #endregion
