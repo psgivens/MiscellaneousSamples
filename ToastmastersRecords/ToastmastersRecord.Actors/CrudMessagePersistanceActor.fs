@@ -17,8 +17,10 @@ let private create<'TCommand>
                 envelope.UserId
                 envelope.StreamId
                 (Some(envelope))
-
-            envelope |> eventSubject.Tell
+                
+            envelope 
+            |> Envelope.repackage envelope.StreamId ignore
+            |> eventSubject.Tell
         with
             | ex -> errorSubject <! ex
                                         

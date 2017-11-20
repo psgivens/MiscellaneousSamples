@@ -23,6 +23,7 @@ type ActorGroups = {
     RoleRequestActors:ActorIO<RoleRequestCommand>
     RolePlacementActors:ActorIO<RolePlacementCommand>
     ClubMeetingActors:ActorIO<ClubMeetingCommand>
+    MemberHistoryActors:ActorIO<MemberHistoryConfirmation>
     }
 
 let composeActors system =
@@ -41,6 +42,12 @@ let composeActors system =
             (system, 
              "memberMessage", 
              Persistence.MemberMessages.persist)
+
+    let historyActors =
+        CrudMessagePersistanceActor.spawn<MemberHistoryConfirmation>
+            (system,
+            "memberHistoryConfirmation",
+            Persistence.MemberManagement.persistConfirmation)
 
     // Create role request actors
     let roleRequestActors =
@@ -121,4 +128,5 @@ let composeActors system =
       RoleRequestActors=roleRequestActors
       RolePlacementActors=rolePlacementActors
       ClubMeetingActors=clubMeetingActors
+      MemberHistoryActors=historyActors
     }

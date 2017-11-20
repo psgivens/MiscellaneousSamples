@@ -80,7 +80,7 @@ let getRolePlacmentsByMember memberId =
                 on (placement.MeetingId = meeting.Id)
             sortBy meeting.Date 
             where (placement.MemberId = memberId)
-            select placement 
+            select (meeting.Date, placement)
             }
     |> Seq.toList                
 

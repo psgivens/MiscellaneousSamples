@@ -23,7 +23,7 @@ let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState opt
                 IsActive = (details.PaidStatus = "paid"),
                 ToastmasterId = TMMemberId.unbox details.ToastmasterId,
                 Name = details.Name,
-                DisplayName=details.DisplayName,
+                Awards=details.Awards,
                 Email=details.Email,
                 HomePhone=details.HomePhone,
                 MobilePhone=details.MobilePhone,
@@ -36,13 +36,15 @@ let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState opt
         context.MemberHistories.Add (
             MemberHistoryAggregate (
                 Id = StreamId.unbox streamId,
+                DisplayName=details.DisplayName,
                 SpeechCountConfirmedDate = details.SpeechCountConfirmedDate,
                 ConfirmedSpeechCount = 0,
                 AggregateCalculationDate = defaultDT,
                 CalculatedSpeechCount = 0,
                 DateAsToastmaster = defaultDT,
                 DateAsGeneralEvaluator = defaultDT,
-                DateAsTableTopicsMaster = defaultDT
+                DateAsTableTopicsMaster = defaultDT,
+                DateOfLastSpeech = defaultDT
             )
          ) |> ignore
         printfn "Persist: (%A, %A, %A)" details.DisplayName details.Awards details.ClubMemberSince
@@ -58,14 +60,19 @@ let persistHistory (userId:UserId) (streamId:StreamId) (state:MemberHistoryState
     entity.DateAsToastmaster <- state.LastToastmaster
     entity.DateAsTableTopicsMaster <- state.LastTableTopicsMaster
     entity.DateAsGeneralEvaluator <- state.LastGeneralEvaluator
+    entity.DateOfLastSpeech <- state.LastSpeechGiven
+    entity.DateOfLastEvaluation <- state.LastEvaluationGiven
     context.SaveChanges () |> ignore
 
-let persistConfirmation (userId:UserId) (streamId:StreamId) (confirmation:MemberHistoryConfirmation) =
+let persistConfirmation (userId:UserId) (streamId:StreamId) (env:Envelope<MemberHistoryConfirmation> option) =
     use context = new ToastmastersEFDbContext () 
+    let envelope = env |> Option.get
+    let confirmation = envelope.Item
     let entity = context.MemberHistories.Find (StreamId.unbox streamId)
     entity.AggregateCalculationDate <- System.DateTime.Now.Date
     entity.ConfirmedSpeechCount <- confirmation.SpeechCount
     entity.SpeechCountConfirmedDate <- confirmation.ConfirmationDate
+    entity.DisplayName <- confirmation.DisplayName
     context.SaveChanges () |> ignore
 
 let find (userId:UserId) (streamId:StreamId) =
@@ -75,7 +82,18 @@ let find (userId:UserId) (streamId:StreamId) =
 let findMemberByDisplayName name =
     use context = new ToastmastersEFDbContext () 
     query { for clubMember in context.Members do
-            where (clubMember.DisplayName = name)
+            where (clubMember.Name = name)
+            select clubMember
+//            join history in context.MemberHistories
+//                on (clubMember.Id = history.Id)
+//            where (history.DisplayName = name)
+//            select (clubMember, history)
+            exactlyOne }
+
+let findMemberByToastmasterId ident =
+    use context = new ToastmastersEFDbContext () 
+    query { for clubMember in context.Members do
+            where (clubMember.ToastmasterId = ident)
             select clubMember
             exactlyOne }
 
@@ -96,7 +114,7 @@ let getMemberHistories () =
             leftOuterJoin history in context.MemberHistories 
                 on (clubMember.Id = history.Id) into result
             for history in result  do            
-            select history
+            select (clubMember, history)
         } 
-        |> Seq.where (fun history -> not <| obj.ReferenceEquals (history, null))
+        |> Seq.where (fun (_, history) -> not <| obj.ReferenceEquals (history, null))
         |> Seq.toList 

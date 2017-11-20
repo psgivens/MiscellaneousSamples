@@ -10,7 +10,8 @@ namespace ToastmastersRecord.Data.Entities {
     public class MemberHistoryAggregate {
         [Key]
         public virtual Guid Id { get; set; }
-        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual string DisplayName { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]        
         public virtual DateTime SpeechCountConfirmedDate { get; set; }
         public virtual int ConfirmedSpeechCount { get; set; }
         [DataType(DataType.Date), Column(TypeName = "Date")]
@@ -22,5 +23,9 @@ namespace ToastmastersRecord.Data.Entities {
         public virtual DateTime DateAsGeneralEvaluator { get; set; }
         [DataType(DataType.Date), Column(TypeName = "Date")]
         public virtual DateTime DateAsTableTopicsMaster { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastSpeech { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastEvaluation { get; set; }
     }
 }

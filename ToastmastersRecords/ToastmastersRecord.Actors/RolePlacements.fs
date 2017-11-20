@@ -32,7 +32,7 @@ let spawnPlacementManager system userId (rolePlacmentRequestReply:IActorRef) =
         }        
         loop placements
 
-let spawnRoleConfirmationReaction system = 
+let spawnRoleConfirmationReaction system actorGroups = 
     (fun (mailbox:Actor<Envelope<RolePlacementEvent>>) cmdenv -> 
         match cmdenv.Item with
         // TODO: Respond to the event
