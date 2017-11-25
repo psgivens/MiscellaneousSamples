@@ -16,12 +16,13 @@ let persist (userId:UserId) (streamId:StreamId) (state:Envelope<MemberMessageCom
     | null, Option.None -> ()
     | null, Option.Some(env) -> 
         match env.Item with 
-        | Create(memberId, message) ->
+        | Create(memberId, date, message) ->
             context.Messages.Add (
                 MemberMessageEntity (
                     Id = StreamId.unbox streamId,
                     MemberId = MemberId.unbox memberId,
-                    Message = message
+                    Message = message,
+                    MessageDate = date
                 )) |> ignore
     | _, Option.None -> context.Messages.Remove entity |> ignore        
     | _, Some(item) -> ()

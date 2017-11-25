@@ -71,7 +71,7 @@ module Envelope =
             (DateTimeOffset.Now) 
             item
 
-    let repackage<'a,'b> streamId (func:'a->'b) (envelope:Envelope<'a>) ={
+    let reuseEnvelope<'a,'b> streamId (func:'a->'b) (envelope:Envelope<'a>) ={
         Id = envelope.Id
         UserId = envelope.UserId
         StreamId = streamId

@@ -21,6 +21,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ToastmastersRecord.Actors",
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ToastmastersRecord.SampleApp", "ToastmastersRecord.SampleApp\ToastmastersRecord.SampleApp.fsproj", "{6DAF3845-6855-421A-A580-F9D307831264}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ToastmastersRecord.SampleApp2", "ToastmastersRecord.SampleApp2\ToastmastersRecord.SampleApp2.fsproj", "{BACD3108-7D49-4CBD-8651-C610E553C2E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{6DAF3845-6855-421A-A580-F9D307831264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DAF3845-6855-421A-A580-F9D307831264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DAF3845-6855-421A-A580-F9D307831264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BACD3108-7D49-4CBD-8651-C610E553C2E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BACD3108-7D49-4CBD-8651-C610E553C2E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BACD3108-7D49-4CBD-8651-C610E553C2E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BACD3108-7D49-4CBD-8651-C610E553C2E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

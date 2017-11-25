@@ -12,7 +12,6 @@ namespace ToastmastersRecord.Data.Entities {
         public virtual Guid Id { get; set; }
         public virtual int State { get; set; }
         public virtual Guid MessageId { get; set; }
-        public virtual MemberMessageEntity Message { get; set; }
         public virtual string Brief { get; set; }
         public virtual IList<RoleRequestDate> Dates { get; set; }
         public virtual Guid MemberId { get; set; }

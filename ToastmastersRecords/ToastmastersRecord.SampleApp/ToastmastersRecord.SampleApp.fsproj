@@ -57,7 +57,10 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Initialize.fs" />
     <Compile Include="Infrastructure.fs" />
+    <Compile Include="RolePlacements.fs" />
     <Compile Include="SampleScript.fs" />
+    <Compile Include="IngestMembers.fs" />
+    <Compile Include="IngestMeetings.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

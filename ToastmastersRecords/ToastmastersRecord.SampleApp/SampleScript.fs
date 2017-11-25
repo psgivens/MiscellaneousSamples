@@ -24,7 +24,7 @@ let scriptInteractions roleRequesStreamId system actorGroups =
             printfn "onMemberCreated_createMemberMessage"             
             match cmdenv.Item with
             | MemberManagementEvent.Created (details) ->
-                ((cmdenv.StreamId, "Here is a sample message from our member.")
+                ((cmdenv.StreamId, System.DateTime.Now, "Here is a sample message from our member.")
                 |> MemberMessageCommand.Create
                 |> envelopWithDefaults
                     cmdenv.UserId
@@ -39,7 +39,7 @@ let scriptInteractions roleRequesStreamId system actorGroups =
         <| fun (mailbox:Actor<Envelope<MemberMessageCommand>>) cmdenv ->        
             printfn "onMessageCreated_createRolerequest"
             match cmdenv.Item with
-            | MemberMessageCommand.Create (mbrid, message) ->                
+            | MemberMessageCommand.Create (mbrid, date, message) ->                
                 ((mbrid, cmdenv.StreamId,"S,TM",[])
                     |> RoleRequestCommand.Request
                     |> envelopWithDefaults
