@@ -8,8 +8,9 @@ open Akka.FSharp
 open FSharp.Data
 
 open ToastmastersRecord.Actors
-open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain
+open ToastmastersRecord.Domain.Infrastructure
+open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.SampleApp.Infrastructure
 open ToastmastersRecord.SampleApp.Initialize
@@ -91,19 +92,18 @@ let addIdToMemberMessages system userId (actorGroups:ActorGroups) =
     csv.Save fileName
 
 type Meeting = {
-    Id:Guid
+    Id:MeetingId
     Date:DateTime
     Concluded:bool
     }
 
 type Description = string
 type Request =
-    | Unavailable
-    | Available of Description
+    | Unavailable of MessageId
+    | Available of Description * MessageId list
 
 type RequestInfo = {
-    MeetingId:Guid
-    MessageId:Guid
+    MessageId:MessageId
     Name:string
     Request:Request
     }
@@ -116,6 +116,8 @@ let buildRequests () =
     let absentsFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOff.csv"
     let requestFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOn.csv"
 
+    IO.File.WriteAllText (absentsFileName, String.Empty)
+    IO.File.WriteAllText (requestFileName, String.Empty)
 
     use absentsFile = new DayOffCsvType      ([("Meeting Id", "Message Id", "Name")|> DayOffCsvType.Row])
     use requestFile = new RoleRequestCsvType ([("Meeting Id", "Message Id", "Name", "Description")|> RoleRequestCsvType.Row])
@@ -123,7 +125,7 @@ let buildRequests () =
     let unscheduledMeetings = 
         meetingsFile.Rows
         |> Seq.map (fun row -> 
-            {   Meeting.Id = row.``Meeting Id`` |> Guid.Parse
+            {   Meeting.Id = row.``Meeting Id`` |> Guid.Parse |> MeetingId.box
                 Date = row.``Meeting Date`` |> DateTime.Parse
                 Concluded = row.Concluded |> Boolean.Parse } )
         |> Seq.where (fun meeting -> not meeting.Concluded)
@@ -131,61 +133,78 @@ let buildRequests () =
 
     messagesFile.Rows
     |> Seq.fold (fun (state:RequestInfo list) row -> 
-        Seq.unfold (fun row' ->
+        Seq.unfold (fun unscheduledMeetings ->
+            if unscheduledMeetings |> Array.isEmpty then None
+            else
 
-            printfn """
+                printfn """
 Which dates would you like to work with? 
 List all indices, comma delimitated.
 -1 to end message.
 """
-            unscheduledMeetings        
-            |> Array.iteri (fun i meeting ->
-                printfn "%d) %s" i (meeting.Date.ToString "mmm dd, yyyy"))
+                unscheduledMeetings
+                |> Array.iteri (fun i meeting ->
+                    printfn "%d) %s" i (meeting.Date.ToString "MMM dd, yyyy"))
 
-            let response = Console.ReadLine ()
-            if response = "-1" then None
-            else
-                let selected =
-                    response.Split ','
-                    |> Seq.map (fun r ->
-                        let i = r.Trim () |> Int32.Parse
-                        unscheduledMeetings.[i]
-                        )
-                    |> Seq.toList
-
-                printfn """
+                let response = Console.ReadLine ()
+                if response = "-1" then None
+                else
+                    let selected =
+                        response.Split ','
+                        |> Seq.map (fun r ->
+                            let i = r.Trim () |> Int32.Parse
+                            unscheduledMeetings.[i]
+                            )
+                        |> Seq.toList                    
+                        
+                    printfn """
 Would you like to 
 1) Request the day off
-2) Leave a description
+2) Describe your request
 """
-                let request = 
                     match Console.ReadLine () |> Int32.Parse with
-                    | 1 -> Request.Unavailable
+                    | 1 -> 
+                        selected
+                        |> List.map (fun meeting ->
+                            {   RequestInfo.MessageId = row.``Message Id`` |> Guid.Parse |> MessageId.box
+                                RequestInfo.Name = row.Name
+                                RequestInfo.Request = meeting.Id |> Request.Unavailable})
+                        |> fun l -> 
+                            Some(l, 
+                                unscheduledMeetings 
+                                |> Array.filter (fun meeting -> 
+                                    selected 
+                                    |> List.contains meeting 
+                                    |> not))
                     | 2 -> 
                         printfn "Please describe the request"
-                        Request.Available <| Console.ReadLine ()
-                    | _ -> failwith "Not a valid number"
+                        ([{ RequestInfo.MessageId = row.``Message Id`` |> Guid.Parse |> MessageId.box
+                            RequestInfo.Name = row.Name
+                            RequestInfo.Request = 
+                                (Console.ReadLine (), selected |> List.map (fun meeting -> meeting.Id))
+                                |> Request.Available }],
+                         unscheduledMeetings)
+                        |> Some
+                    | _ -> 
+                        printfn "You've entered an invalid value"
+                        Some ([], unscheduledMeetings)
 
-                selected
-                |> List.map (fun meeting ->
-                    {   RequestInfo.MeetingId = meeting.Id
-                        RequestInfo.MessageId = row.``Message Id`` |> Guid.Parse
-                        RequestInfo.Name = row.Name
-                        RequestInfo.Request = request })
-                |> fun l -> Some (l, None)
-            ) None
+            ) unscheduledMeetings
         |> Seq.fold (fun allItems rowItems -> rowItems@allItems) state
         ) []
     |> Seq.fold (fun ((absents:Runtime.CsvFile<DayOffCsvType.Row>), (requests:Runtime.CsvFile<RoleRequestCsvType.Row>)) request -> 
         match request.Request with
-        | Unavailable -> 
-            [(request.MeetingId.ToString "D", request.MessageId.ToString (), request.Name)] 
+        | Unavailable (MeetingId.Id meetingId) -> 
+            [(meetingId.ToString "D", request.MessageId |> MessageId.toString, request.Name)] 
             |> Seq.map DayOffCsvType.Row
-            |> absents.Append , 
+            |> absents.Append, 
             requests
-        | Available description -> 
+        | Available (description, meetingIds) -> 
             absents,
-            [(request.MeetingId.ToString "D", request.MessageId.ToString (), request.Name, description)] 
+            [(String.Join (";", meetingIds |> List.map (fun (MeetingId.Id i) -> i.ToString "D")), 
+              request.MessageId |> MessageId.toString, 
+              request.Name, 
+              description)] 
             |> Seq.map RoleRequestCsvType.Row
             |> requests.Append            
         ) (absentsFile :> Runtime.CsvFile<DayOffCsvType.Row>, 

@@ -7,6 +7,7 @@ type FsGuidType = Id of Guid with
     static member unbox (Id(id)) = id
     static member box id = Id(id)
     static member Empty = Id (Guid.Empty)
+    static member toString (Id(id)) = id.ToString () 
 
 type FsType<'T> = Val of 'T with
     static member box value = Val(value)
