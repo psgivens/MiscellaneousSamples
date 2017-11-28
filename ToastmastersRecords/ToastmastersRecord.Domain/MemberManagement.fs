@@ -48,6 +48,14 @@ type MemberHistoryState = {
     LastGeneralEvaluator:System.DateTime
     LastSpeechGiven:System.DateTime
     LastEvaluationGiven:System.DateTime
+    LastAssignment:DateTime
+    LastMinorRole:DateTime
+    LastMajorRole:DateTime
+    LastFunctionaryRole:DateTime
+    LastFacilitatorRole:DateTime
+    WillAttend:bool
+    SpecialRequest:string
+    EligibilityCount:int
     }
 
 type MemberHistoryConfirmation = {

@@ -20,6 +20,7 @@ open ToastmastersRecord.Actors
 type ActorGroups = {
     MemberManagementActors:ActorIO<MemberManagementCommand>
     MessageActors:ActorIO<MemberMessageCommand>
+    DayOffActors:ActorIO<DayOffRequestCommand>
     RoleRequestActors:ActorIO<RoleRequestCommand>
     RolePlacementActors:ActorIO<RolePlacementCommand>
     ClubMeetingActors:ActorIO<ClubMeetingCommand>
@@ -42,6 +43,12 @@ let composeActors system =
             (system, 
              "memberMessage", 
              Persistence.MemberMessages.persist)
+
+    let dayOffActors =
+        CrudMessagePersistanceActor.spawn<DayOffRequestCommand>
+            (system,
+             "dayOffRequest",
+             Persistence.MemberDayOffRequests.persist)
 
     let historyActors =
         CrudMessagePersistanceActor.spawn<MemberHistoryConfirmation>
@@ -125,6 +132,7 @@ let composeActors system =
              
     { MemberManagementActors=memberManagementActors
       MessageActors=messageActors
+      DayOffActors=dayOffActors
       RoleRequestActors=roleRequestActors
       RolePlacementActors=rolePlacementActors
       ClubMeetingActors=clubMeetingActors

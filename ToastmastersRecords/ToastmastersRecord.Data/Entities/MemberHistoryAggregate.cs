@@ -27,5 +27,18 @@ namespace ToastmastersRecord.Data.Entities {
         public virtual DateTime DateOfLastSpeech { get; set; }
         [DataType(DataType.Date), Column(TypeName = "Date")]
         public virtual DateTime DateOfLastEvaluation { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastMinorRole { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastMajorRole { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastFunctionaryRole { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastFacilitatorRole { get; set; }
+        [DataType(DataType.Date), Column(TypeName = "Date")]
+        public virtual DateTime DateOfLastRole { get; set; }
+        public virtual bool WillAttend { get; set; }
+        public virtual string SpecialRequest { get; set; }
+        public virtual int EligibilityCount { get; set; }
     }
 }

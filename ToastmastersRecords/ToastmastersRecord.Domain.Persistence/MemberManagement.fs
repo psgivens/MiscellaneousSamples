@@ -44,7 +44,14 @@ let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState opt
                 DateAsToastmaster = defaultDT,
                 DateAsGeneralEvaluator = defaultDT,
                 DateAsTableTopicsMaster = defaultDT,
-                DateOfLastSpeech = defaultDT
+                DateOfLastSpeech = defaultDT,
+                DateOfLastEvaluation = defaultDT,
+                DateOfLastMajorRole = defaultDT,
+                DateOfLastMinorRole = defaultDT,
+                DateOfLastFacilitatorRole = defaultDT,
+                DateOfLastFunctionaryRole = defaultDT,
+                DateOfLastRole = defaultDT,
+                EligibilityCount = if System.String.IsNullOrWhiteSpace details.Awards then 0 else 5
             )
          ) |> ignore
         printfn "Persist: (%A, %A, %A)" details.DisplayName details.Awards details.ClubMemberSince
@@ -61,7 +68,15 @@ let persistHistory (userId:UserId) (streamId:StreamId) (state:MemberHistoryState
     entity.DateAsTableTopicsMaster <- state.LastTableTopicsMaster
     entity.DateAsGeneralEvaluator <- state.LastGeneralEvaluator
     entity.DateOfLastSpeech <- state.LastSpeechGiven
-    entity.DateOfLastEvaluation <- state.LastEvaluationGiven
+    entity.DateOfLastEvaluation <- state.LastEvaluationGiven    
+    entity.DateOfLastMinorRole <- state.LastMinorRole
+    entity.DateOfLastMajorRole <- state.LastMajorRole
+    entity.DateOfLastFunctionaryRole <- state.LastFunctionaryRole
+    entity.DateOfLastFacilitatorRole <- state.LastFacilitatorRole    
+    entity.DateOfLastRole <- state.LastAssignment
+    entity.WillAttend <- state.WillAttend
+    entity.SpecialRequest <- state.SpecialRequest
+    entity.EligibilityCount <- state.EligibilityCount    
     context.SaveChanges () |> ignore
 
 let persistConfirmation (userId:UserId) (streamId:StreamId) (env:Envelope<MemberHistoryConfirmation> option) =
@@ -71,6 +86,7 @@ let persistConfirmation (userId:UserId) (streamId:StreamId) (env:Envelope<Member
     let entity = context.MemberHistories.Find (StreamId.unbox streamId)
     entity.AggregateCalculationDate <- System.DateTime.Now.Date
     entity.ConfirmedSpeechCount <- confirmation.SpeechCount
+    entity.EligibilityCount <- System.Math.Max (confirmation.SpeechCount, entity.EligibilityCount)
     entity.SpeechCountConfirmedDate <- confirmation.ConfirmationDate
     entity.DisplayName <- confirmation.DisplayName
     context.SaveChanges () |> ignore
@@ -79,23 +95,28 @@ let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.Members.Find (StreamId.unbox streamId)
 
-let findMemberByDisplayName name =
+let findMemberByName name =
     use context = new ToastmastersEFDbContext () 
-    query { for clubMember in context.Members do
+    query { for clubMember in context.Members do            
             where (clubMember.Name = name)
             select clubMember
-//            join history in context.MemberHistories
-//                on (clubMember.Id = history.Id)
-//            where (history.DisplayName = name)
-//            select (clubMember, history)
             exactlyOne }
 
-let findMemberByToastmasterId ident =
+let findMemberByDisplayName name =
+    use context = new ToastmastersEFDbContext () 
+    query { for history in context.MemberHistories do
+            join clubMember in context.Members 
+                on (history.Id = clubMember.Id)
+            where (history.DisplayName = name)
+            select clubMember
+            exactlyOne }
+
+let findMemberByToastmasterId (TMMemberId.Val ident) =
     use context = new ToastmastersEFDbContext () 
     query { for clubMember in context.Members do
             where (clubMember.ToastmasterId = ident)
             select clubMember
-            exactlyOne }
+            exactlyOneOrDefault }
 
 //let findMemberHistoryByDisplayName name =
 //    use context = new ToastmastersEFDbContext () 

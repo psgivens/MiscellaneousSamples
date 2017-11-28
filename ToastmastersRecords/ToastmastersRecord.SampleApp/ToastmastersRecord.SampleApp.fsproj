@@ -61,6 +61,8 @@
     <Compile Include="SampleScript.fs" />
     <Compile Include="IngestMembers.fs" />
     <Compile Include="IngestMeetings.fs" />
+    <Compile Include="IngestMessages.fs" />
+    <Compile Include="AggregateInformation.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

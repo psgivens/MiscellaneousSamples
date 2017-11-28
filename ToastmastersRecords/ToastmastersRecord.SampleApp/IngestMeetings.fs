@@ -1,5 +1,6 @@
 ﻿module ToastmastersRecord.SampleApp.IngestMeetings
 
+open System
 open FSharp.Data
 open Akka.Actor
 open Akka.FSharp
@@ -14,7 +15,15 @@ open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.SampleApp.Infrastructure
 open ToastmastersRecord.SampleApp.Initialize
 
-let createMeetings system userId actorGroups =
+type MeetingsCsvType = 
+    CsvProvider<
+        Schema = "Meeting Id (string), Meeting Date (string), Concluded (string)", 
+        Separators = "\t",
+        HasHeaders=false>
+
+let clubMeetingsFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\ClubMeetings.csv"
+
+let ingestMeetings system userId actorGroups =
     // Create an request-reply actor that we can wait on. 
     let meetingRequestReplyCreate = 
         RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
@@ -22,20 +31,24 @@ let createMeetings system userId actorGroups =
             (fun x -> x.Item = Initialized)
             system "clubMeeting_initialized" actorGroups.ClubMeetingActors
 
-    // Create a sequence of dates
-    System.DateTime.Parse("07/11/2017")           
-    |> Seq.unfold (fun date -> 
-        if date < System.DateTime.Now then Some(date, date.AddDays 7.0)
-        else None)
+    let meetingsFile = MeetingsCsvType.Load (clubMeetingsFileName )
 
+    let meetings = 
+        meetingsFile.Rows
+        |> Seq.map (fun row ->
+            row.``Meeting Id`` |> Guid.Parse |> MeetingId.box,
+            row.``Meeting Date`` |> DateTime.Parse,
+            row.Concluded |> bool.Parse)
+
+    meetings
     // Create a meeting and wait for creation
-    |> Seq.map (fun date -> 
+    |> Seq.map (fun (mtgid, date, concluded) -> 
         date
         |> ClubMeetings.ClubMeetingCommand.Create
         |> envelopWithDefaults
             (userId)
             (TransId.create ())
-            (StreamId.create ())
+            (mtgid |> MeetingId.unbox |> StreamId.box)
             (Version.box 0s)
         |> meetingRequestReplyCreate.Ask
         |> Async.AwaitTask)
@@ -47,6 +60,35 @@ let createMeetings system userId actorGroups =
 
     // Unsubscribe and stop request-reply
     meetingRequestReplyCreate <! "Unsubscribe"
+
+    // Create an request-reply actor that we can wait on. 
+    let meetingRequestReplyOccur= 
+        RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
+            (fun x -> true)
+            (fun x -> x.Item = Occurred)
+            system "clubMeeting_confirmed" actorGroups.ClubMeetingActors
+
+
+    meetings
+    |> Seq.where (fun (_,_,concluded) -> concluded)
+    // Create a meeting and wait for creation
+    |> Seq.map (fun (mtgid, date, concluded) -> 
+        ClubMeetings.ClubMeetingCommand.Occur
+        |> envelopWithDefaults
+            (userId)
+            (TransId.create ())
+            (mtgid |> MeetingId.unbox |> StreamId.box)
+            (Version.box 0s)
+        |> meetingRequestReplyOccur.Ask
+        |> Async.AwaitTask)
+
+    // Wait for completion of all meeting creations
+    |> Async.Parallel
+    |> Async.Ignore
+    |> Async.RunSynchronously
+    
+    // Unsubscribe and stop request-reply
+    meetingRequestReplyOccur <! "Unsubscribe"
 
     // Create a request-reply which waits for the canceled event
     let meetingRequestReplyCanceled = 
@@ -113,7 +155,7 @@ let ingestHistory system userId actorGroups =
             |> System.DateTime.Parse 
             |> Persistence.ClubMeetings.findByDate 
         let roleTypeId = Persistence.RolePlacements.getRoleTypeId role
-        let clubMember = Persistence.MemberManagement.findMemberByDisplayName person
+        let clubMember = Persistence.MemberManagement.findMemberByName person
         roleTypeId |> enum<RoleTypeId>, 
         meeting.Id |> MeetingId.box, 
         clubMember.Id |> MemberId.box , 

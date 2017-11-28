@@ -6,14 +6,14 @@ open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
 
 type RoleRequestCommand = 
-    | Request of MemberId * MessageId * RequestAbbreviation * DateTime list
+    | Request of MemberId * MessageId * RequestAbbreviation * MemberId list
     | Assign
     | Unassign
     | Complete
     | Cancel
 
 type RoleRequestEvent = 
-    | Requested of MemberId * MessageId * RequestAbbreviation * DateTime list
+    | Requested of MemberId * MessageId * RequestAbbreviation * MemberId list
     | Assigned
     | Unassigned
     | Completed
@@ -24,7 +24,7 @@ type RoleRequestStateValue =
     | Assigned = 1
     | Complete = 2
     | Canceled = 3
-type RoleRequestState = { State:RoleRequestStateValue; MemberId:MemberId; MessageId:MessageId; Brief:RequestAbbreviation; Dates:DateTime list }
+type RoleRequestState = { State:RoleRequestStateValue; MemberId:MemberId; MessageId:MessageId; Brief:RequestAbbreviation; Meetings:MeetingId list }
 
 let (|HasStateValue|_|) expected state =
     match state with 
@@ -47,8 +47,8 @@ let handle (command:CommandHandlers<RoleRequestEvent, Version>) (state:RoleReque
 
 let evolve (state:RoleRequestState option) (event:RoleRequestEvent) : RoleRequestState= 
     match state, event with
-    | None, RoleRequestEvent.Requested(mbrid, msgid, rab, dtl) ->
-            { RoleRequestState.State=RoleRequestStateValue.Unassigned; MemberId=mbrid; MessageId=msgid; Brief=rab; Dates=dtl }
+    | None, RoleRequestEvent.Requested(mbrid, msgid, rab, mtgids) ->
+            { RoleRequestState.State=RoleRequestStateValue.Unassigned; MemberId=mbrid; MessageId=msgid; Brief=rab; Meetings=mtgids }
     | HasStateValue RoleRequestStateValue.Unassigned s, RoleRequestEvent.Assigned -> { s with State=RoleRequestStateValue.Assigned }
     | HasStateValue RoleRequestStateValue.Unassigned s, RoleRequestEvent.Canceled -> { s with State=RoleRequestStateValue.Canceled }
     | HasStateValue RoleRequestStateValue.Assigned s, RoleRequestEvent.Unassigned -> { s with State=RoleRequestStateValue.Unassigned }

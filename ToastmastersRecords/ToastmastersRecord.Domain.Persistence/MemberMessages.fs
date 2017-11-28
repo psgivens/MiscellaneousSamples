@@ -16,7 +16,7 @@ let persist (userId:UserId) (streamId:StreamId) (state:Envelope<MemberMessageCom
     | null, Option.None -> ()
     | null, Option.Some(env) -> 
         match env.Item with 
-        | Create(memberId, date, message) ->
+        | MemberMessageCommand.Create(memberId, date, message) ->
             context.Messages.Add (
                 MemberMessageEntity (
                     Id = StreamId.unbox streamId,

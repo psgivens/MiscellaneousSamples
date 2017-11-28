@@ -22,11 +22,12 @@ namespace ToastmastersRecord.Data {
         public virtual DbSet<MemberEnvelopeEntity> MemberEvents { get; set; }
         public virtual DbSet<MemberEntity> Members { get; set; }
         public virtual DbSet<RoleRequestEntity> RoleRequests { get; set; }
-        public virtual DbSet<RoleRequestDate> RoleRequestDates { get; set; }
+        public virtual DbSet<RoleRequestMeeting> RoleRequestMeetings { get; set; }
         public virtual DbSet<MemberMessageEntity> Messages { get; set; }
         public virtual DbSet<ClubMeetingEntity> ClubMeetings { get; set; }
-        public virtual DbSet<RolePlacementEntity> RolePlacements { get; set; }
+        public virtual DbSet<RolePlacementEntity> RolePlacements { get; set; }        
         public virtual DbSet<RoleTypeEntity> RoleTypes { get; set; }
         public virtual DbSet<MemberHistoryAggregate> MemberHistories { get; set; }
+        public virtual DbSet<DayOffEntity> DaysOff { get; set; }
     }
 }

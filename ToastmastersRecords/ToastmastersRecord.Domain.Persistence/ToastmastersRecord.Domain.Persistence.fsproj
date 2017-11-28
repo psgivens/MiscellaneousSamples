@@ -52,14 +52,15 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="ClubMeetings.fs" />
+    <Compile Include="MemberDayOffRequests.fs" />
     <Compile Include="RolePlacements.fs" />
     <Compile Include="EventSourcing.fs" />
     <None Include="Script.fsx" />
     <Content Include="App.config" />
     <Content Include="packages.config" />
-    <Compile Include="MemberMessages.fs" />
     <Compile Include="MemberManagement.fs" />
     <Compile Include="RoleRequests.fs" />
+    <Compile Include="MemberMessages.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">

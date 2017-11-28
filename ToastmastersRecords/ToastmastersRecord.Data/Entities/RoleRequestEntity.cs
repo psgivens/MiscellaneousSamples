@@ -13,15 +13,14 @@ namespace ToastmastersRecord.Data.Entities {
         public virtual int State { get; set; }
         public virtual Guid MessageId { get; set; }
         public virtual string Brief { get; set; }
-        public virtual IList<RoleRequestDate> Dates { get; set; }
+        public virtual IList<RoleRequestMeeting> Meetings { get; set; }
         public virtual Guid MemberId { get; set; }
     }
-    public class RoleRequestDate {
+    public class RoleRequestMeeting {
         [Key, Column(Order = 1)]
         public virtual Guid RoleRequestId { get; set; }
         public virtual RoleRequestEntity RoleRequest { get; set; }
-        [Key, Column(Order = 2, TypeName = "Date")]
-        [DataType(DataType.Date)]
-        public virtual DateTime Date { get; set; }
+        [Key, Column(Order = 2)]
+        public virtual Guid MeetingId { get; set; }
     }
 }

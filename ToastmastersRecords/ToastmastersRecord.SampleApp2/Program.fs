@@ -16,33 +16,7 @@ open ToastmastersRecord.SampleApp.Infrastructure
 open ToastmastersRecord.SampleApp.Initialize
 open ToastmastersRecord.SampleApp.IngestMembers
 open ToastmastersRecord.SampleApp.IngestMeetings
-
-
-let defaultDate = "1900/1/1" |> DateTime.Parse
-let interpret (date:DateTime) =
-    if date = defaultDate then "Data not available" else date.ToString "MM/dd/yyyy"
-
-type MeetingsCsvType = 
-    CsvProvider<
-        Schema = "Meeting Id (string), Meeting Date (string), Concluded (string)", 
-        Separators = "\t",
-        HasHeaders=false>
-
-type MessagesCsvType = 
-    CsvProvider<
-        Schema = "Message Id (string), Name (string), Date (string), Message (string)", 
-        Separators = "\t",
-        HasHeaders=false>
-
-type DayOffCsvType =
-    CsvProvider<
-        Schema = "Meeting Id (string), Message Id (string), Name (string)", 
-        HasHeaders=false>
-
-type RoleRequestCsvType =
-    CsvProvider<
-        Schema = "Meeting Id (string), Message Id (string), Name (string), Description (string)", 
-        HasHeaders=false>
+open ToastmastersRecord.SampleApp.IngestMessages
 
 let generateMeetings system userId actorGroups =    
     let fileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\ClubMeetings.csv"
@@ -78,7 +52,7 @@ let addIdToMemberMessages system userId (actorGroups:ActorGroups) =
             "C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessages.txt",
             separators="\t",
             hasHeaders=true).Cache()
-    let fileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"
+    let fileName = messagesFileName //"C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"
 
 //    let csvFile = new MessagesCsvType  ([("Meeting Id", "Name", "Date", "Message")|> MessagesCsvType.Row])
     let csvFile = new MessagesCsvType  ([])
@@ -107,20 +81,21 @@ type RequestInfo = {
     Name:string
     Request:Request
     }
-    
+
+let roleRequestsFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"    
 
 let buildRequests () = 
-    let meetingsFile = MeetingsCsvType.Load "C:\Users\Phillip Givens\OneDrive\Toastmasters\ClubMeetings.csv" 
-    let messagesFile = MessagesCsvType.Load "C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"
+    let meetingsFile = MeetingsCsvType.Load (clubMeetingsFileName)//"C:\Users\Phillip Givens\OneDrive\Toastmasters\ClubMeetings.csv" 
+    let messagesFile = MessagesCsvType.Load (roleRequestsFileName) //"C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"
 
-    let absentsFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOff.csv"
-    let requestFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOn.csv"
+//    let absentsFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOff.csv"
+//    let requestFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOn.csv"
 
     IO.File.WriteAllText (absentsFileName, String.Empty)
     IO.File.WriteAllText (requestFileName, String.Empty)
 
-    use absentsFile = new DayOffCsvType      ([("Meeting Id", "Message Id", "Name")|> DayOffCsvType.Row])
-    use requestFile = new RoleRequestCsvType ([("Meeting Id", "Message Id", "Name", "Description")|> RoleRequestCsvType.Row])
+    use absentsFile = new DayOffCsvType      ([])
+    use requestFile = new RoleRequestCsvType ([])
 
     let unscheduledMeetings = 
         meetingsFile.Rows
@@ -136,12 +111,19 @@ let buildRequests () =
         Seq.unfold (fun unscheduledMeetings ->
             if unscheduledMeetings |> Array.isEmpty then None
             else
-
+            
+                
                 printfn """
+%s said:
+%s
+----
 Which dates would you like to work with? 
 List all indices, comma delimitated.
 -1 to end message.
 """
+                    row.Name
+                    row.Message
+
                 unscheduledMeetings
                 |> Array.iteri (fun i meeting ->
                     printfn "%d) %s" i (meeting.Date.ToString "MMM dd, yyyy"))
@@ -162,8 +144,8 @@ Would you like to
 1) Request the day off
 2) Describe your request
 """
-                    match Console.ReadLine () |> Int32.Parse with
-                    | 1 -> 
+                    match Console.ReadLine () |> Int32.TryParse with
+                    | (true,1) -> 
                         selected
                         |> List.map (fun meeting ->
                             {   RequestInfo.MessageId = row.``Message Id`` |> Guid.Parse |> MessageId.box
@@ -176,7 +158,7 @@ Would you like to
                                     selected 
                                     |> List.contains meeting 
                                     |> not))
-                    | 2 -> 
+                    | (true,2) -> 
                         printfn "Please describe the request"
                         ([{ RequestInfo.MessageId = row.``Message Id`` |> Guid.Parse |> MessageId.box
                             RequestInfo.Name = row.Name
@@ -213,6 +195,134 @@ Would you like to
         absents.Save absentsFileName
         requests.Save requestFileName
 
+let printMessageReport system userId actorGroups =
+    let meetingsFile = MeetingsCsvType.Load (clubMeetingsFileName)//"C:\Users\Phillip Givens\OneDrive\Toastmasters\ClubMeetings.csv" 
+    let messagesFile = MessagesCsvType.Load (messagesFileName )//"C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"
+    let dayOffsFile = DayOffCsvType.Load (absentsFileName)//"C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOff.csv"
+    let requestFile = RoleRequestCsvType.Load (requestFileName )//"C:\Users\Phillip Givens\OneDrive\Toastmasters\RequestOn.csv"
+    let messagesReportFileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\MessagesReport.txt"
+    IO.File.WriteAllText (messagesReportFileName , String.Empty)
+    
+    let meetings =
+        meetingsFile.Rows
+        |> Seq.map (fun row ->
+            let id = row.``Meeting Id`` |> Guid.Parse |> MeetingId.box
+            id,
+            {   Meeting.Id = id
+                Meeting.Date = row.``Meeting Date`` |> DateTime.Parse
+                Meeting.Concluded = row.Concluded |> bool.Parse}
+            )
+        |> Map.ofSeq
+
+    let dayOffRequests = 
+        dayOffsFile.Rows
+        |> Seq.fold (fun msgmap row ->
+            let msgid = row.``Message Id`` |> Guid.Parse |> MessageId.box
+            let mtgid = row.``Meeting Id`` |> Guid.Parse |> MeetingId.box
+            let requests =
+                match msgmap |> Map.tryFind msgid with
+                | Some requests -> requests
+                | _ -> []
+            
+            msgmap 
+            |> Map.add msgid (
+                {   
+                    RequestInfo.MessageId = msgid
+                    RequestInfo.Name = row.Name
+                    RequestInfo.Request = Request.Unavailable mtgid
+                }::requests)
+            ) Map.empty<FsGuidType, RequestInfo list>
+
+    let roleRequests = 
+        requestFile.Rows
+        |> Seq.fold (fun msgmap row ->
+            let msgid = row.``Message Id`` |> Guid.Parse |> MessageId.box
+            let meetingIds = row.``Meeting Id`` |> unpackMeetingIdsFromRequest
+//                row.``Meeting Id``.Split ';'
+//                |> Array.toList
+//                |> List.map (fun idstr -> idstr |> Guid.Parse |> MeetingId.box)
+            
+            let requests =
+                match msgmap |> Map.tryFind msgid with
+                | Some requests -> requests
+                | _ -> []
+
+            msgmap
+            |> Map.add msgid (
+                {   RequestInfo.MessageId = msgid
+                    RequestInfo.Name = row.Name
+                    RequestInfo.Request = Request.Available (row.Description, meetingIds)
+                }::requests)) Map.empty<FsGuidType, RequestInfo list>
+        
+    let joinString separator (strings:string[]) = String.Join (separator, strings)
+    use writer = new System.IO.StreamWriter (messagesReportFileName)
+
+    messagesFile.Rows 
+    |> Seq.map (fun row ->
+        let msgid = row.``Message Id`` |> Guid.Parse |> MessageId.box
+            
+        let dayOffDates =
+            match dayOffRequests |> Map.tryFind msgid with
+            | Some(requests) -> 
+                requests
+                |> Seq.map (fun request ->
+                    match request.Request with
+                    | Unavailable (meetingId) -> meetingId
+                    | _ -> failwith "Unexpected request" )
+                |> Seq.map (fun mtgid ->
+                    meetings 
+                    |> Map.find mtgid
+                    |> fun mtg -> mtg.Date.ToString " * MMM dd, yyyy") 
+                |> Seq.toArray
+                |> joinString "\n"
+            | None -> ""
+
+        let roles =
+            match roleRequests |> Map.tryFind msgid with
+            | Some(requests) ->
+                requests
+                |> Seq.map (fun request ->
+                    match request.Request with
+                    | Available (description, meetingIds) -> description, meetingIds
+                    | _ -> failwith "Unexpected request" )
+                |> Seq.map (fun (description, mtgids) ->
+                    mtgids
+                    |> Seq.map (fun mtgid -> 
+                        meetings 
+                        |> Map.find mtgid
+                        |> fun mtg -> mtg.Date.ToString "MMM dd, yyyy") 
+                    |> Seq.toArray
+                    |> joinString "; "
+                    |> fun dates ->
+                        sprintf """
+%s requested for: %s
+"""                         description dates) 
+                |> Seq.toArray
+                |> joinString "\n"
+            | None -> ""
+
+        sprintf """
+-------------------------
+Member: %s
+Message: 
+%s
+
+Not Attending
+%s
+
+%s
+            """ 
+                row.Name
+                row.Message
+                dayOffDates
+                roles
+                
+            |> writer.Write
+        ) 
+        |> Seq.toList
+        |> ignore
+
+
 [<EntryPoint>]
 let main argv = 
     // System set up
@@ -229,7 +339,9 @@ let main argv =
     // actorGroups |> ingestMembers system userId
     //actorGroups |> ingestMemberMessages system userId 
 
+
     buildRequests ()
+    actorGroups |> printMessageReport system userId 
     
     printfn "%A" argv
     0 // return an integer exit code

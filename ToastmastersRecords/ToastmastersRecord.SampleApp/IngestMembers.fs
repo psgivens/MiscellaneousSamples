@@ -16,7 +16,7 @@ open ToastmastersRecord.SampleApp.Initialize
 let ingestMembers system userId actorGroups =
     let memberRequestReply = RequestReplyActor.spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent> system "memberManagement" actorGroups.MemberManagementActors
     
-    let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171118.csv").Cache()
+    let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171126.csv").Cache()
     
     // Map CSV rows to Member Details
     roster.Rows 
@@ -54,8 +54,12 @@ let ingestMembers system userId actorGroups =
                 memberDetails.Awards
                 (TMMemberId.unbox memberDetails.ToastmasterId)
 
+            let clubMember = Persistence.MemberManagement.findMemberByToastmasterId memberDetails.ToastmasterId
+
             do! memberDetails
-                |> MemberManagementCommand.Create
+                |> (if clubMember = null 
+                    then MemberManagementCommand.Create 
+                    else MemberManagementCommand.Update)
                 |> envelopWithDefaults
                     (userId)
                     (TransId.create ())
@@ -101,7 +105,7 @@ let ingestSpeechCount system userId (actorGroups:ActorGroups) =
                         else defaultDate
         let intRef : int ref = ref 0
         let count = if System.Int32.TryParse(row.GetColumn "Count", intRef) then !intRef else 0
-        row.GetColumn "Customer ID" |> System.Int32.Parse, 
+        row.GetColumn "Customer ID" |> System.Int32.Parse |> TMMemberId.box, 
         row.GetColumn "Name", 
         row.GetColumn "Display Name",
         objNext,
