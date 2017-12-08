@@ -36,7 +36,7 @@ let main argv =
     let actorGroups = composeActors system
     
     // Sample data
-    let userId = UserId.create ()
+    let userId = Persistence.Users.findUserId "ToastmastersRecord.SampleApp.Initialize" 
     
     actorGroups |> ingestMembers system userId    
     actorGroups |> ingestSpeechCount system userId
@@ -48,7 +48,7 @@ let main argv =
     actorGroups |> ingestDaysOff system userId
     actorGroups |> ingestRoleRequests system userId
 
-    let date = "12/05/2017" |> DateTime.Parse
+    let date = "12/12/2017" |> DateTime.Parse
     actorGroups |> calculateHistory system userId date 
     actorGroups |> generateStatistics system userId
 

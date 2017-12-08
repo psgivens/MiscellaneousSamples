@@ -58,6 +58,7 @@
     <Compile Include="Entities\RoleRequestEntity.cs" />
     <Compile Include="Entities\MemberEntity.cs" />
     <Compile Include="Entities\RoleTypeEntity.cs" />
+    <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="EventSourcing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToastmastersEFDbContext.cs" />

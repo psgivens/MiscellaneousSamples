@@ -52,7 +52,7 @@ let addIdToMemberMessages system userId (actorGroups:ActorGroups) =
             "C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessages.txt",
             separators="\t",
             hasHeaders=true).Cache()
-    let fileName = messagesFileName //"C:\Users\Phillip Givens\OneDrive\Toastmasters\RoleRequestMessagesId.txt"
+    let fileName = messagesFileName 
 
 //    let csvFile = new MessagesCsvType  ([("Meeting Id", "Name", "Date", "Message")|> MessagesCsvType.Row])
     let csvFile = new MessagesCsvType  ([])
@@ -332,7 +332,7 @@ let main argv =
     let actorGroups = composeActors system
     
     // Sample data
-    let userId = UserId.create ()
+    let userId = Persistence.Users.findUserId "ToastmastersRecord.SampleApp.MessageProcessor" 
     
     actorGroups |> generateMeetings system userId
     actorGroups |> addIdToMemberMessages system userId

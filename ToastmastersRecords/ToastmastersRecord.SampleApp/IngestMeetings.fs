@@ -117,14 +117,15 @@ let ingestMeetings system userId actorGroups =
 
 let ingestHistory system userId actorGroups =    
 
-    // Send Complete command when we receive a Created event
-    let roleConfirmationReaction = RolePlacementActors.spawnRoleConfirmationReaction system actorGroups
+//    // Send Complete command when we receive a Created event
+//    let roleConfirmationReaction = RolePlacementActors.spawnRoleConfirmationReaction system actorGroups
 
     // Process Create command, wait for Completed event
     let rolePlacementRequestReply =
         RequestReplyActor.spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
             (fun cmd -> true)
-            (fun evt -> evt.Item = RolePlacementEvent.Completed)
+            (fun evt -> match evt.Item with | RolePlacementEvent.Assigned(_,_) -> true; | _ -> false)
+            //(fun evt -> evt.Item = RolePlacementEvent.Completed)
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
 
     // Cache of unprocessed placements for this script.
@@ -136,9 +137,9 @@ let ingestHistory system userId actorGroups =
         printfn "History: (%s, %s, %s, %s)" 
             (row.GetColumn "Role") (row.GetColumn "Person") (row.GetColumn "Date") (row.GetColumn "Source")
             
-    // Register activity related post action
-    roleConfirmationReaction
-    |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
+//    // Register activity related post action
+//    roleConfirmationReaction
+//    |> SubjectActor.subscribeTo actorGroups.RolePlacementActors.Events 
 
     // Get data
     history.Rows
@@ -172,7 +173,7 @@ let ingestHistory system userId actorGroups =
     |> Async.Ignore
     |> Async.RunSynchronously
 
-    // Unregister activity related post action
-    roleConfirmationReaction
-    |> SubjectActor.unsubscribeFrom actorGroups.RolePlacementActors.Events 
+//    // Unregister activity related post action
+//    roleConfirmationReaction
+//    |> SubjectActor.unsubscribeFrom actorGroups.RolePlacementActors.Events 
 

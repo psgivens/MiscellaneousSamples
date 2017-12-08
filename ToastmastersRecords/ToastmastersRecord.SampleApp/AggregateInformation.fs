@@ -15,7 +15,7 @@ let calculateHistory system userId date actorGroups =
         let historyState = 
             history.Id 
             |> Persistence.RolePlacements.getRolePlacmentsByMember
-            |> Seq.where (fun (d, p) -> d < date && p.State = 2)
+//            |> Seq.where (fun (d, p) -> d < date && p.State = 2)
             |> Seq.fold (fun state (date,placement) -> 
                 match placement.RoleTypeId |> enum<RoleTypeId> with
                 | RoleTypeId.Speaker ->           

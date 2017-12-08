@@ -9,7 +9,7 @@ using ToastmastersRecord.Data.Entities;
 namespace ToastmastersRecord.Data {
     public class ToastmastersEFDbContext : DbContext {
         static ToastmastersEFDbContext() {
-            Database.SetInitializer<ToastmastersEFDbContext>(new ToastmastersEFDbInitializer());
+            //Database.SetInitializer<ToastmastersEFDbContext>(new ToastmastersEFDbInitializer());
         }
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             modelBuilder.Entity<RoleRequestEnvelopeEntity>().ToTable("RoleRequestEvents");
@@ -29,5 +29,6 @@ namespace ToastmastersRecord.Data {
         public virtual DbSet<RoleTypeEntity> RoleTypes { get; set; }
         public virtual DbSet<MemberHistoryAggregate> MemberHistories { get; set; }
         public virtual DbSet<DayOffEntity> DaysOff { get; set; }
+        public virtual DbSet<UserEntity> Users { get; set; }
     }
 }

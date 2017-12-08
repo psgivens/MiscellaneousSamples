@@ -118,6 +118,14 @@ let findMemberByToastmasterId (TMMemberId.Val ident) =
             select clubMember
             exactlyOneOrDefault }
 
+let getMemberHistory id =
+    use context = new ToastmastersEFDbContext () 
+    query { for history in context.MemberHistories do
+            where (history.Id = id)
+            select history
+            exactlyOneOrDefault }
+
+
 //let findMemberHistoryByDisplayName name =
 //    use context = new ToastmastersEFDbContext () 
 //    query { for clubMember in context.Members do

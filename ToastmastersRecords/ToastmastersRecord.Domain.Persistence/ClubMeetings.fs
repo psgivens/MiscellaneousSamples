@@ -38,7 +38,15 @@ let findByDate (date:System.DateTime) =
     use context = new ToastmastersEFDbContext () 
     query { for meeting in context.ClubMeetings do
             where (meeting.Date = date)
-            select meeting}
-    |> Seq.head
+            select meeting
+            exactlyOne }
 
+let fetchByDate count (date:System.DateTime) =
+    use context = new ToastmastersEFDbContext () 
+    query { for meeting in context.ClubMeetings do
+            where (meeting.Date >= date)
+            sortBy meeting.Date
+            select meeting }
+    |> Seq.take count
+    |> Seq.toList
 
