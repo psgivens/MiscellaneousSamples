@@ -91,6 +91,11 @@ let persistConfirmation (userId:UserId) (streamId:StreamId) (env:Envelope<Member
     entity.DisplayName <- confirmation.DisplayName
     context.SaveChanges () |> ignore
 
+let execQuery (q:ToastmastersEFDbContext -> System.Linq.IQueryable<'a>) =
+    use context = new ToastmastersEFDbContext () 
+    q context
+    |> Seq.toList
+
 let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.Members.Find (StreamId.unbox streamId)

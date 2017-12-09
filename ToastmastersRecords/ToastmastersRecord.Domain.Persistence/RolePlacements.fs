@@ -54,6 +54,7 @@ let findMeetingPlacements id =
     use context = new ToastmastersEFDbContext () 
     query { for placement in context.RolePlacements do
             where (placement.MeetingId = id)
+            sortBy placement.RoleTypeId
             select placement}
     |> Seq.toList
 
