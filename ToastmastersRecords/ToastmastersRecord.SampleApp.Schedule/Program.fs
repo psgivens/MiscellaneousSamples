@@ -6,6 +6,26 @@ open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Data.Entities
 
+let displayRequests userId (meeting:ClubMeetingEntity) =
+    printfn ""
+    printfn "#    Name                 Request"
+    printfn "---- -------------------- ----------------"
+    Persistence.MemberManagement.execQuery (fun context ->
+        query { 
+            for rrm in context.RoleRequestMeetings do
+            join r in context.RoleRequests 
+                on (rrm.RoleRequestId = r.Id)
+            join m in context.Members 
+                on (r.MemberId = m.Id)
+            join h in context.MemberHistories
+                on (r.MemberId = h.Id)
+            where (rrm.MeetingId = meeting.Id && r.State = 0)
+            select (m,h,r) })
+    |> Seq.iteri (fun i (m,h,r) ->
+        printfn "%-4d %-20s %s" i h.DisplayName r.Brief
+        )
+   
+
 let displayMeeting userId (meeting:ClubMeetingEntity) (placements:RolePlacementEntity seq) =
     printfn ""
     printfn "Meeting: %s\t Status: %d"
@@ -159,6 +179,9 @@ let rec editMeeting userId (meeting:ClubMeetingEntity) (placements:RolePlacement
     let loop = editMeeting userId meeting
     
     displayMeeting userId meeting placements    
+
+    displayRequests userId meeting
+
     printfn """
 type -1 for done editing or the index for the item you would like to edit. 
 """
@@ -179,7 +202,8 @@ Please make a selection
 1) List 5 meetings from date
 2) List meeting details
 3) Edit meeting details
-4) ...
+4) Create new meeting
+5) ...
     """
     match Console.ReadLine () |> Int32.TryParse with
     | true, 0 -> 
@@ -200,6 +224,9 @@ Please make a selection
             let placements = Persistence.RolePlacements.findMeetingPlacements meeting.Id  
             editMeeting userId meeting placements)
         loop ()        
+    | true, 4 -> 
+        printfn "Create meeting not implemented"
+        loop ()
     | true, i -> 
         printfn "Number not recognized: %d" i
         loop ()
