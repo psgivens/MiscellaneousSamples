@@ -74,7 +74,7 @@ let create<'TState, 'TCommand, 'TEvent>
         eventSubject <! envelope
 
         // TODO: Create timer for expiring cache
-        states |> Map.add envelope.StreamId (state', version)
+        states |> Map.add envelope.StreamId (state', envelope.Version)
     
     fun (mailbox:Actor<obj>) ->
         let rec loop states = actor {
