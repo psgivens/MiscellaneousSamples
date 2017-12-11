@@ -13,6 +13,7 @@ open ToastmastersRecord.SampleApp.Schedule.EditMeeting
 
 open ToastmastersRecord.Actors
 open ToastmastersRecord.Domain.RolePlacements
+open ToastmastersRecord.Domain.ClubMeetings
 open ToastmastersRecord.SampleApp.Initialize
 
 let processCommands system (actorGroups:ActorGroups) userId = 
@@ -20,6 +21,13 @@ let processCommands system (actorGroups:ActorGroups) userId =
     let rolePlacementRequestReply =
         RequestReplyActor.spawnRequestReplyActor<RolePlacementCommand,RolePlacementEvent> 
             system "rolePlacementRequestReply" actorGroups.RolePlacementActors
+
+    // Create an request-reply actor that we can wait on. 
+    let meetingRequestReplyCreate = 
+        RequestReplyActor.spawnRequestReplyConditionalActor<ClubMeetingCommand,ClubMeetingEvent> 
+            (fun x -> true)
+            (fun x -> x.Item = Initialized)
+            system "clubMeeting_initialized" actorGroups.ClubMeetingActors
 
     let rec loop () = 
         printfn """
@@ -51,7 +59,24 @@ Please make a selection
                 editMeeting rolePlacementRequestReply userId meeting placements)
             loop ()        
         | true, 4 -> 
-            printfn "Create meeting not implemented"
+            printfn "Enter the date of the meeeting."
+            match Console.ReadLine () |> DateTime.TryParse with
+            | true, date -> 
+                date
+                |> ClubMeetings.ClubMeetingCommand.Create
+                |> envelopWithDefaults
+                    (userId)
+                    (TransId.create ())
+                    (StreamId.create ())
+                    (Version.box 0s)
+                |> meetingRequestReplyCreate.Ask
+                |> Async.AwaitTask
+                |> Async.Ignore
+                |> Async.RunSynchronously
+                let meeting = Persistence.ClubMeetings.findByDate date
+                let placements = Persistence.RolePlacements.findMeetingPlacements meeting.Id
+                displayMeeting userId meeting placements 
+            | _ -> printfn "Input could not be parsed as a date."            
             loop ()
         | true, i -> 
             printfn "Number not recognized: %d" i
