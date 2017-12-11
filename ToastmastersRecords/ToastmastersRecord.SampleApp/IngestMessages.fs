@@ -38,10 +38,6 @@ type RoleRequestCsvType =
         Separators = "\t",
         HasHeaders=false>
 
-let defaultDate = "1900/1/1" |> DateTime.Parse
-let interpret (date:DateTime) =
-    if date = defaultDate then "Data not available" else date.ToString "MM/dd/yyyy"
-
 let unpackMeetingIdsFromRequest (midsString:string) =
     midsString.Split ';'
     |> Array.toList

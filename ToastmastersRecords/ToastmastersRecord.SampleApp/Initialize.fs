@@ -84,6 +84,7 @@ let composeActors system =
                 | RolePlacementEvent.Opened _ -> true
                 | _ -> false)
             system "rolePlacement_create" rolePlacementActors
+
     let createRolePlacement meetingEnv roleTypeId = 
         ((roleTypeId, MeetingId.box <| StreamId.unbox meetingEnv.StreamId)
         |> RolePlacementCommand.Open

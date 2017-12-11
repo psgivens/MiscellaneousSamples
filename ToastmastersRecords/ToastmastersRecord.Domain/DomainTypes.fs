@@ -24,3 +24,20 @@ type RoleTypeId =
     | Timer = 11
     | Videographer = 12
 
+let category = 
+    function
+    | RoleTypeId.Toastmaster
+    | RoleTypeId.GeneralEvaluator
+    | RoleTypeId.TableTopicsMaster -> "Facilitator"
+    | RoleTypeId.Evaluator
+    | RoleTypeId.Speaker -> "Major"
+    | RoleTypeId.OpeningThoughtAndBallotCounter 
+    | RoleTypeId.ClosingThoughtAndGreeter 
+    | RoleTypeId.JokeMaster -> "Minor"
+    | RoleTypeId.ErAhCounter
+    | RoleTypeId.Grammarian
+    | RoleTypeId.Timer
+    | RoleTypeId.Videographer -> "Functionary"
+    | _ -> "other"
+
+

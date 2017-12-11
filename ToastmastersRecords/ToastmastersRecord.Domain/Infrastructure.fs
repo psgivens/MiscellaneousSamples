@@ -24,7 +24,9 @@ let incrementVersion version =
 
 let buildState evolve = List.fold (fun st evt -> Some (evolve st evt))
 
-
+let defaultDate = "1900/1/1" |> DateTime.Parse
+let interpret naMessage (format:string) (date:DateTime) =
+    if date = defaultDate then naMessage else date.ToString format
 
 [<AutoOpen>]
 module Envelope =

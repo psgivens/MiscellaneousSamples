@@ -106,34 +106,74 @@ let getMembers (placement:RolePlacementEntity) =
         | _ -> attending
     )
     
-let displayMembers roleType (members:(MemberEntity * MemberHistoryAggregate * RoleRequestEntity) seq) = 
+let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggregate * RoleRequestEntity) seq) = 
     printfn ""
-    printfn "#   TMI Id   Name                 Last TM    Last Facilitator "
-    printfn "--- -------- -------------------- ---------- ---------------- "
-    members 
-    |> Seq.iteri (fun i (m,h,r) ->        
-        printfn "%-3d %-8d %-20s %-10s %-10s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
-        )
 
-let rec editPlacement system (actorGroups:ActorGroups) userId (placement:RolePlacementEntity) =
-        // Process Create command, wait for Completed event
-    let rolePlacementRequestReply =
-        RequestReplyActor.spawnRequestReplyConditionalActor<RolePlacementCommand,RolePlacementEvent> 
-            (fun cmd -> true)
-            (fun evt -> match evt.Item with | RolePlacementEvent.Assigned(_,_) -> true; | _ -> false)
-            //(fun evt -> evt.Item = RolePlacementEvent.Completed)
-            system "rolePlacementRequestReply" actorGroups.RolePlacementActors
+    match roleType with
+    | RoleTypeId.Toastmaster -> 
+        printfn "#   TMI Id   Name                 Last TM    Last Facilitator Requests"
+        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        members 
+        |> Seq.iteri (fun i (m,h,r) ->        
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
 
+    | RoleTypeId.GeneralEvaluator -> 
+        printfn "#   TMI Id   Name                 Last GE    Last Facilitator Requests"
+        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        members 
+        |> Seq.iteri (fun i (m,h,r) ->        
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsGeneralEvaluator.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
+
+    | RoleTypeId.TableTopicsMaster -> 
+        printfn "#   TMI Id   Name                 Last TTM   Last Facilitator Requests"
+        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        members 
+        |> Seq.iteri (fun i (m,h,r) ->        
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsTableTopicsMaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
+
+    | RoleTypeId.Evaluator -> 
+        printfn "#   TMI Id   Name                 Last Eval  Last Facilitator Requests"
+        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        members 
+        |> Seq.iteri (fun i (m,h,r) ->        
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateOfLastEvaluation.ToString "MM/dd/yyyy") (h.DateOfLastMajorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
+
+    | RoleTypeId.JokeMaster
+    | RoleTypeId.ClosingThoughtAndGreeter
+    | RoleTypeId.OpeningThoughtAndBallotCounter -> 
+        printfn "#   TMI Id   Name                 Last Minor Requests"
+        printfn "--- -------- -------------------- ---------- --------------"
+        members 
+        |> Seq.iteri (fun i (m,h,r) ->        
+            printfn "%-3d %-8d %-20s %-16s %-10s" i m.ToastmasterId h.DisplayName (h.DateOfLastMinorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
+
+    | RoleTypeId.ErAhCounter
+    | RoleTypeId.Grammarian
+    | RoleTypeId.Videographer
+    | RoleTypeId.Timer -> 
+        printfn "#   TMI Id   Name                 Last Functionary   Requests"
+        printfn "--- -------- -------------------- ------------------ --------------"
+        members 
+        |> Seq.iteri (fun i (m,h,r) ->        
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
+
+    | _ -> printfn "RoleTypeId unknown"
+
+
+let rec editPlacement (rolePlacementRequestReply:IActorRef) userId (placement:RolePlacementEntity) =
     let rec loop (placement:RolePlacementEntity) = 
         let roleType = placement.RoleTypeId |> enum<RoleTypeId>
-        let member' = Persistence.MemberManagement.find userId (placement.MemberId |> StreamId.box)
-        let history = Persistence.MemberManagement.getMemberHistory member'.Id        
-        printfn "Item to edit"
-        printfn "Id: %d; Name:%s Role:%s" member'.ToastmasterId history.DisplayName (roleType.ToString ())
         let members = getMembers placement
-        members |> displayMembers roleType
+        members |> displayRoleCandidates roleType
 
         if placement.MemberId <> Guid.Empty then
+            let history = Persistence.MemberManagement.getMemberHistory placement.MemberId
             printfn "The role of %s is currently assigned to %s. Would you like to unassign?" (roleType.ToString ()) history.DisplayName
             printfn "0) No    1) yes"
             match Console.ReadLine () |> Int32.TryParse with
@@ -145,7 +185,10 @@ let rec editPlacement system (actorGroups:ActorGroups) userId (placement:RolePla
                     (TransId.create ())
                     (placement.Id |> StreamId.box)
                     (Version.box 0s)
-                |> rolePlacementRequestReply.Tell
+                |> rolePlacementRequestReply.Ask
+                |> Async.AwaitTask
+                |> Async.Ignore
+                |> Async.RunSynchronously
             | _ -> 
                 printfn "Received an invalid answser"
                 loop placement
@@ -156,6 +199,17 @@ let rec editPlacement system (actorGroups:ActorGroups) userId (placement:RolePla
             | true, n when n < members.Length -> 
                 let m,h,r = members |> Seq.skip n |> Seq.head
                 printfn "TODO: You chose: %s" h.DisplayName
+                (h.Id |> MemberId.box, RoleRequestId.Empty)
+                |> RolePlacementCommand.Assign
+                |> envelopWithDefaults
+                    userId
+                    (TransId.create ())
+                    (placement.Id |> StreamId.box)
+                    (Version.box 0s)
+                |> rolePlacementRequestReply.Ask
+                |> Async.AwaitTask
+                |> Async.Ignore
+                |> Async.RunSynchronously
             | true, n -> 
                 printfn "The number entered was out of range"
             | _ -> 
@@ -163,8 +217,8 @@ let rec editPlacement system (actorGroups:ActorGroups) userId (placement:RolePla
                 loop placement
     loop placement
 
-let rec editMeeting system (actorGroups:ActorGroups) userId (meeting:ClubMeetingEntity) (placements:RolePlacementEntity seq) =
-    let loop = editMeeting system actorGroups userId meeting
+let rec editMeeting rolePlacementRequestReply userId (meeting:ClubMeetingEntity) (placements:RolePlacementEntity seq) =
+    let loop = editMeeting rolePlacementRequestReply userId meeting
     
     displayMeeting userId meeting placements    
 
@@ -176,7 +230,7 @@ type -1 for done editing or the index for the item you would like to edit.
     match Console.ReadLine () |> Int32.TryParse with
     | true, -1 -> ()
     | true, n when n < (placements |> Seq.length) -> 
-        placements |> Seq.skip n |> Seq.head |> editPlacement system actorGroups userId 
+        placements |> Seq.skip n |> Seq.head |> editPlacement rolePlacementRequestReply userId 
         loop placements
     | _ -> 
         printfn "Input not understood"

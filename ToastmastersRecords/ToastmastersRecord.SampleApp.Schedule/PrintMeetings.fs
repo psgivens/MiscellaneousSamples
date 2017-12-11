@@ -32,17 +32,17 @@ let displayMeeting userId (meeting:ClubMeetingEntity) (placements:RolePlacementE
         (meeting.Date.ToString ("MMM d, yyyy"))
         meeting.State
     printfn ""
-    printfn "Item \tTMI Id   \tName                \tRole"
-    printfn "---- \t---------\t--------------------\t---------------------"
+    printfn "Item TMI Id    Name                 Category    Role"
+    printfn "---- --------- -------------------- ----------- ---------------------"
     placements     
     |> Seq.iteri (fun i placement ->
         let roleType = placement.RoleTypeId |> enum<RoleTypeId>
         if placement.MemberId = Guid.Empty 
-        then printfn "%-4d \t%-8d \t%-20s \t%-20s" i 0 "Not recorded" (roleType.ToString ())
+        then printfn "%-4d %-9d %-20s %-11s %-20s" i 0 "--" (roleType |> category) (roleType.ToString ())
         else
             let member' = Persistence.MemberManagement.find userId (placement.MemberId |> StreamId.box)
             let history = Persistence.MemberManagement.getMemberHistory member'.Id        
-            printfn "%-4d \t%-9d\t%-20s\t%-20s" i member'.ToastmasterId history.DisplayName (roleType.ToString ()))
+            printfn "%-4d %-9d %-20s %-11s %-20s" i member'.ToastmasterId history.DisplayName (roleType |> category) (roleType.ToString ()))
 
 let displayMeetings (meetings:ClubMeetingEntity seq) =
     printfn ""
@@ -50,7 +50,7 @@ let displayMeetings (meetings:ClubMeetingEntity seq) =
     printfn "---- \t------------ \t--------- "
     meetings 
     |> Seq.iteri (fun i meeting ->
-        printfn "%-4d \t%-10s \t%d" i (meeting.Date.ToString "MMM dd, yyyy") meeting.State)
+        printfn "%-4d \t%-10s \t%d" i (meeting.Date |> interpret "NA" "MMM dd, yyyy") meeting.State)
 
 let processDate (f:DateTime -> unit) =
     printfn "Please enter a date"

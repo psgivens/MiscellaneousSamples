@@ -18,6 +18,7 @@ open ToastmastersRecord.SampleApp.IngestMembers
 open ToastmastersRecord.SampleApp.IngestMeetings
 open ToastmastersRecord.SampleApp.IngestMessages
 
+let interpret = interpret "NA" "MMM dd, yyyy"
 let generateMeetings system userId actorGroups =    
     let fileName = "C:\Users\Phillip Givens\OneDrive\Toastmasters\ClubMeetings.csv"
     
@@ -126,7 +127,7 @@ List all indices, comma delimitated.
 
                 unscheduledMeetings
                 |> Array.iteri (fun i meeting ->
-                    printfn "%d) %s" i (meeting.Date.ToString "MMM dd, yyyy"))
+                    printfn "%d) %s" i (meeting.Date |> interpret))
 
                 let response = Console.ReadLine ()
                 if response = "-1" then None
@@ -290,7 +291,7 @@ let printMessageReport system userId actorGroups =
                     |> Seq.map (fun mtgid -> 
                         meetings 
                         |> Map.find mtgid
-                        |> fun mtg -> mtg.Date.ToString "MMM dd, yyyy") 
+                        |> fun mtg -> mtg.Date |> interpret) 
                     |> Seq.toArray
                     |> joinString "; "
                     |> fun dates ->

@@ -90,9 +90,7 @@ let calculateHistory system userId date actorGroups =
     
     |> Seq.iter (fun (historyId, state) -> state |> Persistence.MemberManagement.persistHistory userId historyId)
 
-let defaultDate = "1900/1/1" |> System.DateTime.Parse
-let interpret (date:System.DateTime) =
-    if date = defaultDate then "Data not available" else date.ToString "MM/dd/yyyy"
+let interpret = interpret "NA" "MM/dd/yyyy"
 let generateMessagesToMembers system userId actorGroups =
     use writer = new System.IO.StreamWriter "C:\Users\Phillip Givens\OneDrive\Toastmasters\messages.txt"
     Persistence.MemberManagement.getMemberHistories ()
