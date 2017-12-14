@@ -1,0 +1,8 @@
+# (uncomment to add a dependency)
+ dependencies:
+  - name: mywidget
+    version: 0.0.1
+    src: htmlwidgets/lib/d3-4.5.0
+    script: d3.min.js
+#    script:
+#    stylesheet:

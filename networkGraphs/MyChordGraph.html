@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Andrew's Test</title>
+<style>
+
+@import url(style.css);
+ 
+#circle circle {
+fill: none;
+pointer-events: all;
+}
+ 
+.group path {
+fill-opacity: .5;
+}
+ 
+path.chord {
+stroke: #000;
+stroke-width: .25px;
+}
+ 
+#circle:hover path.fade {
+display: none;
+}
+ 
+</style>
+ 
+<header>
+<aside>November 14th, 2013</aside>
+<p>Modified from Mike Bostock's <a href="http://bost.ocks.org/mike/uberdata/">Uber Rides by Neighborhood</a></p>
+<p>Modified from eleyine's <a href="http://bl.ocks.org/eleyine/raw/6846156/">Visa requirements in Arab countries</a></p>
+<p>Modified from Andy's <a href="http://bl.ocks.org/eleyine/raw/6846156/">Visa requirements in Arab countries</a></p>
+</header>
+ 
+<h1>Andrew's Test</h1>
+ 
+<aside>Mouseover to focus on travel to and from a particular city.</aside>
+ 
+<p>Built with <a href="http://d3js.org/">d3.js</a>.</aside>
+<div id="mygraph" />
+<script src="http://d3js.org/d3.v2.min.js?2.8.1"></script>
+<script>
+ 
+var width = 720,
+height = 720,
+outerRadius = Math.min(width, height) / 2 - 10,
+innerRadius = outerRadius - 24;
+var opacityDefault = 0.8;
+	
+var formatPercent = d3.format(".1%");
+ 
+var arc = d3.svg.arc()
+.innerRadius(innerRadius)
+.outerRadius(outerRadius);
+ 
+var layout = d3.layout.chord()
+.padding(.04)
+.sortSubgroups(d3.descending)
+.sortChords(d3.ascending);
+ 
+var path = d3.svg.chord()
+.radius(innerRadius);
+ 
+var svg = d3.select("#mygraph").append("svg")
+.attr("width", width)
+.attr("height", height)
+.append("g")
+.attr("id", "circle")
+.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+ 
+svg.append("circle")
+.attr("r", outerRadius);
+ 
+d3.csv("chordnodes.csv", function(cities) {
+d3.json("matrix.json", function(matrix) {
+ 
+// Compute the chord layout.
+layout.matrix(matrix);
+ 
+// Add a group per neighborhood.
+var group = svg.selectAll(".group")
+.data(layout.groups)
+.enter().append("g")
+.attr("class", "group")
+.on("mouseover", mouseover);
+ 
+// Add a mouseover title.
+// group.append("title").text(function(d, i) {
+// return cities[i].name + ": " + formatPercent(d.value) + " of origins";
+// });
+ 
+// Add the group arc.
+var groupPath = group.append("path")
+.attr("id", function(d, i) { return "group" + i; })
+.attr("d", arc)
+.style("fill", function(d, i) { return cities[i].color; });
+ 
+// Add a text label.
+var groupText = group.append("text")
+.attr("x", 6)
+.attr("dy", 15);
+ 
+groupText.append("textPath")
+.attr("xlink:href", function(d, i) { return "#group" + i; })
+.text(function(d, i) { return cities[i].name; });
+ 
+// Remove the labels that don't fit. :(
+groupText.filter(function(d, i) { return groupPath[0][i].getTotalLength() / 2 - 16 < this.getComputedTextLength(); })
+.remove();
+ 
+ 
+ 
+ ////////////////////////////////////////////////////////////
+/////////////// Create the gradient fills //////////////////
+////////////////////////////////////////////////////////////
+
+//Function to create the unique id for each chord gradient
+function getGradID(d){ return "linkGrad-" + d.source.index + "-" + d.target.index; }
+
+//Create the gradients definitions for each chord
+var grads = svg.append("defs").selectAll("linearGradient")
+	.data(layout.chords)
+   .enter().append("linearGradient")
+    //Create the unique ID for this specific source-target pairing
+	.attr("id", getGradID)
+	.attr("gradientUnits", "userSpaceOnUse")
+	//Find the location where the source chord starts
+	.attr("x1", function(d,i) { return innerRadius * Math.cos((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2); })
+	.attr("y1", function(d,i) { return innerRadius * Math.sin((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2); })
+	//Find the location where the target chord starts 
+	.attr("x2", function(d,i) { return innerRadius * Math.cos((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2); })
+	.attr("y2", function(d,i) { return innerRadius * Math.sin((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2); })
+
+//Set the starting color (at 0%)
+grads.append("stop")
+	.attr("offset", function(d){ return d.source.value <= d.target.value ? "0%" : "100%"; })
+	.attr("stop-color", function(d){return cities[d.source.index].color; });
+
+//Set the ending color (at 100%)
+grads.append("stop")
+	.attr("offset", function(d){ return d.source.value > d.target.value ? "0%" : "100%"; })
+	.attr("stop-color", function(d){ return cities[d.target.index].color; });
+ 
+ 
+ 
+////////////////// Draw outer Arcs /////////////////////////
+////////////////////////////////////////////////////////////
+
+var outerArcs = svg.selectAll("g.group")
+	.data(layout.groups)
+	.enter().append("g")
+	.attr("class", "group")
+	.on("mouseover", fade(.1))
+	.on("mouseout", fade(opacityDefault));
+
+outerArcs.append("path")
+	.style("fill", function(d) { return colors(d.index); })
+	.attr("d", arc);
+ 
+////////////////////////////////////////////////////////////
+////////////////// Extra Functions /////////////////////////
+////////////////////////////////////////////////////////////
+
+//Returns an event handler for fading a given chord group.
+function fade(opacity) {
+  return function(d,i) {
+    svg.selectAll("path.chord")
+        .filter(function(d) { return d.source.index != i && d.target.index != i; })
+		.transition()
+        .style("opacity", opacity);
+  };
+}//fade
+ 
+ 
+ 
+ 
+// Add the chords.
+var chord = svg.selectAll(".chord")
+.data(layout.chords)
+.enter().append("path")
+.attr("class", "chord")
+.style("fill", function(d){ return "url(#" + getGradID(d) + ")"; })
+//.style("fill", function(d) { return cities[d.source.index].color; })
+.style("opacity", opacityDefault)
+.attr("d", path);
+ 
+// Add an elaborate mouseover title for each chord.
+ chord.append("title").text(function(d) {
+ return cities[d.source.index].name
+ + " ? " + cities[d.target.index].name
+ + ": " + formatPercent(d.source.value)
+ + "\n" + cities[d.target.index].name
+ + " ? " + cities[d.source.index].name
+ + ": " + formatPercent(d.target.value);
+ });
+ 
+function mouseover(d, i) {
+chord.classed("fade", function(p) {
+return p.source.index != i
+&& p.target.index != i;
+});
+}
+});
+});
+ 
+</script>
+ 
+ 
+<footer>
+<aside>November 14th, 2013</aside>
+<p>Modified from Mike Bostock's <a href="http://bost.ocks.org/mike/uberdata/">Uber Rides by Neighborhood</a></p>
+<p>Modified from eleyine's <a href="http://bl.ocks.org/eleyine/raw/6846156/">Visa requirements in Arab countries</a></p>
+</footer>
