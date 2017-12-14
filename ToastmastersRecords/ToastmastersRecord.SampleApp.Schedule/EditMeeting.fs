@@ -15,8 +15,9 @@ open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.SampleApp.Initialize
 
 
-let getMembers (placement:RolePlacementEntity) = 
+let getMembers date (placement:RolePlacementEntity) = 
     let roleType = placement.RoleTypeId |> enum<RoleTypeId>
+    let previousMeetingIds = Persistence.ClubMeetings.findPreviousIds date
     Persistence.MemberManagement.execQuery (fun context ->
         let attending = 
             query { for clubMember in context.Members do   
@@ -51,7 +52,7 @@ let getMembers (placement:RolePlacementEntity) =
                                 select r } 
                         on (clubMember.Id = request.MemberId) into result
                     for request in result do
-                    select (clubMember, history, request) }            
+                    select (clubMember, history, request) } //if previous = null then None else Some (previous.RoleTypeId |> enum<RoleTypeId>)) }
 
         match roleType with
         | RoleTypeId.Toastmaster -> 
@@ -75,38 +76,57 @@ let getMembers (placement:RolePlacementEntity) =
                     where (history.EligibilityCount >= 3)
                     sortBy history.DateAsTableTopicsMaster
                     thenBy history.DateOfLastFacilitatorRole
-                    select (clubMember, history, request )
+                    select (clubMember, history, request)
                     take 100 }
 
         | RoleTypeId.Evaluator -> 
-            query { for clubMember, history, request  in attending do 
+            query { for clubMember, history, request in attending do 
                     where (history.EligibilityCount >= 3)
                     sortBy history.DateOfLastEvaluation
                     thenBy history.DateOfLastMajorRole
-                    select (clubMember, history, request )
+                    select (clubMember, history, request)
                     take 100 }
 
         | RoleTypeId.JokeMaster
         | RoleTypeId.ClosingThoughtAndGreeter
         | RoleTypeId.OpeningThoughtAndBallotCounter -> 
-            query { for clubMember, history, request  in attending do 
+            query { for clubMember, history, request in attending do 
                     sortBy history.DateOfLastMinorRole
-                    select (clubMember, history, request )
+                    select (clubMember, history, request)
                     take 100 }
 
         | RoleTypeId.ErAhCounter
         | RoleTypeId.Grammarian
         | RoleTypeId.Videographer
         | RoleTypeId.Timer -> 
-            query { for clubMember, history, request  in attending do 
+            query { for clubMember, history, request in attending do 
                     sortBy history.DateOfLastFunctionaryRole
-                    select (clubMember, history, request )
+                    select (clubMember, history, request)
                     take 100 }                
 
-        | _ -> attending
-    )
+        | _ -> attending)
+    |> Seq.map (fun (m,h,r) -> 
+        m,
+        h,
+        r,
+        previousMeetingIds
+        |> Seq.map (fun previousMeetingId ->
+            Persistence.MemberManagement.execQuery (fun context ->                    
+                query { for p in context.RolePlacements do
+                        where (p.MeetingId = previousMeetingId && m.Id = p.MemberId)
+                        sortBy p.RoleTypeId // Greatest role
+                        select p.RoleTypeId })
+            |> Seq.toList
+            |> fun result ->
+                match result with 
+                | [] -> None
+                | item::_ -> Some(item |> enum<RoleTypeId>))
+        |> Seq.toList )
+    |> Seq.toList
+
     
-let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggregate * RoleRequestEntity) seq) = 
+    
+let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggregate * RoleRequestEntity * RoleTypeId option list) seq) = 
     printfn ""
 
     match roleType with
@@ -114,7 +134,7 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
         printfn "#   TMI Id   Name                 Last TM    Last Facilitator Requests"
         printfn "--- -------- -------------------- ---------- ---------------- --------------"
         members 
-        |> Seq.iteri (fun i (m,h,r) ->        
+        |> Seq.iteri (fun i (m,h,r,pr) ->
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
             )
 
@@ -122,7 +142,7 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
         printfn "#   TMI Id   Name                 Last GE    Last Facilitator Requests"
         printfn "--- -------- -------------------- ---------- ---------------- --------------"
         members 
-        |> Seq.iteri (fun i (m,h,r) ->        
+        |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsGeneralEvaluator.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
             )
 
@@ -130,7 +150,7 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
         printfn "#   TMI Id   Name                 Last TTM   Last Facilitator Requests"
         printfn "--- -------- -------------------- ---------- ---------------- --------------"
         members 
-        |> Seq.iteri (fun i (m,h,r) ->        
+        |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsTableTopicsMaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
             )
 
@@ -138,7 +158,7 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
         printfn "#   TMI Id   Name                 Last Eval  Last Facilitator Requests"
         printfn "--- -------- -------------------- ---------- ---------------- --------------"
         members 
-        |> Seq.iteri (fun i (m,h,r) ->        
+        |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateOfLastEvaluation.ToString "MM/dd/yyyy") (h.DateOfLastMajorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
             )
 
@@ -148,7 +168,7 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
         printfn "#   TMI Id   Name                 Last Minor Requests"
         printfn "--- -------- -------------------- ---------- --------------"
         members 
-        |> Seq.iteri (fun i (m,h,r) ->        
+        |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-16s %-10s" i m.ToastmasterId h.DisplayName (h.DateOfLastMinorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
             )
 
@@ -159,17 +179,17 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
         printfn "#   TMI Id   Name                 Last Functionary   Requests"
         printfn "--- -------- -------------------- ------------------ --------------"
         members 
-        |> Seq.iteri (fun i (m,h,r) ->        
+        |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
             )
 
     | _ -> printfn "RoleTypeId unknown"
 
 
-let rec editPlacement (rolePlacementRequestReply:IActorRef) userId (placement:RolePlacementEntity) =
+let editPlacement date (rolePlacementRequestReply:IActorRef) userId (placement:RolePlacementEntity) =
     let rec loop (placement:RolePlacementEntity) = 
-        let roleType = placement.RoleTypeId |> enum<RoleTypeId>
-        let members = getMembers placement
+        let roleType = placement.RoleTypeId |> enum<RoleTypeId> 
+        let members = getMembers date placement 
         members |> displayRoleCandidates roleType
 
         if placement.MemberId <> Guid.Empty then
@@ -197,8 +217,8 @@ let rec editPlacement (rolePlacementRequestReply:IActorRef) userId (placement:Ro
             match Console.ReadLine () |> Int32.TryParse with
             | true, n when n < 0 -> ()
             | true, n when n < members.Length -> 
-                let m,h,r = members |> Seq.skip n |> Seq.head
-                printfn "TODO: You chose: %s" h.DisplayName
+                let m,h,r,pr = members |> Seq.skip n |> Seq.head
+                printfn "You chose: %s" h.DisplayName
                 (h.Id |> MemberId.box, RoleRequestId.Empty)
                 |> RolePlacementCommand.Assign
                 |> envelopWithDefaults
@@ -230,9 +250,24 @@ type -1 for done editing or the index for the item you would like to edit.
     match Console.ReadLine () |> Int32.TryParse with
     | true, -1 -> ()
     | true, n when n < (placements |> Seq.length) -> 
-        placements |> Seq.skip n |> Seq.head |> editPlacement rolePlacementRequestReply userId 
-        loop placements
+        placements |> Seq.skip n |> Seq.head |> editPlacement meeting.Date rolePlacementRequestReply userId 
+        Persistence.RolePlacements.findMeetingPlacements meeting.Id |> List.toSeq |> loop
     | _ -> 
         printfn "Input not understood"
         loop placements
 
+let createMeeting (meetingRequestReplyCreate:IActorRef) userId date =
+    date
+    |> ClubMeetings.ClubMeetingCommand.Create
+    |> envelopWithDefaults
+        (userId)
+        (TransId.create ())
+        (StreamId.create ())
+        (Version.box 0s)
+    |> meetingRequestReplyCreate.Ask
+    |> Async.AwaitTask
+    |> Async.Ignore
+    |> Async.RunSynchronously
+    let meeting = Persistence.ClubMeetings.findByDate date
+    let placements = Persistence.RolePlacements.findMeetingPlacements meeting.Id
+    displayMeeting userId meeting placements 

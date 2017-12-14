@@ -10,10 +10,12 @@ open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Data.Entities
 open ToastmastersRecord.SampleApp.Schedule.PrintMeetings
 open ToastmastersRecord.SampleApp.Schedule.EditMeeting
+open ToastmastersRecord.SampleApp.Schedule.AggregateInformation
 
 open ToastmastersRecord.Actors
 open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.Domain.ClubMeetings
+
 open ToastmastersRecord.SampleApp.Initialize
 
 let processCommands system (actorGroups:ActorGroups) userId = 
@@ -37,12 +39,13 @@ Please make a selection
 2) List meeting details
 3) Edit meeting details
 4) Create new meeting
-5) ...
+5) Calculate member statistics
+6) Ingest messages
+7) Review messages
     """
         match Console.ReadLine () |> Int32.TryParse with
         | true, 0 -> 
             printfn "Exiting"
-            ()
         | true, 1 -> 
             processDate (Persistence.ClubMeetings.fetchByDate 5 >> displayMeetings)
             loop ()
@@ -56,27 +59,25 @@ Please make a selection
             processDate (fun date ->          
                 let meeting = Persistence.ClubMeetings.findByDate date
                 let placements = Persistence.RolePlacements.findMeetingPlacements meeting.Id  
-                editMeeting rolePlacementRequestReply userId meeting placements)
+                editMeeting rolePlacementRequestReply userId meeting placements
+                printfn "Calculating member statistics..."
+                actorGroups |> calculateHistory system userId 
+                printfn "Member statistics calculated"
+                )
             loop ()        
         | true, 4 -> 
-            printfn "Enter the date of the meeeting."
-            match Console.ReadLine () |> DateTime.TryParse with
-            | true, date -> 
-                date
-                |> ClubMeetings.ClubMeetingCommand.Create
-                |> envelopWithDefaults
-                    (userId)
-                    (TransId.create ())
-                    (StreamId.create ())
-                    (Version.box 0s)
-                |> meetingRequestReplyCreate.Ask
-                |> Async.AwaitTask
-                |> Async.Ignore
-                |> Async.RunSynchronously
-                let meeting = Persistence.ClubMeetings.findByDate date
-                let placements = Persistence.RolePlacements.findMeetingPlacements meeting.Id
-                displayMeeting userId meeting placements 
-            | _ -> printfn "Input could not be parsed as a date."            
+            processDate <| createMeeting meetingRequestReplyCreate userId 
+            loop ()
+        | true, 5 -> 
+            printfn "Calculating member statistics..."
+            actorGroups |> calculateHistory system userId 
+            printfn "Member statistics calculated"
+            loop ()
+        | true, 6 -> 
+            printfn "Ingest member messages not implemented."
+            loop ()
+        | true, 7 -> 
+            printfn "Message review not implemented."
             loop ()
         | true, i -> 
             printfn "Number not recognized: %d" i

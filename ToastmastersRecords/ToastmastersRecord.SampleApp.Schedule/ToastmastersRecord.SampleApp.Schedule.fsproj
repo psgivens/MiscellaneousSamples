@@ -57,6 +57,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="PrintMeetings.fs" />
     <Compile Include="EditMeeting.fs" />
+    <Compile Include="AggregateInformation.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

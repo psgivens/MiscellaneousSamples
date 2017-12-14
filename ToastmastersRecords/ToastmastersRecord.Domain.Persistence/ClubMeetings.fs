@@ -34,6 +34,15 @@ let find (userId:UserId) (streamId:StreamId) =
 //    |> fun meetings -> meetings.Include "RolePlacements"
     |> Seq.head
 
+let findPreviousIds (date:System.DateTime) =
+    use context = new ToastmastersEFDbContext () 
+    query { for meeting in context.ClubMeetings do
+            where (meeting.Date < date)
+            sortByDescending meeting.Date
+            select meeting.Id     
+            take 2 }
+    |> Seq.toList
+
 let findByDate (date:System.DateTime) =
     use context = new ToastmastersEFDbContext () 
     query { for meeting in context.ClubMeetings do

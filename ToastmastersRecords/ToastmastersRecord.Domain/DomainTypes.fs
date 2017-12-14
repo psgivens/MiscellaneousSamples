@@ -12,15 +12,15 @@ type RoleRequestId = FsGuidType
 // These values are mirrored in the database
 type RoleTypeId = 
     | Toastmaster = 1
-    | GeneralEvaluator = 2
-    | TableTopicsMaster = 3
-    | Evaluator = 4
-    | Speaker = 5
-    | OpeningThoughtAndBallotCounter = 6
-    | ClosingThoughtAndGreeter = 7
-    | JokeMaster = 8
-    | ErAhCounter = 9
-    | Grammarian = 10
+    | TableTopicsMaster = 2
+    | GeneralEvaluator = 3    
+    | Speaker = 4
+    | Evaluator = 5    
+    | JokeMaster = 6
+    | OpeningThoughtAndBallotCounter = 7
+    | ClosingThoughtAndGreeter = 8    
+    | Grammarian = 9
+    | ErAhCounter = 10    
     | Timer = 11
     | Videographer = 12
 
