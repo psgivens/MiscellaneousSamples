@@ -15,9 +15,9 @@ open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.SampleApp.Initialize
 
 
-let getMembers date (placement:RolePlacementEntity) = 
+let getMembers (previousMeetingInfos:MeetingId seq) (placement:RolePlacementEntity) = 
     let roleType = placement.RoleTypeId |> enum<RoleTypeId>
-    let previousMeetingIds = Persistence.ClubMeetings.findPreviousIds date
+    
     Persistence.MemberManagement.execQuery (fun context ->
         let attending = 
             query { for clubMember in context.Members do   
@@ -109,11 +109,11 @@ let getMembers date (placement:RolePlacementEntity) =
         m,
         h,
         r,
-        previousMeetingIds
-        |> Seq.map (fun previousMeetingId ->
+        previousMeetingInfos
+        |> Seq.map (fun (MeetingId.Id meetingId) ->
             Persistence.MemberManagement.execQuery (fun context ->                    
                 query { for p in context.RolePlacements do
-                        where (p.MeetingId = previousMeetingId && m.Id = p.MemberId)
+                        where (p.MeetingId = meetingId && m.Id = p.MemberId)
                         sortBy p.RoleTypeId // Greatest role
                         select p.RoleTypeId })
             |> Seq.toList
@@ -126,37 +126,73 @@ let getMembers date (placement:RolePlacementEntity) =
 
     
     
-let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggregate * RoleRequestEntity * RoleTypeId option list) seq) = 
+let displayRoleCandidates (previousDates:DateTime seq) roleType (members:(MemberEntity * MemberHistoryAggregate * RoleRequestEntity * RoleTypeId option list) seq) = 
     printfn ""
-
+    let datesString = String.Join (" ", previousDates |> Seq.map (fun d -> d.ToString "MM/dd/yyyy"))
+    let printRoles roles = 
+        roles
+        |> Seq.map (fun r -> 
+            match r with
+            | None -> "         "
+            | Some role -> 
+                ((role.ToString ()).PadRight 9).Substring (0, 9))
+        |> fun s -> String.Join (" ", s)
+    let datesHr = String.Join (" ", previousDates |> Seq.map (fun d -> "----------"))
     match roleType with
     | RoleTypeId.Toastmaster -> 
-        printfn "#   TMI Id   Name                 Last TM    Last Facilitator Requests"
-        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        printfn "#   TMI Id   Name                 Last TM    Last Facilitator Requests       %s" datesString
+        printfn "--- -------- -------------------- ---------- ---------------- -------------- %s" datesHr
         members 
         |> Seq.iteri (fun i (m,h,r,pr) ->
-            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            printfn "%-3d %-8d %-20s %-10s %-16s %14s %s" 
+                i 
+                m.ToastmasterId 
+                h.DisplayName 
+                (h.DateAsToastmaster.ToString "MM/dd/yyyy") 
+                (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") 
+                (if r <> null then r.Brief else "") 
+                (printRoles pr)
             )
 
     | RoleTypeId.GeneralEvaluator -> 
-        printfn "#   TMI Id   Name                 Last GE    Last Facilitator Requests"
-        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        printfn "#   TMI Id   Name                 Last GE    Last Facilitator Requests       %s" datesString
+        printfn "--- -------- -------------------- ---------- ---------------- -------------- %s" datesHr
         members 
         |> Seq.iteri (fun i (m,h,r,pr) ->        
-            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsGeneralEvaluator.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            printfn "%-3d %-8d %-20s %-10s %-16s %14s %s" 
+                i m.ToastmasterId 
+                h.DisplayName 
+                (h.DateAsGeneralEvaluator.ToString "MM/dd/yyyy") 
+                (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") 
+                (if r <> null then r.Brief else "") 
+                (printRoles pr)
             )
 
     | RoleTypeId.TableTopicsMaster -> 
-        printfn "#   TMI Id   Name                 Last TTM   Last Facilitator Requests"
-        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        printfn "#   TMI Id   Name                 Last TTM   Last Facilitator Requests       %s" datesString
+        printfn "--- -------- -------------------- ---------- ---------------- -------------- %s" datesHr
         members 
         |> Seq.iteri (fun i (m,h,r,pr) ->        
-            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsTableTopicsMaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" 
+                i 
+                m.ToastmasterId 
+                h.DisplayName 
+                (h.DateAsTableTopicsMaster.ToString "MM/dd/yyyy") 
+                (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") 
+                (if r <> null then r.Brief else "")
             )
 
     | RoleTypeId.Evaluator -> 
-        printfn "#   TMI Id   Name                 Last Eval  Last Facilitator Requests"
-        printfn "--- -------- -------------------- ---------- ---------------- --------------"
+        printfn "#   TMI Id   Name                 Last Eval  Last Major       Requests       %s" datesString
+        printfn "--- -------- -------------------- ---------- ---------------- -------------- %s" datesHr
+        members 
+        |> Seq.iteri (fun i (m,h,r,pr) ->        
+            printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateOfLastEvaluation.ToString "MM/dd/yyyy") (h.DateOfLastMajorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
+            )
+
+    | RoleTypeId.Speaker -> 
+        printfn "#   TMI Id   Name                 Last Eval  Last Major       Requests       %s" datesString
+        printfn "--- -------- -------------------- ---------- ---------------- -------------- %s" datesHr
         members 
         |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateOfLastEvaluation.ToString "MM/dd/yyyy") (h.DateOfLastMajorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
@@ -165,8 +201,8 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
     | RoleTypeId.JokeMaster
     | RoleTypeId.ClosingThoughtAndGreeter
     | RoleTypeId.OpeningThoughtAndBallotCounter -> 
-        printfn "#   TMI Id   Name                 Last Minor Requests"
-        printfn "--- -------- -------------------- ---------- --------------"
+        printfn "#   TMI Id   Name                 Last Minor Requests       %s" datesString
+        printfn "--- -------- -------------------- ---------- -------------- %s" datesHr
         members 
         |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-16s %-10s" i m.ToastmasterId h.DisplayName (h.DateOfLastMinorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
@@ -176,8 +212,8 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
     | RoleTypeId.Grammarian
     | RoleTypeId.Videographer
     | RoleTypeId.Timer -> 
-        printfn "#   TMI Id   Name                 Last Functionary   Requests"
-        printfn "--- -------- -------------------- ------------------ --------------"
+        printfn "#   TMI Id   Name                 Last Functionary   Requests       %s" datesString
+        printfn "--- -------- -------------------- ------------------ -------------- %s" datesHr
         members 
         |> Seq.iteri (fun i (m,h,r,pr) ->        
             printfn "%-3d %-8d %-20s %-10s %-16s %s" i m.ToastmasterId h.DisplayName (h.DateAsToastmaster.ToString "MM/dd/yyyy") (h.DateOfLastFacilitatorRole.ToString "MM/dd/yyyy") (if r <> null then r.Brief else "")
@@ -189,8 +225,9 @@ let displayRoleCandidates roleType (members:(MemberEntity * MemberHistoryAggrega
 let editPlacement date (rolePlacementRequestReply:IActorRef) userId (placement:RolePlacementEntity) =
     let rec loop (placement:RolePlacementEntity) = 
         let roleType = placement.RoleTypeId |> enum<RoleTypeId> 
-        let members = getMembers date placement 
-        members |> displayRoleCandidates roleType
+        let previousMeetingInfos = Persistence.ClubMeetings.findPreviousIds date
+        let members = getMembers (previousMeetingInfos |> Seq.map fst) placement 
+        members |> displayRoleCandidates (previousMeetingInfos |> Seq.map snd) roleType
 
         if placement.MemberId <> Guid.Empty then
             let history = Persistence.MemberManagement.getMemberHistory placement.MemberId

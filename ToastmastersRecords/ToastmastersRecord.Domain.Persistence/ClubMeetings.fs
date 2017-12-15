@@ -39,8 +39,9 @@ let findPreviousIds (date:System.DateTime) =
     query { for meeting in context.ClubMeetings do
             where (meeting.Date < date)
             sortByDescending meeting.Date
-            select meeting.Id     
+            select (meeting.Id, meeting.Date)
             take 2 }
+    |> Seq.map (fun (g, d) -> g |> MeetingId.box, d)
     |> Seq.toList
 
 let findByDate (date:System.DateTime) =
