@@ -56,7 +56,21 @@ let persist (userId:UserId) (streamId:StreamId) (state:MemberManagementState opt
          ) |> ignore
         printfn "Persist: (%A, %A, %A)" details.DisplayName details.Awards details.ClubMemberSince
     | _, Option.None -> context.Members.Remove entity |> ignore        
-    | _, Some(item) -> entity.Name <- item.Details.Name
+    | _, Some(item) -> 
+        let details = item.Details
+        entity.Name <- details.Name
+        entity.IsActive <- (details.PaidStatus = "paid")
+        entity.ToastmasterId <- TMMemberId.unbox details.ToastmasterId
+        entity.Name <- details.Name
+        entity.Awards <- details.Awards
+        entity.Email <- details.Email
+        entity.HomePhone <- details.HomePhone
+        entity.MobilePhone <- details.MobilePhone
+        entity.PaidUntil <- details.PaidUntil
+        entity.ClubMemberSince <- details.ClubMemberSince
+        entity.OriginalJoinDate <- details.OriginalJoinDate
+        entity.PaidStatus <- details.PaidStatus
+        entity.CurrentPosition <- details.CurrentPosition                
     context.SaveChanges () |> ignore
     
 let persistHistory (userId:UserId) (streamId:StreamId) (state:MemberHistoryState) =
@@ -99,6 +113,10 @@ let execQuery (q:ToastmastersEFDbContext -> System.Linq.IQueryable<'a>) =
 let find (userId:UserId) (streamId:StreamId) =
     use context = new ToastmastersEFDbContext () 
     context.Members.Find (StreamId.unbox streamId)
+
+let findHistory (userId:UserId) (streamId:StreamId) =
+    use context = new ToastmastersEFDbContext () 
+    context.MemberHistories.Find (StreamId.unbox streamId)
 
 let findMemberByName name =
     use context = new ToastmastersEFDbContext () 

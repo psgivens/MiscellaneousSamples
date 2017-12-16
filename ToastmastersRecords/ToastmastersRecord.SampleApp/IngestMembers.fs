@@ -13,10 +13,10 @@ open ToastmastersRecord.Actors
 open ToastmastersRecord.SampleApp.Infrastructure
 open ToastmastersRecord.SampleApp.Initialize
 
-let ingestMembers system userId actorGroups =
+let ingestMembers system userId actorGroups (fileName:string) =
     let memberRequestReply = RequestReplyActor.spawnRequestReplyActor<MemberManagementCommand,MemberManagementEvent> system "memberManagement" actorGroups.MemberManagementActors
     
-    let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171126.csv").Cache()
+    let roster = CsvFile.Load(fileName).Cache()
     
     // Map CSV rows to Member Details
     roster.Rows 
@@ -55,15 +55,16 @@ let ingestMembers system userId actorGroups =
                 (TMMemberId.unbox memberDetails.ToastmasterId)
 
             let clubMember = Persistence.MemberManagement.findMemberByToastmasterId memberDetails.ToastmasterId
-
+            let streamId, cmd = 
+                match clubMember with
+                | null -> StreamId.create (), MemberManagementCommand.Create
+                | _ -> clubMember.Id |> StreamId.box, MemberManagementCommand.Update
             do! memberDetails
-                |> (if clubMember = null 
-                    then MemberManagementCommand.Create 
-                    else MemberManagementCommand.Update)
+                |> cmd
                 |> envelopWithDefaults
                     (userId)
                     (TransId.create ())
-                    (StreamId.create ())
+                    (streamId)
                     (Version.box 0s)
                 |> memberRequestReply.Ask
                 |> Async.AwaitTask

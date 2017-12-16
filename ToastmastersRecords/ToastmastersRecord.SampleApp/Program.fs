@@ -38,7 +38,8 @@ let main argv =
     // Sample data
     let userId = Persistence.Users.findUserId "ToastmastersRecord.SampleApp.Initialize" 
     
-    actorGroups |> ingestMembers system userId    
+    let clubRosterFile = "C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171126.csv"
+    ingestMembers system userId actorGroups clubRosterFile
     actorGroups |> ingestSpeechCount system userId
 
     actorGroups |> ingestMemberMessages system userId 

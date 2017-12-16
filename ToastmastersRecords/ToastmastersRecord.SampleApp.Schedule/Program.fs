@@ -17,6 +17,10 @@ open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.Domain.ClubMeetings
 
 open ToastmastersRecord.SampleApp.Initialize
+open ToastmastersRecord.SampleApp.IngestMembers
+
+open ToastmastersRecord.SampleApp.Schedule.IngestMessages
+open ToastmastersRecord.SampleApp.Schedule.MessageReview
 
 let processCommands system (actorGroups:ActorGroups) userId = 
     // Process Create command, wait for Completed event
@@ -42,6 +46,7 @@ Please make a selection
 5) Calculate member statistics
 6) Ingest messages
 7) Review messages
+8) Ingest Club Roster from Toastmasters.org
     """
         match Console.ReadLine () |> Int32.TryParse with
         | true, 0 -> 
@@ -74,10 +79,23 @@ Please make a selection
             printfn "Member statistics calculated"
             loop ()
         | true, 6 -> 
-            printfn "Ingest member messages not implemented."
+            printfn "Please enter the member messages file name"
+            let fileName = Console.ReadLine ()
+            if fileName |> IO.File.Exists 
+            then fileName |> ingestMemberMessages system userId actorGroups                
+            else printfn "File not found"
             loop ()
         | true, 7 -> 
+            let messages = Persistence.MemberMessages.fetch ()
+            messages |> Seq.iter (fun message -> displayMessage userId message)
             printfn "Message review not implemented."
+            loop ()
+        | true, 8 ->
+            printfn "Please enter the file name"
+            let fileName = Console.ReadLine ()
+            if fileName |> IO.File.Exists 
+            then fileName |> ingestMembers system userId actorGroups                
+            else printfn "File not found"
             loop ()
         | true, i -> 
             printfn "Number not recognized: %d" i
