@@ -28,35 +28,38 @@ let persist (userId:UserId) (streamId:StreamId) (state:Envelope<MemberMessageCom
     | _, Some(item) -> ()
     context.SaveChanges () |> ignore
 
-let fetch () =
-    use context = new ToastmastersEFDbContext () 
+let fetch date =
+    use context = new ToastmastersEFDbContext ()
     let messages =
         query {
             for message in context.Messages do
+            where (message.MessageDate >= date)
             join history in context.MemberHistories
                 on (message.MemberId = history.Id)
-            select (message.Id, history.DisplayName, message.MessageDate, message.Message)}
-        |> Seq.map (fun (id, name, date, message) ->
-            id, name, date, message,
+            select (message.Id, message.MemberId, history.DisplayName, message.MessageDate, message.Message)}
+        |> Seq.map (fun (msgId, memId, name, date, message) ->
+            msgId, memId, name, date, message,
             query {
                 for dayOff in context.DaysOff do
-                where (dayOff.MessageId = id)
+                where (dayOff.MessageId = msgId)
                 join meeting in context.ClubMeetings
                     on (dayOff.MeetingId = meeting.Id)
                 select (meeting.Id, meeting.Date) }
             |> Seq.map (fun (id, date) -> id |> MeetingId.box, date)
             |> Seq.toList)
-        |> Seq.map (fun (id, name, date, message, daysOff) ->
-            id, name, date, message, daysOff,
+        |> Seq.map (fun (msgId, memId, name, date, message, daysOff) ->
+            msgId, memId, name, date, message, daysOff,
             query {
                 for request in context.RoleRequests do
-                where (request.MessageId = id)
-                select (request.Id, request.Brief) })
-        |> Seq.map (fun (id, name, date, message, daysOff, requests) ->
-            id, name, date, message, daysOff, 
+                where (request.MessageId = msgId)
+                select (request.Id, request.Brief, request.State) })
+        |> Seq.map (fun (msgId, memId, name, date, message, daysOff, requests) ->
+            msgId, memId, name, date, message, daysOff, 
             requests
-            |> Seq.map (fun (id, brief) ->
+            |> Seq.map (fun (id, brief, state) ->
+                id |> RoleRequestId.box,
                 brief,
+                state,
                 query {
                     for requestMeeting in context.RoleRequestMeetings do
                     where (requestMeeting.RoleRequestId = id)
@@ -66,8 +69,8 @@ let fetch () =
                 |> Seq.map (fun (id, date) -> id |> MeetingId.box, date)
                 |> Seq.toList)
             |> Seq.toList)
-        |> Seq.map (fun (id, name, date, message, daysOff, requests) ->
-            (id |> MessageId.box, name, date, message), daysOff, requests)
+        |> Seq.map (fun (msgId, memId, name, date, message, daysOff, requests) ->
+            (msgId |> MessageId.box, memId |> MemberId.box, name, date, message), daysOff, requests)
         |> Seq.toList
     messages
 

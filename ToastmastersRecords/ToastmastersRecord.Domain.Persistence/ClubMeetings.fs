@@ -60,3 +60,12 @@ let fetchByDate count' (date:System.DateTime) =
             take count' }    
     |> Seq.toList
 
+let fetchOpenMeetings () =
+    use context = new ToastmastersEFDbContext () 
+    let pending = ClubMeetingStateValue.Pending |> int
+    query { for meeting in context.ClubMeetings do
+            where (meeting.State = pending)
+            sortBy meeting.Date
+            select meeting }    
+    |> Seq.toList
+

@@ -60,6 +60,7 @@
     <Compile Include="AggregateInformation.fs" />
     <Compile Include="IngestMessages.fs" />
     <Compile Include="MessageReview.fs" />
+    <Compile Include="MemberManagement.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

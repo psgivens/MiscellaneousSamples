@@ -6,8 +6,8 @@ open ToastmastersRecord.Domain.DomainTypes
 open ToastmastersRecord.Data.Entities
 open ToastmastersRecord.Domain
 
-let displayMessage userId (messageInfo:(MessageId * string * DateTime * string) * (MeetingId * DateTime) list * (string * ((MeetingId * DateTime) list)) list) = 
-    let (mid, name, date, message), daysOff, requests = messageInfo
+let displayMessage userId (messageInfo:(MessageId * MemberId * string * DateTime * string) * (MeetingId * DateTime) list * (RoleRequestId * string * int * ((MeetingId * DateTime) list)) list) = 
+    let (msgId, memId, name, date, message), daysOff, requests = messageInfo
     printfn """
 %s said:
 %s
@@ -31,18 +31,13 @@ let displayMessage userId (messageInfo:(MessageId * string * DateTime * string) 
     printfn "Instructions"
     printfn "----------"
     requests 
-    |> Seq.iter (fun r ->
-        r |> fst |> printfn "%s"
+    |> Seq.iter (fun (id, description, state, r) ->
+        printfn "`%s` has state %d" description state
         r 
-        |> snd 
         |> Seq.iter (fun days ->
             days
             |> snd
             |> fun d -> d.ToString "MMM dd, yyyy"
             |> printfn "    %s"))
 
-    printfn """
-Which dates would you like to work with? 
-List all indices, comma delimitated.
--1 to end message.
-"""
+    printfn "#####################################################"

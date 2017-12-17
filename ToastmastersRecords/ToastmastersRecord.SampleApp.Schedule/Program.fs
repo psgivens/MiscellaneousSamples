@@ -15,12 +15,15 @@ open ToastmastersRecord.SampleApp.Schedule.AggregateInformation
 open ToastmastersRecord.Actors
 open ToastmastersRecord.Domain.RolePlacements
 open ToastmastersRecord.Domain.ClubMeetings
+open ToastmastersRecord.Domain.MemberMessages
+open ToastmastersRecord.Domain.RoleRequests
 
 open ToastmastersRecord.SampleApp.Initialize
 open ToastmastersRecord.SampleApp.IngestMembers
 
 open ToastmastersRecord.SampleApp.Schedule.IngestMessages
 open ToastmastersRecord.SampleApp.Schedule.MessageReview
+open ToastmastersRecord.SampleApp.Schedule.MemberManagement
 
 let processCommands system (actorGroups:ActorGroups) userId = 
     // Process Create command, wait for Completed event
@@ -35,6 +38,14 @@ let processCommands system (actorGroups:ActorGroups) userId =
             (fun x -> x.Item = Initialized)
             system "clubMeeting_initialized" actorGroups.ClubMeetingActors
 
+    let dayOffsRequestReply = 
+        RequestReplyActor.spawnRequestReplyActor<DayOffRequestCommand,unit> 
+            system "dayOffRequest_ingest" actorGroups.DayOffActors
+
+    let roleRequestsRequestReplyCreated = 
+        RequestReplyActor.spawnRequestReplyActor<RoleRequestCommand,RoleRequestEvent> 
+            system "RoleRequest_ingest" actorGroups.RoleRequestActors
+
     let rec loop () = 
         printfn """
 Please make a selection
@@ -47,6 +58,7 @@ Please make a selection
 6) Ingest messages
 7) Review messages
 8) Ingest Club Roster from Toastmasters.org
+9) Add member
     """
         match Console.ReadLine () |> Int32.TryParse with
         | true, 0 -> 
@@ -86,16 +98,133 @@ Please make a selection
             else printfn "File not found"
             loop ()
         | true, 7 -> 
-            let messages = Persistence.MemberMessages.fetch ()
-            messages |> Seq.iter (fun message -> displayMessage userId message)
+            let messages = Persistence.MemberMessages.fetch ("12/1/2017" |> DateTime.Parse)
+            let unscheduledMeetings = 
+                Persistence.ClubMeetings.fetchOpenMeetings ()
+                |> List.toArray
+            let interpret = interpret "NA" "MMM dd, yyyy"
+            unscheduledMeetings
+            |> Array.iteri (fun i meeting ->
+                printfn "%d) %s" i (meeting.Date |> interpret))
+            messages 
+            |> Seq.map (fun message ->
+                let _, daysOff, _ = message
+                message, 
+                unscheduledMeetings
+                |> Array.filter (fun meeting ->
+                    daysOff
+                    |> List.map snd
+                    |> List.contains meeting.Date
+                    |> not))
+            |> Seq.map (fun (message, unscheduled) -> 
+                let rec procmessage messageInfo (unscheduled':ClubMeetingEntity [])=                                         
+                    displayMessage userId messageInfo
+
+                    let (msgId, memId, name, date, message), daysOff, requests = messageInfo
+
+                    printfn "Unscheduled meetings"
+                    unscheduled'
+                    |> Array.iteri (fun i meeting ->
+                        printfn "%d) %s" i (meeting.Date |> interpret))
+                    |> ignore
+
+                    printfn "Which meetings will you NOT attend?"
+                    match Console.ReadLine () |> Int32.TryParse with
+                    | true, n when n < unscheduled'.Length ->
+                        let meeting = unscheduled'.[n]
+                        (memId, meeting.Id |> MeetingId.box, msgId)
+                        |> DayOffRequestCommand.Create
+                        |> envelopWithDefaults
+                            (userId)
+                            (TransId.create ())
+                            (StreamId.create ())
+                            (Version.box 0s)
+                        |> dayOffsRequestReply .Ask
+                        |> Async.AwaitTask
+                        |> Async.Ignore
+                        |> Async.RunSynchronously
+
+                        unscheduled'
+                        |> Array.filter (fun m -> m.Id = meeting.Id |> not)
+                        |> procmessage messageInfo
+
+                    | _ -> 
+                        printfn "input not recognized"
+                        messageInfo, unscheduled'
+
+                procmessage message unscheduled
+                )
+            |> Seq.map (fun (message, unscheduled) -> 
+                let rec procmessage messageInfo =
+                    displayMessage userId messageInfo
+
+                    let (msgId, memId, name, date, message), daysOff, requests = messageInfo
+
+                    printfn "Unscheduled meetings"
+                    unscheduled
+                    |> Array.iteri (fun i meeting ->
+                        printfn "%d) %s" i (meeting.Date |> interpret))
+                    |> ignore
+
+                    printfn "Would you like to request roles? 1 for yes"
+                    match Console.ReadLine () |> Int32.TryParse with
+                    | true, 1 ->
+                        //let meeting = unscheduled'.[n]
+
+                        printfn "What description is this request?"
+                        let description = Console.ReadLine ()
+                        printfn "Which meetings would you like to request? (-1 for none)"
+                        let response = Console.ReadLine ()
+                        if response = "-1" then ()
+                        elif response = "" then ()
+                        else
+                            let selected =
+                                response.Split ','
+                                |> Seq.map (fun r ->
+                                    let i = r.Trim () |> Int32.Parse
+                                    unscheduled.[i].Id
+                                    |> MemberId.box
+                                    )
+                                |> Seq.toList                    
+
+
+                            (memId, msgId, description, selected)
+                            |> RoleRequestCommand.Request 
+                            |> envelopWithDefaults
+                                (userId)
+                                (TransId.create ())
+                                (StreamId.create ())
+                                (Version.box 0s)
+                            |> roleRequestsRequestReplyCreated .Ask
+                            |> Async.AwaitTask
+                            |> Async.Ignore
+                            |> Async.RunSynchronously
+
+                            procmessage messageInfo 
+
+                    | _ -> printfn "input not recognized"
+
+                procmessage message 
+                )
+
+            |> Seq.toList
+            |> ignore
             printfn "Message review not implemented."
             loop ()
         | true, 8 ->
-            printfn "Please enter the file name"
+            printfn "Please enter the file name for the member roster"
             let fileName = Console.ReadLine ()
             if fileName |> IO.File.Exists 
             then fileName |> ingestMembers system userId actorGroups                
             else printfn "File not found"
+            loop ()
+        | true, 9 ->
+            printfn "Please enter the name of the member"
+            match Console.ReadLine () with
+            | empty when empty |> String.IsNullOrWhiteSpace -> 
+                printfn "Nothing entered"
+            | name -> 
+                createMember system userId actorGroups name  
             loop ()
         | true, i -> 
             printfn "Number not recognized: %d" i
