@@ -20,6 +20,7 @@ open ToastmastersRecord.Domain.RoleRequests
 
 open ToastmastersRecord.SampleApp.Initialize
 open ToastmastersRecord.SampleApp.IngestMembers
+open ToastmastersRecord.SampleApp.IngestMembers
 
 open ToastmastersRecord.SampleApp.Schedule.IngestMessages
 open ToastmastersRecord.SampleApp.Schedule.MessageReview
@@ -59,6 +60,7 @@ Please make a selection
 7) Review messages
 8) Ingest Club Roster from Toastmasters.org
 9) Add member
+10) Ingest confirmed speech counts
     """
         match Console.ReadLine () |> Int32.TryParse with
         | true, 0 -> 
@@ -110,10 +112,15 @@ Please make a selection
         | true, 9 ->
             printfn "Please enter the name of the member"
             match Console.ReadLine () with
-            | empty when empty |> String.IsNullOrWhiteSpace -> 
-                printfn "Nothing entered"
+            | empty when empty |> String.IsNullOrWhiteSpace -> printfn "Nothing entered"
             | name -> 
                 createMember system userId actorGroups name  
+            loop ()
+        | true, 10 ->        
+            printfn "What file contains the member ingestions?"
+            match Console.ReadLine () with
+            | empty when empty |> String.IsNullOrWhiteSpace -> printfn "Nothing entered"
+            | fileName -> ingestSpeechCount system userId fileName actorGroups            
             loop ()
         | true, i -> 
             printfn "Number not recognized: %d" i

@@ -82,8 +82,8 @@ let ingestMembers system userId actorGroups (fileName:string) =
     // Unsubscribe and stop the actor
     memberRequestReply <! "Unsubscribe"
 
-let ingestSpeechCount system userId (actorGroups:ActorGroups) = 
-    let roster = CsvFile.Load("C:\Users\Phillip Givens\OneDrive\Toastmasters\ConfirmedSpeechCount.csv").Cache()
+let ingestSpeechCount system userId (fileName:string) (actorGroups:ActorGroups) = 
+    let roster = CsvFile.Load(fileName).Cache()
     
     roster.Rows 
     |> Seq.iter (fun row ->

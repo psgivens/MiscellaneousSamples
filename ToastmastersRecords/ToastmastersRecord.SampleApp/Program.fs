@@ -40,7 +40,7 @@ let main argv =
     
     let clubRosterFile = "C:\Users\Phillip Givens\OneDrive\Toastmasters\Club-Roster20171126.csv"
     ingestMembers system userId actorGroups clubRosterFile
-    actorGroups |> ingestSpeechCount system userId
+    actorGroups |> ingestSpeechCount system userId "C:\Users\Phillip Givens\OneDrive\Toastmasters\ConfirmedSpeechCount.csv"
 
     actorGroups |> ingestMemberMessages system userId 
     actorGroups |> ingestMeetings system userId

@@ -99,13 +99,21 @@ let reviewMessages userId (dayOffsRequestReply:IActorRef) (roleRequestsRequestRe
                 |> Async.Ignore
                 |> Async.RunSynchronously
 
+                let m = unscheduled' |> Array.find (fun m -> m.Id = meeting.Id)
+                let messageInfo' = 
+                    (msgId, memId, name, date, message),
+                    (m.Id |> MeetingId.box, m.Date)::daysOff,
+                    requests
+
                 unscheduled'
                 |> Array.filter (fun m -> m.Id = meeting.Id |> not)
-                |> procmessage messageInfo
+                |> procmessage messageInfo'
 
             | _ -> 
                 printfn "input not recognized"
                 messageInfo, unscheduled'
+
+        
 
         procmessage message unscheduled)
 
@@ -150,7 +158,11 @@ let reviewMessages userId (dayOffsRequestReply:IActorRef) (roleRequestsRequestRe
                 |> Async.Ignore
                 |> Async.RunSynchronously
 
-                procmessage messageInfo 
+                let messageInfo' = (msgId, memId, name, date, message), daysOff, requests
+
+                // TODO: Build requests 
+
+                procmessage messageInfo'
 
         procmessage message)
     |> Seq.toList
