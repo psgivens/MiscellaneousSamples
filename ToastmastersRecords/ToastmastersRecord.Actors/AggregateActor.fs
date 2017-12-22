@@ -16,24 +16,6 @@ let create<'TState, 'TCommand, 'TEvent>
         handle:CommandHandlers<'TEvent, Version> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<Version>,
         persist:UserId -> StreamId -> 'TState option -> unit) =
 
-    let getState states streamId =
-        match states |> Map.tryFind streamId with
-        | Some values -> values
-        | None -> 
-            let events = 
-                store.GetEvents streamId 
-                // Crudely remove concurrency errors
-                // TODO: Devise error correction mechanism
-                |> List.distinctBy (fun e -> e.Version)
-                
-            let version = 
-                if events |> List.isEmpty then Version.box 0s
-                else events |> List.last |> (fun e -> e.Version)
-
-            // Build current state
-            let state = buildState None (events |> List.map unpack)
-            state, version
-
     let raiseVersioned (self:IActorRef) cmdenv (version:Version) event =
         let newVersion = incrementVersion version
         // publish new event
@@ -48,20 +30,15 @@ let create<'TState, 'TCommand, 'TEvent>
         envelope |> self.Tell        
         newVersion
     
-    let handleCommand states self cmdenv =
-        let state, version = getState states cmdenv.StreamId
-
+    let handleCommand (state, version) self cmdenv =
         cmdenv
         |> handle (CommandHandlers <| raiseVersioned self cmdenv) state
         |> Handler.Run version
         |> Async.Ignore
         |> Async.Start
+        (state, version)
 
-        states 
-
-    let processEvent states envelope = 
-        let state, version = getState states envelope.StreamId
-              
+    let processEvent (state, version) envelope =               
         // Build current state
         let state' = buildState state [envelope.Item]
 
@@ -73,20 +50,62 @@ let create<'TState, 'TCommand, 'TEvent>
                 
         eventSubject <! envelope
 
-        // TODO: Create timer for expiring cache
-        states |> Map.add envelope.StreamId (state', envelope.Version)
-    
-    fun (mailbox:Actor<obj>) ->
-        let rec loop states = actor {
+        (state', envelope.Version)
+
+    let child streamId (mailbox:Actor<obj>) =
+        let getState streamId =
+            let events = 
+                store.GetEvents streamId 
+                // Crudely remove concurrency errors
+                // TODO: Devise error correction mechanism
+                |> List.distinctBy (fun e -> e.Version)
+                
+            let version = 
+                if events |> List.isEmpty then Version.box 0s
+                else events |> List.last |> (fun e -> e.Version)
+
+            // Build current state
+            let state = buildState None (events |> List.map unpack)
+            state, version
+
+        let rec loop stateAndVersion = actor {
             let! msg = mailbox.Receive ()
             return! 
                 match msg with 
-                | :? Envelope<'TCommand> as cmdenv -> cmdenv |> handleCommand states mailbox.Self 
-                | :? Envelope<'TEvent> as envelope -> envelope |> processEvent states 
-                | _ -> states
+                | :? Envelope<'TCommand> as cmdenv -> cmdenv |> handleCommand stateAndVersion mailbox.Self 
+                | :? Envelope<'TEvent> as evtenv ->   evtenv |> processEvent stateAndVersion
+                | _ -> stateAndVersion
+                |> loop
+            }
+            
+        loop <| getState streamId
+    
+    fun (mailbox:Actor<obj>) ->
+        let rec loop children = actor {
+            let! msg = mailbox.Receive ()
+
+            let getChild streamId =
+                match children |> Map.tryFind streamId with
+                | Some actor' -> (children,actor')
+                | None ->   
+                    let actorName = mailbox.Self.Path.Parent.Name + "_" + (streamId.ToString ())
+                    let actor' = spawn mailbox actorName <| child streamId                                        
+                    // TODO: Create timer for expiring cache
+                    children |> Map.add streamId actor', actor'
+
+            let forward env =
+                let children', child = getChild env.StreamId
+                child.Forward msg
+                children'
+
+            return! 
+                match msg with 
+                | :? Envelope<'TCommand> as env -> forward env
+                | :? Envelope<'TEvent> as env -> forward env
+                | _ -> children
                 |> loop
         }
-        loop Map.empty<StreamId, 'TState option * Version>
+        loop Map.empty<StreamId, IActorRef>
 
 
 
