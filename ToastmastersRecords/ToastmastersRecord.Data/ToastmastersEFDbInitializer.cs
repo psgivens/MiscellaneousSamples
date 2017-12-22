@@ -37,7 +37,7 @@ namespace ToastmastersRecord.Data {
                 new RoleTypeEntity { Id=2, Classification="Facilitator", MinimumSpeechCount=3, Title="Table Topics Master" },
                 new RoleTypeEntity { Id=3, Classification="Facilitator", MinimumSpeechCount=4, Title="General Evaluator" },
                 new RoleTypeEntity { Id=4, Classification="Prominant", MinimumSpeechCount=0, Title="Speaker" },
-                new RoleTypeEntity { Id=5, Classification="Prominant", MinimumSpeechCount=0, Title="Evaluator" },
+                new RoleTypeEntity { Id=5, Classification="Prominant", MinimumSpeechCount=1, Title="Evaluator" },
                 new RoleTypeEntity { Id=6, Classification="Ancilliary", MinimumSpeechCount=0, Title="Joke Master" },
                 new RoleTypeEntity { Id=7, Classification="Ancilliary", MinimumSpeechCount=0, Title="Opening Thought and Ballot Counter" },
                 new RoleTypeEntity { Id=8, Classification="Ancilliary", MinimumSpeechCount=0, Title="Closing Thought and Greeter" },

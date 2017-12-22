@@ -30,29 +30,32 @@ let create<'TState, 'TCommand, 'TEvent>
         envelope |> self.Tell        
         newVersion
     
-    let handleCommand (state, version) self cmdenv =
-        cmdenv
-        |> handle (CommandHandlers <| raiseVersioned self cmdenv) state
-        |> Handler.Run version
-        |> Async.Ignore
-        |> Async.Start
-        (state, version)
-
-    let processEvent (state, version) envelope =               
-        // Build current state
-        let state' = buildState state [envelope.Item]
-
-        // Command side persistence, record the event
-        store.AppendEvent envelope
-
-        // Query side persistence, record the state
-        persist envelope.UserId envelope.StreamId state'
-                
-        eventSubject <! envelope
-
-        (state', envelope.Version)
 
     let child streamId (mailbox:Actor<obj>) =
+        let handleCommand (state, version) cmdenv = 
+            async {
+                do! cmdenv
+                    |> handle (CommandHandlers <| raiseVersioned mailbox.Self cmdenv) state
+                    |> Handler.Run version
+                    |> Async.Ignore
+
+                mailbox.Self <! "Finished"
+            } |> Async.Start
+
+        let processEvent (state, version) envelope =
+            // Build current state
+            let state' = buildState state [envelope.Item]
+
+            // Command side persistence, record the event
+            store.AppendEvent envelope
+
+            // Query side persistence, record the state
+            persist envelope.UserId envelope.StreamId state'
+                
+            eventSubject <! envelope
+
+            (state', envelope.Version)
+
         let getState streamId =
             let events = 
                 store.GetEvents streamId 
@@ -68,17 +71,49 @@ let create<'TState, 'TCommand, 'TEvent>
             let state = buildState None (events |> List.map unpack)
             state, version
 
-        let rec loop stateAndVersion = actor {
+        let rec receiveCommand stateAndVersion = actor {
             let! msg = mailbox.Receive ()
             return! 
                 match msg with 
-                | :? Envelope<'TCommand> as cmdenv -> cmdenv |> handleCommand stateAndVersion mailbox.Self 
-                | :? Envelope<'TEvent> as evtenv ->   evtenv |> processEvent stateAndVersion
-                | _ -> stateAndVersion
-                |> loop
+                | :? Envelope<'TCommand> as cmdenv -> 
+                    cmdenv |> handleCommand stateAndVersion
+                    [] |> recieveEvents stateAndVersion 
+                | _ -> stateAndVersion |> receiveCommand
+            }
+        and recieveEvents stateAndVersion events = actor {
+            let! msg = mailbox.Receive ()
+            return! 
+                match msg with 
+                | :? Envelope<'TCommand> as cmdenv -> 
+                    mailbox.Stash ()
+                    [] |> recieveEvents stateAndVersion 
+                | :? Envelope<'TEvent> as evtenv ->   
+                    evtenv::events |> recieveEvents stateAndVersion
+
+                | m when "Finished".Equals m -> 
+                    let state, version = stateAndVersion                    
+                    let head = events |> List.head
+                    let events' = events |> List.rev
+                    let state' = 
+                        events'
+                        |> List.map (fun env -> env.Item)
+                        |> buildState state 
+                    
+                    events' |> List.iter store.AppendEvent
+
+                    // Query side persistence, record the state.
+                    persist head.UserId head.StreamId state'
+                
+                    events' |> List.iter eventSubject.Tell
+
+                    // Persist and notify events.
+                    // Update state.
+                    (state', head.Version) |> receiveCommand
+                | _ -> [] |> recieveEvents stateAndVersion
             }
             
-        loop <| getState streamId
+        getState streamId
+        |> receiveCommand
     
     fun (mailbox:Actor<obj>) ->
         let rec loop children = actor {
@@ -88,7 +123,7 @@ let create<'TState, 'TCommand, 'TEvent>
                 match children |> Map.tryFind streamId with
                 | Some actor' -> (children,actor')
                 | None ->   
-                    let actorName = mailbox.Self.Path.Parent.Name + "_" + (streamId.ToString ())
+                    let actorName = mailbox.Self.Path.Parent.Name + "_" + (StreamId.unbox streamId).ToString ()
                     let actor' = spawn mailbox actorName <| child streamId                                        
                     // TODO: Create timer for expiring cache
                     children |> Map.add streamId actor', actor'
