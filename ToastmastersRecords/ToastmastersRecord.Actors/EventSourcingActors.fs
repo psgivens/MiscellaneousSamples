@@ -14,12 +14,12 @@ open ToastmastersRecord.Actors
 open ToastmastersRecord.Actors.Infrastructure
 
 let spawn<'TCommand, 'TEvent, 'TState>
-   (sys,
-    name,
-    eventStore,
-    buildState:'TState option -> 'TEvent list -> 'TState option,
-    handle:CommandHandlers<'TEvent, Version> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<Version>,
-    persist:UserId -> StreamId -> 'TState option -> unit) :ActorIO<'TCommand> = 
+   (    sys,
+        name,
+        eventStore,
+        buildState:'TState option -> 'TEvent list -> 'TState option,
+        handle:CommandHandlers<'TEvent, Version> -> 'TState option -> Envelope<'TCommand> -> CommandHandlerFunction<Version>,
+        persist:UserId -> StreamId -> 'TState option -> unit) :ActorIO<'TCommand> = 
 
     // Create a subject so that the next step can subscribe. 
     let persistEventSubject = SubjectActor.spawn sys (name + "_Events")

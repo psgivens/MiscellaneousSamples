@@ -8,6 +8,8 @@ open ToastmastersRecord.Domain.CommandHandlers
 open ToastmastersRecord.Domain.Infrastructure
 open ToastmastersRecord.Domain.Infrastructure.Envelope
 
+type Finished = Finished of TransId
+
 let create<'TState, 'TCommand, 'TEvent> 
     (   eventSubject:IActorRef,
         invalidMessageSubject:IActorRef,
@@ -26,10 +28,8 @@ let create<'TState, 'TCommand, 'TEvent>
                 cmdenv.StreamId 
                 newVersion
                 event
-
         envelope |> self.Tell        
-        newVersion
-    
+        newVersion    
 
     let child streamId (mailbox:Actor<obj>) =
         let handleCommand (state, version) cmdenv = 
@@ -39,22 +39,8 @@ let create<'TState, 'TCommand, 'TEvent>
                     |> Handler.Run version
                     |> Async.Ignore
 
-                mailbox.Self <! "Finished"
+                mailbox.Self <! cmdenv.TransactionId
             } |> Async.Start
-
-        let processEvent (state, version) envelope =
-            // Build current state
-            let state' = buildState state [envelope.Item]
-
-            // Command side persistence, record the event
-            store.AppendEvent envelope
-
-            // Query side persistence, record the state
-            persist envelope.UserId envelope.StreamId state'
-                
-            eventSubject <! envelope
-
-            (state', envelope.Version)
 
         let getState streamId =
             let events = 
@@ -77,21 +63,24 @@ let create<'TState, 'TCommand, 'TEvent>
                 match msg with 
                 | :? Envelope<'TCommand> as cmdenv -> 
                     cmdenv |> handleCommand stateAndVersion
-                    [] |> recieveEvents stateAndVersion 
+                    [] |> recieveEvents cmdenv.TransactionId stateAndVersion 
                 | _ -> stateAndVersion |> receiveCommand
             }
-        and recieveEvents stateAndVersion events = actor {
+        and recieveEvents transId stateAndVersion events = actor {
             let! msg = mailbox.Receive ()
             return! 
                 match msg with 
                 | :? Envelope<'TCommand> as cmdenv -> 
                     mailbox.Stash ()
-                    [] |> recieveEvents stateAndVersion 
-                | :? Envelope<'TEvent> as evtenv ->   
-                    evtenv::events |> recieveEvents stateAndVersion
+                    events |> recieveEvents transId stateAndVersion 
 
-                | m when "Finished".Equals m -> 
-                    let state, version = stateAndVersion                    
+                | :? Envelope<'TEvent> as evtenv ->   
+                    if evtenv.TransactionId = transId
+                    then evtenv::events |> recieveEvents transId stateAndVersion
+                    else events |> recieveEvents transId stateAndVersion
+
+                | stop when transId.Equals stop -> 
+                    let state, _ = stateAndVersion                    
                     let head = events |> List.head
                     let events' = events |> List.rev
                     let state' = 
@@ -109,11 +98,10 @@ let create<'TState, 'TCommand, 'TEvent>
                     // Persist and notify events.
                     // Update state.
                     (state', head.Version) |> receiveCommand
-                | _ -> [] |> recieveEvents stateAndVersion
+                | _ -> events |> recieveEvents transId stateAndVersion
             }
             
-        getState streamId
-        |> receiveCommand
+        getState streamId |> receiveCommand
     
     fun (mailbox:Actor<obj>) ->
         let rec loop children = actor {
@@ -136,7 +124,6 @@ let create<'TState, 'TCommand, 'TEvent>
             return! 
                 match msg with 
                 | :? Envelope<'TCommand> as env -> forward env
-                | :? Envelope<'TEvent> as env -> forward env
                 | _ -> children
                 |> loop
         }

@@ -47,11 +47,11 @@ namespace ToastmastersRecord.Data {
                 new RoleTypeEntity { Id=12, Classification="Functionary", MinimumSpeechCount=0, Title="Videographer" }
                 });
             
-            Guid guid = new Guid("{338D805A-E434-4ECA-BC11-022E9AEE820E}");
             context.Users.AddRange(new UserEntity[] {
                 new UserEntity { Id=new Guid("{338D805A-E434-4ECA-BC11-022E9AEE820E}"), Name = "ToastmastersRecord.SampleApp.Initialize" },
                 new UserEntity { Id=new Guid("{BFFF581A-A4C6-4816-88C9-DF8A7B00D90C}"), Name = "ToastmastersRecord.SampleApp.MessageProcessor" },
-                new UserEntity { Id=new Guid("{2699A8E2-7787-4FFF-9FEF-348AE9B040A4}"), Name = "ToastmastersRecord.SampleApp.Schedule" }
+                new UserEntity { Id=new Guid("{2699A8E2-7787-4FFF-9FEF-348AE9B040A4}"), Name = "ToastmastersRecord.SampleApp.Schedule" },
+                new UserEntity { Id=new Guid("{BE3B1456-4E94-45B5-A8E2-D12FC4C8573B}"), Name = "ToastmastersRecord.WPF" }
             });
 
             base.Seed(context);
