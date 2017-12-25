@@ -1,9 +1,10 @@
 "severity","state","team","count"
-"High","BL","Core",3
-"Low","BL","Core",3
+"High","BL","Core",4
+"Medium","BL","Core",5
+"Low","BL","Core",6
 "High","IP","Core",3
-"Medium","IP","Core",3
-"Low","IP","Core",3
+"Medium","IP","Core",6
+"Low","IP","Core",2
 "High","Done","Core",3
-"Medium","Done","Core",3
+"Medium","Done","Core",1
 "Low","Done","Core",3
