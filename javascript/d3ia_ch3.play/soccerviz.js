@@ -10,6 +10,22 @@ function createSoccerViz() {
       return "bar_" + severity + "_" + state;
   }
 
+  function summarizeData(data) {
+    const severity = d1 => d1.severity;
+    const team = d1 => d1.team;
+    const state = d1 => d1.state;
+    const rollupSum = d1 => d3.sum(d1, function(d2) { return d2.count; });
+
+    const teamSums = d3.nest()
+      .key(state)
+      .key(severity)
+      // .key(team)
+      .rollup(rollupSum)
+      .entries(data);
+
+    return teamSums;
+  }
+
   function overallTeamViz(incomingData) {
 
     const svgHeight = 200;
@@ -23,9 +39,8 @@ function createSoccerViz() {
 
     const categories = ["High", "Medium", "Low"]
 
-    const dataByState = d3.nest()
-      .key(d => d.state)
-      .entries(incomingData);
+    const dataSums = summarizeData(incomingData);
+    console.log(dataSums);
 
     const yScale = d3.scaleBand()
       .domain(categories)
@@ -50,9 +65,8 @@ function createSoccerViz() {
       .padding(0.1)
       .round(true);
 
-    dataByState.map(function(d, i) {
+    dataSums.map(function(d, i) {
 
-      // TODO: Build xScale per category
       const xScale_State = d3.scaleLinear()
         .domain([ 0, 7 ])
         .range([ 0, 0 + xScale_InterState.bandwidth() ]);
@@ -67,8 +81,6 @@ function createSoccerViz() {
         .attr("id","xAxis_" + d.key)
         .call(xAxis)
         .attr("transform","translate(" + xScale_InterState(d.key) + "," + (svgHeight ) + ")");
-
-      var tempData = d.values.reduce((acc,o) => {acc[o.severity] = o; return acc}, {});
 
       // https://bl.ocks.org/EmbraceLife/677054c8f535c77ddd95485523d97fcd
       const chart = d3.selectAll("svg").append("g")
@@ -85,10 +97,10 @@ function createSoccerViz() {
         .style("stroke-width", "1px")
         .attr("id", function(d1) { return barId(d1.severity,d1.state);})
         .attr("class", "measurementRectangle")
-        .attr("y", function(d) { return yScale(d.severity); })
-        .attr("x", function(d) { return 0; })
-        .attr("height", function(d) { return yScale.bandwidth(); })
-        .attr("width", function(d) { return xScale_State(d.count); });
+        .attr("y", function(d1) { return yScale(d1.key); })
+        .attr("x", function(d1) { return 0; })
+        .attr("height", function(d1) { return yScale.bandwidth(); })
+        .attr("width", function(d1) { return xScale_State(d1.value); });
     });
 
     const mRects = d3.selectAll("rect.measurementRectangle");

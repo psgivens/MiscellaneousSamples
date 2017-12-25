@@ -10,3 +10,5 @@
 */packages/*
 **/obj/Debug/*
 **/node_modules/*
+VSNugetProjectTools
+ProducerConsumerEngine
