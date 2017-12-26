@@ -64,7 +64,7 @@ function createSoccerViz() {
       const labelMargin = 20;
       const xScale_State = d3.scaleLinear()
         .domain([ 0, 7 ])
-        .range([ labelMargin, xScale_InterState.bandwidth() ]);
+        .range([ labelMargin, xScale_InterState.bandwidth()]);
 
       const xAxis = d3.axisTop()
         .scale(xScale_State)
@@ -86,10 +86,7 @@ function createSoccerViz() {
 
       d.values.forEach(function(item){
 
-        const xScale_Sub = d3.scaleLinear()
-          .domain([ 0, 7 ])
-          .range([ labelMargin, xScale_InterState.bandwidth () - labelMargin ]);
-
+        const xScale = value => xScale_State(value) - labelMargin;
 
         const barRegion = chart.selectAll("g."+item.Key)
           .data([item])
@@ -105,31 +102,39 @@ function createSoccerViz() {
           .attr("y", function(d1) { return yScale(d1.key) + yScale.bandwidth() / 2; })
           .attr("x", function(d1) { return 0; });
 
-        // Subdivide the bar for a third vector
-        const bar = barRegion
-          .append("svg")
-          .attr("y", d1 => yScale(d1.key))
-          .attr("x", d1 => labelMargin)
-          .attr("height", d1 => yScale.bandwidth())
-          .attr("width", d1 => xScale_Sub(d3.sum(d1.values, d2 => d2.value)));
+        let previous = 0;
+        item.values.forEach(function(item1, index){
+          // Subdivide the bar for a third vector
+          const bar = barRegion
+            .append("svg")
+            .attr("y", d1 => yScale(d1.key))
+            .attr("x", d1 => xScale(previous) + labelMargin)
+            .attr("height", d1 => yScale.bandwidth())
+            .attr("width", d1 => xScale(item1.value));
 
-        bar
-          .append("rect")
-          .style("fill", "pink")
-          .style("stroke", "black")
-          .style("stroke-width", "1px")
-          .attr("class", "measurementRectangle")
-          .attr("height", d1 => yScale.bandwidth())
-          .attr("width", d1 => xScale_Sub(d3.sum(d1.values, d2 => d2.value)));
+          // TODO: Color based on item.key or index
+          bar.append("rect")
+            .style("fill", "pink")
+            .style("stroke", "black")
+            .style("stroke-width", "1px")
+            .attr("x", d1 => 0)
+            .attr("class", "measurementRectangle")
+            .attr("height", d1 => yScale.bandwidth())
+            .attr("width", d1 => xScale(item1.value));
 
 
-        bar.append("text")
-          .text(d1 => ((d1.values.length) > 0) ? d1.values.length : "")
-          .style("text-anchor", "middle")
-          .style("dominant-baseline", "central")
-          .style("fill", "black")
-          .attr("y", "50%")
-          .attr("x", "50%");
+          bar.append("text")
+            .text(d1 => ((item1.value) > 0) ? item1.value : "")
+            .style("text-anchor", "middle")
+            .style("dominant-baseline", "central")
+            .style("fill", "black")
+            .attr("y", "50%")
+            .attr("x", "50%");
+
+          previous += item1.value;
+
+        })
+
       })
     });
 
