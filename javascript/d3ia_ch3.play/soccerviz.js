@@ -111,7 +111,6 @@ function createSoccerViz() {
           .attr("y", d1 => yScale(d1.key))
           .attr("x", d1 => labelMargin)
           .attr("height", d1 => yScale.bandwidth())
-          // .attr("width", d1 => xScale_State(d1.values.length) - labelMargin);
           .attr("width", d1 => xScale_Sub(d3.sum(d1.values, d2 => d2.value)));
 
         bar
