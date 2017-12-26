@@ -6,10 +6,6 @@ function createSoccerViz() {
     overallTeamViz(data);
   })
 
-  function barId(severity, state){
-      return "bar_" + severity + "_" + state;
-  }
-
   function summarizeData(data) {
     const severity = d1 => d1.severity;
     const team = d1 => d1.team;
@@ -19,7 +15,7 @@ function createSoccerViz() {
     const teamSums = d3.nest()
       .key(state)
       .key(severity)
-      // .key(team)
+      .key(team)
       .rollup(rollupSum)
       .entries(data);
 
@@ -37,13 +33,11 @@ function createSoccerViz() {
     const labelOffset = catSize / 2 + margin.top;
     const tickSize = 10;
 
-    const categories = ["High", "Medium", "Low"]
-
     const dataSums = summarizeData(incomingData);
-    console.log(dataSums);
+    const severities = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
 
     const yScale = d3.scaleBand()
-      .domain(categories)
+      .domain(severities)
       .range([margin.top, svgHeight - margin.bottom])
       .padding(0.2)
       .round(true);
@@ -67,9 +61,10 @@ function createSoccerViz() {
 
     dataSums.map(function(d, i) {
 
+      const labelMargin = 20;
       const xScale_State = d3.scaleLinear()
         .domain([ 0, 7 ])
-        .range([ 0, 0 + xScale_InterState.bandwidth() ]);
+        .range([ labelMargin, xScale_InterState.bandwidth() ]);
 
       const xAxis = d3.axisTop()
         .scale(xScale_State)
@@ -82,25 +77,59 @@ function createSoccerViz() {
         .call(xAxis)
         .attr("transform","translate(" + xScale_InterState(d.key) + "," + (svgHeight ) + ")");
 
+      // TODO: Place state label below xAxis
+
       // https://bl.ocks.org/EmbraceLife/677054c8f535c77ddd95485523d97fcd
       const chart = d3.selectAll("svg").append("g")
         .attr("id", "graph" + d.key);
 
-      const bar = chart.selectAll("g")
+      const barTotalsObject = d.values.reduce((acc,v) => {
+        acc[v.key] = (acc[v.key] ? acc[v.key]: 0) + v.values.length; return acc;}, {});
+      const barTotalsList = Object.entries(barTotalsObject).reduce((acc,[key,value]) => { acc.push({key:key, value:value}); return acc;}, []);
+
+      const barRegions = chart.selectAll("g")
+        //.data(d.values)
+        .data(barTotalsList)
+        .enter().append("g")
+        .attr("transform", d1 => "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")");
+
+      // Totals for the bar
+      barRegions.append("text").text(d1 => d1.value)
+        .style("dominant-baseline", "central")
+        .style("font-size", "14px")
+        .attr("y", function(d1) { return yScale(d1.key) + yScale.bandwidth() / 2; })
+        .attr("x", function(d1) { return 0; });
+
+
+      const barRegions1 = chart.selectAll("g.barRegions1")
+        //.data(d.values)
         .data(d.values)
         .enter().append("g")
-        .attr("transform", function(d1) { return "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")"; });
+        .attr("transform", d1 => "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")");
 
-      bar.append("rect")
+      // Subdivide the bar for a third vector
+      const bars = barRegions1.append("svg")
+        .attr("y", d1 => yScale(d1.key))
+        .attr("x", d1 => labelMargin)
+        .attr("height", d1 => yScale.bandwidth())
+        .attr("width", d1 => {console.log(d1); return xScale_State(d1.values.length) - labelMargin;});
+
+      bars.append("rect")
         .style("fill", "pink")
         .style("stroke", "black")
         .style("stroke-width", "1px")
-        .attr("id", function(d1) { return barId(d1.severity,d1.state);})
         .attr("class", "measurementRectangle")
-        .attr("y", function(d1) { return yScale(d1.key); })
-        .attr("x", function(d1) { return 0; })
-        .attr("height", function(d1) { return yScale.bandwidth(); })
-        .attr("width", function(d1) { return xScale_State(d1.value); });
+        .attr("height", d1 => yScale.bandwidth())
+        .attr("width", d1 => xScale_State(d1.values.length) - labelMargin);
+
+      bars.append("text")
+        .text(d1 => ((d1.values.length) > 0) ? d1.values.length : "")
+        .style("text-anchor", "middle")
+        .style("dominant-baseline", "central")
+        .style("fill", "black")
+        .attr("y", "50%")
+        .attr("x", "50%");
+
     });
 
     const mRects = d3.selectAll("rect.measurementRectangle");
