@@ -83,53 +83,55 @@ function createSoccerViz() {
       const chart = d3.selectAll("svg").append("g")
         .attr("id", "graph" + d.key);
 
-      const barTotalsObject = d.values.reduce((acc,v) => {
-        acc[v.key] = (acc[v.key] ? acc[v.key]: 0) + v.values.length; return acc;}, {});
-      const barTotalsList = Object.entries(barTotalsObject).reduce((acc,[key,value]) => { acc.push({key:key, value:value}); return acc;}, []);
 
-      const barRegions = chart.selectAll("g")
-        //.data(d.values)
-        .data(barTotalsList)
-        .enter().append("g")
-        .attr("transform", d1 => "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")");
+      d.values.forEach(function(item){
 
-      // Totals for the bar
-      barRegions.append("text").text(d1 => d1.value)
-        .style("dominant-baseline", "central")
-        .style("font-size", "14px")
-        .attr("y", function(d1) { return yScale(d1.key) + yScale.bandwidth() / 2; })
-        .attr("x", function(d1) { return 0; });
+        const xScale_Sub = d3.scaleLinear()
+          .domain([ 0, 7 ])
+          .range([ labelMargin, xScale_InterState.bandwidth () - labelMargin ]);
 
 
-      const barRegions1 = chart.selectAll("g.barRegions1")
-        //.data(d.values)
-        .data(d.values)
-        .enter().append("g")
-        .attr("transform", d1 => "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")");
+        const barRegion = chart.selectAll("g."+item.Key)
+          .data([item])
+          .enter()
+          .append("g")
+          .attr("id", item.key)
+          .attr("transform", d1 => "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")");
 
-      // Subdivide the bar for a third vector
-      const bars = barRegions1.append("svg")
-        .attr("y", d1 => yScale(d1.key))
-        .attr("x", d1 => labelMargin)
-        .attr("height", d1 => yScale.bandwidth())
-        .attr("width", d1 => {console.log(d1); return xScale_State(d1.values.length) - labelMargin;});
+        // Totals for the bar
+        barRegion.append("text").text(d1 => d3.sum(d1.values, d2 => d2.value))
+          .style("dominant-baseline", "central")
+          .style("font-size", "14px")
+          .attr("y", function(d1) { return yScale(d1.key) + yScale.bandwidth() / 2; })
+          .attr("x", function(d1) { return 0; });
 
-      bars.append("rect")
-        .style("fill", "pink")
-        .style("stroke", "black")
-        .style("stroke-width", "1px")
-        .attr("class", "measurementRectangle")
-        .attr("height", d1 => yScale.bandwidth())
-        .attr("width", d1 => xScale_State(d1.values.length) - labelMargin);
+        // Subdivide the bar for a third vector
+        const bar = barRegion
+          .append("svg")
+          .attr("y", d1 => yScale(d1.key))
+          .attr("x", d1 => labelMargin)
+          .attr("height", d1 => yScale.bandwidth())
+          // .attr("width", d1 => xScale_State(d1.values.length) - labelMargin);
+          .attr("width", d1 => xScale_Sub(d3.sum(d1.values, d2 => d2.value)));
 
-      bars.append("text")
-        .text(d1 => ((d1.values.length) > 0) ? d1.values.length : "")
-        .style("text-anchor", "middle")
-        .style("dominant-baseline", "central")
-        .style("fill", "black")
-        .attr("y", "50%")
-        .attr("x", "50%");
+        bar
+          .append("rect")
+          .style("fill", "pink")
+          .style("stroke", "black")
+          .style("stroke-width", "1px")
+          .attr("class", "measurementRectangle")
+          .attr("height", d1 => yScale.bandwidth())
+          .attr("width", d1 => xScale_Sub(d3.sum(d1.values, d2 => d2.value)));
 
+
+        bar.append("text")
+          .text(d1 => ((d1.values.length) > 0) ? d1.values.length : "")
+          .style("text-anchor", "middle")
+          .style("dominant-baseline", "central")
+          .style("fill", "black")
+          .attr("y", "50%")
+          .attr("x", "50%");
+      })
     });
 
     const mRects = d3.selectAll("rect.measurementRectangle");
@@ -142,6 +144,5 @@ function createSoccerViz() {
       const bar = d3.select(this);
       bar.style("fill","pink");
     });
-
   }
 }
