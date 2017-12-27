@@ -6,6 +6,8 @@ function createSoccerViz() {
     overallTeamViz(data);
   })
 
+const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
+
   function summarizeData(data) {
     const severity = d1 => d1.severity;
     const team = d1 => d1.team;
@@ -114,14 +116,13 @@ function createSoccerViz() {
 
           // TODO: Color based on item.key or index
           bar.append("rect")
-            .style("fill", "pink")
+            .style("fill", colors[index])
             .style("stroke", "black")
             .style("stroke-width", "1px")
             .attr("x", d1 => 0)
             .attr("class", "measurementRectangle")
             .attr("height", d1 => yScale.bandwidth())
             .attr("width", d1 => xScale(item1.value));
-
 
           bar.append("text")
             .text(d1 => ((item1.value) > 0) ? item1.value : "")
@@ -132,7 +133,6 @@ function createSoccerViz() {
             .attr("x", "50%");
 
           previous += item1.value;
-
         })
 
       })
@@ -141,12 +141,17 @@ function createSoccerViz() {
     const mRects = d3.selectAll("rect.measurementRectangle");
     mRects.on("mouseover", function(d) {
       const bar = d3.select(this);
+
+      // hack
+      bar.attr("temp", bar.style("fill"));
       bar.style("fill","red");
+
     });
 
     mRects.on("mouseout", function(d) {
       const bar = d3.select(this);
-      bar.style("fill","pink");
+      // hack
+      bar.style("fill",bar.attr("temp"));
     });
   }
 }
