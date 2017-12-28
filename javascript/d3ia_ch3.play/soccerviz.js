@@ -12,7 +12,7 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
     const severity = d1 => d1.severity;
     const team = d1 => d1.team;
     const state = d1 => d1.state;
-    const rollupSum = d1 => d3.sum(d1, function(d2) { return d2.count; });
+    const rollupSum = d1 => d3.sum(d1, d2 =>  d2.count);
 
     const teamSums = d3.nest()
       .key(state)
@@ -20,6 +20,25 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
       .key(team)
       .rollup(rollupSum)
       .entries(data);
+
+    const mapSeverity = severityItem =>
+      severityItem.values.reduce(
+        (acc,item) => {
+          acc[item.key] = item.value;
+          return acc;
+        },
+        { severity:severityItem.key,
+          total:d3.sum(severityItem.values,ti=>ti.value) });
+
+    const teamSumsR = teamSums
+      .map(stateItem => {
+        return {
+          state:stateItem.key,
+          severities:stateItem.values.map(mapSeverity)
+        }
+      });
+
+    console.log(teamSumsR);
 
     return teamSums;
   }
@@ -103,6 +122,53 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
           .style("font-size", "14px")
           .attr("y", function(d1) { return yScale(d1.key) + yScale.bandwidth() / 2; })
           .attr("x", function(d1) { return 0; });
+
+
+        var stackit = d3.stack()
+            .keys(["Core","Learning"])
+            .order(d3.stackOrderNone)
+            .offset(d3.stackOffsetNone);
+
+        // barRegion
+        //   .each(function(d,i){
+        //
+        //     const n = d.values.reduce((acc,item) => {acc[item.key] = item.value;return acc;}, {})
+        //     const stackedData = stackit([n]);
+        //     console.log(stackedData);
+        //
+        //     // Subdivide the bar for a third vector
+        //     const bars = d3.select(this)
+        //       .selectAll("svg")
+        //       .data(stackedData)
+        //       .enter()
+        //       .append("svg")
+        //       .attr("y", d1 => yScale(d.key))
+        //       .attr("x", d1 => xScale(d1[0]) + labelMargin)
+        //       .attr("height", d1 => yScale.bandwidth())
+        //       .attr("width", d1 => xScale(d1[1]));
+        //
+        //     // TODO: Color based on item.key or index
+        //     bars.append("rect")
+        //       .style("fill", colors[i])
+        //       .style("stroke", "black")
+        //       .style("stroke-width", "1px")
+        //       .attr("x", d1 => 0)
+        //       .attr("class", "measurementRectangle")
+        //       .attr("height", d1 => yScale.bandwidth())
+        //       .attr("width", d1 => xScale(d1[1]));
+        //       // .attr("height", d1 => yScale.bandwidth())
+        //       // .attr("width", d1 => xScale(d1.value));
+        //
+        //     bars.append("text")
+        //       .text(d1 => ((d1.value) > 0) ? d1.value : "")
+        //       .style("text-anchor", "middle")
+        //       .style("dominant-baseline", "central")
+        //       .style("fill", "black")
+        //       .attr("y", "50%")
+        //       .attr("x", "50%");
+        //   });
+        //
+
 
         let previous = 0;
         item.values.forEach(function(item1, index){
