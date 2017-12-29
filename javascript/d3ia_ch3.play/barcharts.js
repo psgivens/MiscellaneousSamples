@@ -1,4 +1,4 @@
-function createSoccerViz() {
+function createBarCharts() {
   // d3.csv("worldcup.csv", function(data) {
   //   overallTeamViz(data);
   // })
@@ -6,7 +6,7 @@ function createSoccerViz() {
     overallTeamViz(data);
   })
 
-const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
+const colors = ["#C0392B", "#E59866", "#FCF3CF"];
 
   function summarizeData(data) {
     const severity = d1 => d1.severity;
@@ -16,29 +16,35 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
 
     const teamSums = d3.nest()
       .key(state)
-      .key(severity)
       .key(team)
+      .key(severity)
       .rollup(rollupSum)
       .entries(data);
 
-    const mapSeverity = severityItem =>
-      severityItem.values.reduce(
-        (acc,item) => {
-          acc[item.key] = item.value;
-          return acc;
-        },
-        { severity:severityItem.key,
-          total:d3.sum(severityItem.values,ti=>ti.value) });
+    const teams = Array.from(data.reduce((acc,d1) => acc.add(d1.team), new Set ()));
+
+    const mapTeam = team => {
+      const severities = team.values;
+      let offset = 0;
+      severities.forEach(item => {
+        item.x0 = offset;
+        offset += item.value;
+        item.x1 = offset;
+      })
+      return {
+        key:team.key,
+        values:severities,
+        total:severities.reduce((acc,item)=>acc+item.value,0)
+      }
+    }
 
     const teamSumsR = teamSums
       .map(stateItem => {
         return {
           state:stateItem.key,
-          severities:stateItem.values.map(mapSeverity)
+          teams:stateItem.values.map(mapTeam)
         }
       });
-
-    console.log(teamSumsR);
 
     return teamSumsR;
   }
@@ -56,9 +62,10 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
 
     const dataSums = summarizeData(incomingData);
     const severities = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
+    const teams = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.team), new Set ()));
 
     const yScale = d3.scaleBand()
-      .domain(severities)
+      .domain(teams)
       .range([margin.top, svgHeight - margin.bottom])
       .padding(0.2)
       .round(true);
@@ -80,11 +87,11 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
       .padding(0.1)
       .round(true);
 
-    const labelMargin = 20;
+    const labelMargin = 30;
 
     const xScale_State = d3.scaleLinear()
-      .domain([ 0, 7 ])
-      .range([ labelMargin, xScale_InterState.bandwidth()]);
+      .domain([ 0, 15 ])
+      .range([ labelMargin, xScale_InterState.bandwidth() - labelMargin]);
 
     const xAxis = d3.axisTop()
       .scale(xScale_State)
@@ -98,6 +105,7 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
       .append("g")
       .attr("class", "stackedBars")
       .attr("id", d => "xAxis_" + d.state)
+      .attr("width", xScale_InterState.bandwidth())
       .attr("x",d => "translate(" + xScale_InterState(d.state));
 
     charts.each(function(d,i){
@@ -109,152 +117,58 @@ const colors = ["#f5b041", " #9b59b6", "#aed6f1", " #f5b041"];
         .ticks(4);
 
       chart
+        .append("g")
         .call(xAxis)
         .attr("transform", "translate(" + xScale_InterState(d.state) + "," + svgHeight + ")");
 
-      var stackit = d3.stack()
-          .keys(["Core","Learning"])
-          .order(d3.stackOrderNone)
-          .offset(d3.stackOffsetNone);
-
-      console.log(stackit(d.severities)[0][0].data);
-
       const barRegions = chart.selectAll("g."+d.state)
-        .data(stackit(d.severities))
+        .data(d.teams)
         .enter()
         .append("g")
         .attr("id", d => d.state)
         .attr("transform", d1 => "translate(" + xScale_InterState(d.state) + ", " + margin.top + ")");
 
-      barRegions.each(function(sev,i1){
-        const sevBar = d3.select(this);
+      barRegions.each(function(team,i1){
+        const teamBarRegion = d3.select(this);
+        teamBarRegion.append("text")
+          .text(team.total)
+          .style("dominant-baseline", "central")
+          .style("font-size", "14px")
+          .attr("y", yScale(team.key) + yScale.bandwidth() / 2)
+          .attr("x", "0");
+
+        const bars = teamBarRegion.selectAll("svg.bars")
+          .data(team.values)
+          .enter()
+          .append("svg")
+          .attr("class", "bars")
+          .attr("x", d1 => xScale_State(d1.x0))
+          .attr("y", d1 => yScale(team.key))
+          .attr("class", "measurementRectangle")
+          .attr("height", d1 => yScale.bandwidth())
+          .attr("width", d1 => xScale_State(d1.value) - labelMargin);
+
+        bars.append("rect")
+          .style("fill", (d1,i1) => colors[i1])
+          .style("stroke", "black")
+          .style("stroke-width", "1px")
+          .attr("x","0")
+          .attr("y","0")
+          .attr("class", "measurementRectangle")
+          .attr("height", d1 => yScale.bandwidth())
+          .attr("width", d1 => xScale_State(d1.value) - labelMargin);
+
+        bars.append("text")
+          .text(d1 => d1.value)
+          .style("text-anchor", "middle")
+          .style("dominant-baseline", "central")
+          .style("fill", "black")
+          .attr("y", "50%")
+          .attr("x", "50%");
+
       });
 
     })
-
-    // dataSums.map(function(d, i) {
-    //
-    //   const labelMargin = 20;
-    //   const xScale_State = d3.scaleLinear()
-    //     .domain([ 0, 7 ])
-    //     .range([ labelMargin, xScale_InterState.bandwidth()]);
-    //
-    //   const xAxis = d3.axisTop()
-    //     .scale(xScale_State)
-    //     .tickSize(tickSize)
-    //     .ticks(4);
-    //
-    //   d3.selectAll("svg")
-    //     .append("g")
-    //     .attr("id","xAxis_" + d.key)
-    //     .call(xAxis)
-    //     .attr("transform","translate(" + xScale_InterState(d.key) + "," + (svgHeight ) + ")");
-    //
-    //   // TODO: Place state label below xAxis
-    //
-    //   // https://bl.ocks.org/EmbraceLife/677054c8f535c77ddd95485523d97fcd
-    //   const chart = d3.selectAll("svg").append("g")
-    //     .attr("id", "graph" + d.key);
-    //
-    //
-    //   d.values.forEach(function(item){
-    //
-    //     const xScale = value => xScale_State(value) - labelMargin;
-    //
-    //     const barRegion = chart.selectAll("g."+item.Key)
-    //       .data([item])
-    //       .enter()
-    //       .append("g")
-    //       .attr("id", item.key)
-    //       .attr("transform", d1 => "translate(" + xScale_InterState(d.key) + ", " + margin.top + ")");
-    //
-    //     // Totals for the bar
-    //     barRegion.append("text").text(d1 => d3.sum(d1.values, d2 => d2.value))
-    //       .style("dominant-baseline", "central")
-    //       .style("font-size", "14px")
-    //       .attr("y", function(d1) { return yScale(d1.key) + yScale.bandwidth() / 2; })
-    //       .attr("x", function(d1) { return 0; });
-    //
-    //
-    //     var stackit = d3.stack()
-    //         .keys(["Core","Learning"])
-    //         .order(d3.stackOrderNone)
-    //         .offset(d3.stackOffsetNone);
-
-        // barRegion
-        //   .each(function(d,i){
-        //
-        //     const n = d.values.reduce((acc,item) => {acc[item.key] = item.value;return acc;}, {})
-        //     const stackedData = stackit([n]);
-        //     console.log(stackedData);
-        //
-        //     // Subdivide the bar for a third vector
-        //     const bars = d3.select(this)
-        //       .selectAll("svg")
-        //       .data(stackedData)
-        //       .enter()
-        //       .append("svg")
-        //       .attr("y", d1 => yScale(d.key))
-        //       .attr("x", d1 => xScale(d1[0]) + labelMargin)
-        //       .attr("height", d1 => yScale.bandwidth())
-        //       .attr("width", d1 => xScale(d1[1]));
-        //
-        //     // TODO: Color based on item.key or index
-        //     bars.append("rect")
-        //       .style("fill", colors[i])
-        //       .style("stroke", "black")
-        //       .style("stroke-width", "1px")
-        //       .attr("x", d1 => 0)
-        //       .attr("class", "measurementRectangle")
-        //       .attr("height", d1 => yScale.bandwidth())
-        //       .attr("width", d1 => xScale(d1[1]));
-        //       // .attr("height", d1 => yScale.bandwidth())
-        //       // .attr("width", d1 => xScale(d1.value));
-        //
-        //     bars.append("text")
-        //       .text(d1 => ((d1.value) > 0) ? d1.value : "")
-        //       .style("text-anchor", "middle")
-        //       .style("dominant-baseline", "central")
-        //       .style("fill", "black")
-        //       .attr("y", "50%")
-        //       .attr("x", "50%");
-        //   });
-        //
-
-        //
-        // let previous = 0;
-        // item.values.forEach(function(item1, index){
-        //   // Subdivide the bar for a third vector
-        //   const bar = barRegion
-        //     .append("svg")
-        //     .attr("y", d1 => yScale(d1.key))
-        //     .attr("x", d1 => xScale(previous) + labelMargin)
-        //     .attr("height", d1 => yScale.bandwidth())
-        //     .attr("width", d1 => xScale(item1.value));
-        //
-        //   // TODO: Color based on item.key or index
-        //   bar.append("rect")
-        //     .style("fill", colors[index])
-        //     .style("stroke", "black")
-        //     .style("stroke-width", "1px")
-        //     .attr("x", d1 => 0)
-        //     .attr("class", "measurementRectangle")
-        //     .attr("height", d1 => yScale.bandwidth())
-        //     .attr("width", d1 => xScale(item1.value));
-        //
-        //   bar.append("text")
-        //     .text(d1 => ((item1.value) > 0) ? item1.value : "")
-        //     .style("text-anchor", "middle")
-        //     .style("dominant-baseline", "central")
-        //     .style("fill", "black")
-        //     .attr("y", "50%")
-        //     .attr("x", "50%");
-        //
-        //   previous += item1.value;
-        // })
-
-//      })
-  //  });
 
     const mRects = d3.selectAll("rect.measurementRectangle");
     mRects.on("mouseover", function(d) {

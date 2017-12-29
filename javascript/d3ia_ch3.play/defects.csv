@@ -9,3 +9,11 @@
 "High","Done","Core",3
 "Medium","Done","Core",1
 "Low","Done","Core",3
+"Medium","BL","Learning",0
+"Low","BL","Learning",0
+"High","IP","Learning",1
+"Medium","IP","Learning",0
+"Low","IP","Learning",1
+"High","Done","Learning",0
+"Medium","Done","Learning",1
+"Low","Done","Learning",0
