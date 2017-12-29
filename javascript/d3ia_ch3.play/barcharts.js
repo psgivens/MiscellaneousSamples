@@ -39,7 +39,7 @@ function createBarCharts() {
     // Set up sizing constants
     const svgHeight = 200;
     const svgWidth = 900;
-    const margin = {top: 20, right: 80, bottom: 50, left: 80};
+    const margin = {top: 20, right: 120, bottom: 50, left: 70};
     const width = svgWidth - margin.left - margin.right;
     const height = svgHeight - margin.top - margin.bottom;
     const catSize = height / 3;
@@ -50,6 +50,7 @@ function createBarCharts() {
 
     // Munge the data
     const teams = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.team), new Set ()));
+    const severities  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
     const dataSums = summarizeData(incomingData, teams);
 
     // Create the scales
@@ -60,7 +61,7 @@ function createBarCharts() {
       .round(true);
 
     const xScale_InterState = d3.scaleBand()
-      .domain(["BL","IP", "Done"])
+      .domain(["Back Log","In Progress", "Done"])
       .range([ margin.left, width + margin.left ])
       .padding(0.1)
       .round(true);
@@ -70,24 +71,40 @@ function createBarCharts() {
       .range([ labelMargin, xScale_InterState.bandwidth() - labelMargin]);
 
     // Define the axis functions
-    const yaxis = d3.axisLeft()
+    const yAxis = d3.axisLeft()
       .scale(yScale)
-      .tickSize(tickSize)
+      .tickSize(0)
       .ticks(4);
 
-    const xAxis = d3.axisTop()
+    const xAxis = d3.axisBottom()
       .scale(xScale_State)
-      .tickSize(tickSize)
-      .ticks(4);
+      .tickSize(0-svgHeight)
+      .ticks(10);
 
     // Start with globals for the graph.
     d3.selectAll("svg")
       .append("g")
       .attr("id","yAxisG")
-      .call(yaxis)
-      .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+      .call(yAxis)
+      .attr("transform","translate(" + margin.left + "," + margin.top + ")")
+      .selectAll("path.domain")
+      .attr("display", "none");
 
     // TODO: Add legend
+    // d3.select("svg")
+    //   .selectAll("svg.legend")
+    //   .append("svg")
+    //   .attr("transform", "translate(" + (width + margin.left) + ",100")
+    //   .attr("class", "legend")
+    //   .data(severities)
+    //   .enter()
+    //   .append("svg")
+    //   .append("text")
+    //   .text("Legend")
+    //   .attr("y", "100")
+    //   // .attr("x", "200")
+
+
 
     // Create the chart for each 'category'
     const charts = d3.select("svg")
@@ -97,22 +114,27 @@ function createBarCharts() {
       .append("g")
       .attr("class", "stackedBars")
       .attr("id", d => "xAxis_" + d.state)
-      .attr("width", xScale_InterState.bandwidth())
-      .attr("x",d => "translate(" + xScale_InterState(d.state));
+      .attr("width", xScale_InterState.bandwidth());
 
     charts.each(function(d,i){
       const chart = d3.select(this);
 
-      chart
+      const xa = chart
         .append("g")
         .call(xAxis)
         .attr("transform", "translate(" + xScale_InterState(d.state) + "," + svgHeight + ")");
+
+        xa.selectAll("path.domain")
+        .attr("opacity", "0.2");
+
+        xa.selectAll("g.tick > line")
+        .attr("opacity","0.2");
 
       chart.append("svg")
         .attr("class", "axisLabel")
         .attr("width", xScale_InterState.bandwidth())
         .attr("height", labelHeight)
-        .attr("transform", "translate(" + (xScale_InterState(d.state)) + "," + svgHeight + ")")
+        .attr("transform", "translate(" + (xScale_InterState(d.state)) + "," + (svgHeight + 10)  + ")")
         .append("text")
         .text(d => d.state)
         .style("text-anchor", "middle")
