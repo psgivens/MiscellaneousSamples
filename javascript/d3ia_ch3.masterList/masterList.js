@@ -235,7 +235,7 @@ function drawDetails(record_id) {
   const config = {
     svgHeight: 400,
     svgWidth: 500,
-    margin: {top: 20, right: 10, bottom: 50, left: 50},
+    margin: {top: 20, right: 10, bottom: 50, left: 20},
     width: svgWidth - margin.left - margin.right,
     height: svgHeight - margin.top - margin.bottom,
     catSize: height / 3,
