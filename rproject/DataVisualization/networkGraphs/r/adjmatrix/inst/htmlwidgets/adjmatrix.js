@@ -29,7 +29,7 @@ HTMLWidgets.widget({
             group:(input.data.nodes.id[i]%3),
             name:input.data.nodes.name[i],
             color:input.data.nodes.color[i]
-          })
+          });
         }
 
         var margin = {top: 80, right: 0, bottom: 10, left: 80};
@@ -47,7 +47,7 @@ HTMLWidgets.widget({
             .attr("height", height + margin.top + margin.bottom)
             .style("margin-left", -margin.left + "px")
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
           // var miserables = dataset;
           //d3.json("irenesdata.json", function(miserables) {

@@ -1,6 +1,6 @@
 HTMLWidgets.widget({
 
-  name: 'mywidget',
+  name: 'mywidget2',
 
   type: 'output',
 
@@ -17,7 +17,8 @@ HTMLWidgets.widget({
           .data(dataset)
           .enter()
           .append("p")
-          .text(x.message);
+          .text("Sample"");
+          //.text(x.message);
       // var svg = d3.select(el).append("svg")
       //          .attr("width", width)
       //          .attr("height", height);

@@ -14,8 +14,11 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 ```{r matrix setup, echo=FALSE}
 # chordDiagram
-nodes <- read.csv(file="c:\\dev\\networkGraphs\\nodes.csv",head=TRUE,sep=",")
-edges <- read.csv(file="c:\\dev\\networkGraphs\\edges.csv",head=TRUE,sep=",")
+#C:\\Repos\\GH\\MiscellaneousSamples\\DataVisualization\\networkGraphs
+#nodes <- read.csv(file="c:\\dev\\networkGraphs\\nodes.csv",head=TRUE,sep=",")
+nodes <- read.csv(file="C:\\Repos\\GH\\MiscellaneousSamples\\DataVisualization\\networkGraphs\\nodes.csv",head=TRUE,sep=",")
+#edges <- read.csv(file="c:\\dev\\networkGraphs\\edges.csv",head=TRUE,sep=",")
+edges <- read.csv(file="C:\\Repos\\GH\\MiscellaneousSamples\\DataVisualization\\networkGraphs\\edges.csv",head=TRUE,sep=",")
 nodes$name <- trimws(x=nodes$Label,which = "both")
 
 names(nodes) <- c("id", "label", "color", "name")

@@ -47,7 +47,7 @@ My widget adustment
 
 ```{r}
 library(mywidget)
-mywidget("Hello world")
+mywidget("Hello world!d")
 ```
 
 
