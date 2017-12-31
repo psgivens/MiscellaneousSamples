@@ -3,12 +3,25 @@
 <head>
   <!-- http://bl.ocks.org/msqr/3202712 -->
     <meta charset="utf-8">
-	<meta name="viewport" content="width=320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<title>Gauge</title>
 	<script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
   <script type="text/javascript" src="gauge.js" ></script>
   <script type="text/javascript" src="masterList.js" ></script>
+
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
   <style>
 	body {
 		font-family:  Helvetica, Arial, sans-serif;
@@ -30,18 +43,60 @@
 		font-weight: bold;
 		fill: #666;
 	}
+  .dashed {
+    stroke-dasharray: 5,5;
+  }
 	</style>
 </head>
 <body onload="createMasterList()">
-<div id="power-gauge"></div>
+<div class="container-fluid">
+  <div class="row">
 
-<div id="master-list">
-<svg id="detail-graph" width="500" height="500" /><svg id="master-list-graph" width="500" height="500" />
+    <div class="col-sm-4"><svg id="master-list-graph" width="500" height="500" /></div>
+    <div class="col-sm-4"><svg id="detail-graph" width="500" height="500" /></div>
+    <div class="col-sm-4">
+      <span class="fieldName">Record Id: </span><span class="fieldValue" id="restaurantId" ></span><br />
+      <span class="fieldName">Restaurant: </span><span class="fieldValue" id="restaurantName" ></span><br />
+      <span class="fieldName">Score: </span><span class="fieldValue" id="restaurantScore" ></span><br />
+      <span class="fieldName">Grade: </span><span class="fieldValue" id="restaurantGrade" ></span><br />
+      <span class="fieldName">Address: </span><span class="fieldValue" id="restaurantAddress" ></span><br />
+      <span class="fieldName">Zip Code: </span><span class="fieldValue" id="restaurantCity" ></span><span class="fieldValue" id="restaurantZip" ></span><br />
+      <span class="fieldName">Last Inspection: </span><span class="fieldValue" id="restaurantLastInsp" ></span><br />
+    </div>
+  </div>
+
+    <div class="row">
+      <div class="col-sm-2">
+        <div id="power-gauge-emp-health"></div>
+        Employee health, heigene and knowledge
+      </div>
+      <div class="col-sm-2">
+        <div id="power-gauge-contamination"></div>
+        Prevent contamination by hands
+      </div>
+      <div class="col-sm-2">
+        <div id="power-gauge-timeAndTemp"></div>
+        Time and temperature relationship
+      </div>
+      <div class="col-sm-2">
+        <div id="power-gauge-protect-contam"></div>
+        Protection from contamination
+      </div>
+      <div class="col-sm-2">
+        <div id="power-gauge-food-source"></div>
+        Food from approved sources
+      </div>
+      <div class="col-sm-2">
+        <div id="power-gauge-critical-risk"></div>
+        Additional risk factors
+      </div>
+    </div>
+
 </div>
 
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+<!-- Latest compiled and minified JavaScript -->
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
 
-<script>
-
-</script>
 </body>
 </html>

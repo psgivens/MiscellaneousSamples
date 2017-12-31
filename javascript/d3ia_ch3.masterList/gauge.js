@@ -2,7 +2,7 @@ var gauge = function(container, configuration) {
   const colors = ["#16A085", "#76D7C4", "#F7DC6F", "#F1C40F", "#A93226"];
 	var that = {};
 	var config = {
-		size						: 710,
+		size						: 110,
 		clipWidth					: 200,
 		clipHeight					: 110,
 		ringInset					: 20,
@@ -24,8 +24,8 @@ var gauge = function(container, configuration) {
 		labelFormat					: d3.format('d'),
 		labelInset					: 10,
 
-    arcColorFn          : (d,i) => colors[i]
-		// arcColorFn					: (d,i) => d3.interpolateHsl(d3.rgb('#e8e2ca'), d3.rgb('#3e6c0a'))(d*i)
+    arcColorFn          : (d,i) => colors[i] //#F9EBEA
+		//arcColorFn					: (d,i) => d3.interpolateHsl(d3.rgb('#F9E79F'), d3.rgb('#641E16'))(d*i)
 	};
 	var range = undefined;
 	var r = undefined;
@@ -63,10 +63,11 @@ var gauge = function(container, configuration) {
 
 		// a linear scale that maps domain values to a percent from 0..1
 		scale = d3.scaleLinear()
-			.range([0,1])
-			.domain([config.minValue, config.maxValue]);
+			.domain([config.minValue, config.maxValue])
+      .range([0,1]);
 
-		ticks = scale.ticks(config.majorTicks);
+    // ticks = scale.ticks(config.majorTicks);
+    ticks = scale.ticks(0);
 		tickData = d3.range(config.majorTicks).map(function() {return 1/config.majorTicks;});
 
 		arc = d3.arc()
@@ -107,7 +108,8 @@ var gauge = function(container, configuration) {
 
 		arcs.selectAll('path')
 				.data(tickData)
-			.enter().append('path')
+			  .enter()
+        .append('path')
 				.attr('fill', function(d, i) {
 					return config.arcColorFn(d,i);
 				})
@@ -161,14 +163,14 @@ var gauge = function(container, configuration) {
 	return that;
 };
 
-var powerGauge = null;
-function startGuage() {
-	powerGauge = gauge('#power-gauge', {
-		size: 300,
+function startGauge(gaugeId, pointCapacity) {
+	const powerGauge = gauge('#' + gaugeId, {
+		size: 200,
 		clipWidth: 300,
-		clipHeight: 300,
+		clipHeight: 120,
 		ringWidth: 60,
-		maxValue: 10,
+		maxValue: pointCapacity,
+//    majorTicks: pointCapacity/2,
 		transitionMs: 4000,
 	});
 	powerGauge.render();
