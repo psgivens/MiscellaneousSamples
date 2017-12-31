@@ -14,14 +14,6 @@
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
 
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-  <!-- Popper JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
-
-  <!-- Latest compiled JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
   <style>
 	body {
 		font-family:  Helvetica, Arial, sans-serif;
@@ -46,57 +38,168 @@
   .dashed {
     stroke-dasharray: 5,5;
   }
+ .largeGraph {
+    width: 500px;
+    display: block;
+    z-index: 0 !important
+  }
+  #master-list-graph {
+    height: 400px;
+  }
+  #detail-graph {
+    height: 500px;
+  }
+  .largeGraphBox {
+    min-width: 500px;
+    display: block;
+    z-index: 0 !important
+  }
+  .row {
+    width: 100%;
+  }
+  .countylogo {
+    height:85px;
+    margin-bottom: 20px;
+  }
+  .powergauges {
+    width: 600px;
+    min-width: 600px;
+    margin-left: 20px;
+  }
+  .body {
+    max-width: 1100px;
+  }
+  #restaurantScore, #restaurantGrade, .fieldValue {
+    font-weight: bold;
+  }
 	</style>
 </head>
-<body onload="createMasterList()">
+<body onload="createMasterList()" >
+<div class="body">
+  <img class="countylogo" src="https://data.lacounty.gov/api/assets/9242DF6D-68B1-40DE-B114-4C0CF43FFC74?header.jpg"  />
+
+  <!-- https://getbootstrap.com/docs/4.0/components/navbar/ -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"></a>
+    LOS ANGELES COUNTY RESTAURANTS AND MARKETS VIOLATIONS
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <!-- <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li> -->
+      </ul>
+      <form class="form-inline my-2 my-lg-0" action="index.html" method="get">
+        <input class="form-control mr-sm-2" type="search" name="record_id" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">View Record</button>
+      </form>
+    </div>
+  </nav>
+
 <div class="container-fluid">
   <div class="row">
-
-    <div class="col-sm-4"><svg id="master-list-graph" width="500" height="500" /></div>
-    <div class="col-sm-4"><svg id="detail-graph" width="500" height="500" /></div>
-    <div class="col-sm-4">
+    <div class="col-md-4 largeGraphBox">
+      <p><h3><span class="fieldValue" id="restaurantName" ></span></h3>
       <span class="fieldName">Record Id: </span><span class="fieldValue" id="restaurantId" ></span><br />
-      <span class="fieldName">Restaurant: </span><span class="fieldValue" id="restaurantName" ></span><br />
       <span class="fieldName">Score: </span><span class="fieldValue" id="restaurantScore" ></span><br />
       <span class="fieldName">Grade: </span><span class="fieldValue" id="restaurantGrade" ></span><br />
       <span class="fieldName">Address: </span><span class="fieldValue" id="restaurantAddress" ></span><br />
       <span class="fieldName">Zip Code: </span><span class="fieldValue" id="restaurantCity" ></span><span class="fieldValue" id="restaurantZip" ></span><br />
       <span class="fieldName">Last Inspection: </span><span class="fieldValue" id="restaurantLastInsp" ></span><br />
+    </p>
+    </div>
+    <div class="col-md-4 largeGraphBox" width="500px">
+      <p>
+        <h5>Inspection Score History for <br /> <span class="fieldValue" id="restaurantName1" ></h5>
+        <svg id="detail-graph" class="img-responsive largeGraph" > </svg>
+      </p>
     </div>
   </div>
-
-    <div class="row">
-      <div class="col-sm-2">
-        <div id="power-gauge-emp-health"></div>
-        Employee health, heigene and knowledge
-      </div>
-      <div class="col-sm-2">
-        <div id="power-gauge-contamination"></div>
-        Prevent contamination by hands
-      </div>
-      <div class="col-sm-2">
-        <div id="power-gauge-timeAndTemp"></div>
-        Time and temperature relationship
-      </div>
-      <div class="col-sm-2">
-        <div id="power-gauge-protect-contam"></div>
-        Protection from contamination
-      </div>
-      <div class="col-sm-2">
-        <div id="power-gauge-food-source"></div>
-        Food from approved sources
-      </div>
-      <div class="col-sm-2">
-        <div id="power-gauge-critical-risk"></div>
-        Additional risk factors
+</div>
+<div class="container powergauges">
+  <div class="row">
+    <div class="col-12">
+      <h5>
+        Critical Risk Factors for <span class="fieldValue" id="restaurantName2" ></span>
+      <h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+        <a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          <div id="power-gauge-emp-health"></div>
+          Employee health, hygiene and knowledge
+        </a>
+    </div>
+    <div class="col-4">
+      <div id="power-gauge-contamination"></div>
+      Prevent contamination by hands
+    </div>
+    <div class="col-4">
+      <div id="power-gauge-timeAndTemp"></div>
+      Time and temperature relationship
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div id="power-gauge-protect-contam"></div>
+      Protection from contamination
+    </div>
+    <div class="col-4">
+      <div id="power-gauge-food-source"></div>
+      Food from approved sources
+    </div>
+    <div class="col-4">
+      <div id="power-gauge-critical-risk"></div>
+      Additional risk factors
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+          Not implemented:
+          This box will list the violation details from the selected gauge.
+        </div>
       </div>
     </div>
-
+  </div>
+</div>
 </div>
 
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-<!-- Latest compiled and minified JavaScript -->
-<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
 
+<div class="col-md-4 largeGraphBox" width="500px" style="margin-top: 80px">
+  <p><h5>Restaurants with the lowest average score</h5>
+  <svg id="master-list-graph" class="img-responsive largeGraph" > </svg></p></div>
+
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 </body>
 </html>

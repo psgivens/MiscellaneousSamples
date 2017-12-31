@@ -130,16 +130,16 @@ function createMasterList() {
         .enter()
         .append("rect")
         .attr("class", "bars")
-        .style("fill", "pink")
+        .style("fill", "#BB8FCE")
         .style("stroke", "black")
-        .style("stroke-width", "1px")
+        .style("stroke-width", "0px")
         .attr("x", xScale(0))
         .attr("y", d => yScale(d.name))
         .attr("width", d => xScale(d.avg_sum_points) - xScale(0))
         .attr("height", d => yScale.bandwidth());
 
       bars.on("click", function(d) {
-        bars.style("fill", "pink");
+        bars.style("fill", "#BB8FCE");
         const bar = d3.select(this);
         bar.style("fill","red");
 
@@ -192,12 +192,36 @@ function drawSpecifics(record){
 function updateRestaurantInfo(record){
   document.getElementById("restaurantId").textContent = record.record_id;
   document.getElementById("restaurantName").textContent = record.name;
-  document.getElementById("restaurantScore").textContent = record.score;
-  document.getElementById("restaurantGrade").textContent = record.grade;
+  document.getElementById("restaurantName1").textContent = record.name;
+  document.getElementById("restaurantName2").textContent = record.name;
+
+  const score = document.getElementById("restaurantScore");
+  const grade = document.getElementById("restaurantGrade");
+  score.textContent = record.score;
+  grade.textContent = record.grade;
+  switch (record.grade) {
+    case "A":
+      score.style.color = 'green';
+      grade.style.color = 'green';
+      break;
+    case "B":
+      score.style.color = '#D68910';
+      grade.style.color = '#D68910';
+    break;case "C":
+      score.style.color = 'red';
+      grade.style.color = 'red';
+      break;
+    default:
+      score.style.color = '#E74C3C';
+      grade.style.color = '#E74C3C';
+      break;
+
+  }
+
   document.getElementById("restaurantAddress").textContent = record.location_1;
   document.getElementById("restaurantCity").textContent = record.site_city;
   document.getElementById("restaurantZip").textContent = record.site_zip;
-  document.getElementById("restaurantLastInsp").textContent = record.activity_date;
+  document.getElementById("restaurantLastInsp").textContent = new Date(record.activity_date).toDateString();
 }
 
 function drawDetails(record_id) {

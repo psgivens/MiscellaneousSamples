@@ -166,7 +166,7 @@ var gauge = function(container, configuration) {
 function startGauge(gaugeId, pointCapacity) {
 	const powerGauge = gauge('#' + gaugeId, {
 		size: 200,
-		clipWidth: 300,
+		clipWidth: 200,
 		clipHeight: 120,
 		ringWidth: 60,
 		maxValue: pointCapacity,
