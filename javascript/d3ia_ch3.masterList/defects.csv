@@ -1,0 +1,19 @@
+"severity","state","team","count"
+"High","Back Log","Core",3
+"High","Back Log","Learning",3
+"Medium","Back Log","Core",5
+"Low","Back Log","Core",6
+"High","In Progress","Core",3
+"Medium","In Progress","Core",6
+"Low","In Progress","Core",2
+"High","Done","Core",3
+"Medium","Done","Core",1
+"Low","Done","Core",3
+"Medium","Back Log","Learning",0
+"Low","Back Log","Learning",0
+"High","In Progress","Learning",1
+"Medium","In Progress","Learning",0
+"Low","In Progress","Learning",1
+"High","Done","Learning",0
+"Medium","Done","Learning",1
+"Low","Done","Learning",0
