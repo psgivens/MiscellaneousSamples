@@ -10,12 +10,32 @@ HTMLWidgets.widget({
 
     return {
 
-      renderValue: function(x) {
+      renderValue: function(args) {
 
         // TODO: code to render the widget, e.g.
-        el.innerText = "Message from psgwidget: " + x.message;
-		el.style.color = 'red'
-		el.style.fontWeight = 'bold'
+        
+        console.log("version 1");
+        console.log(args);
+    		  
+    		const svg = d3.select(el)
+    		  .append("svg")
+    		  .attr("width","500")
+    		  .attr("height","500")
+    		  .append("rect")
+    		  .attr("width", "100")
+    		  .attr("height", "100");
+    		  
+    		d3.select(el)
+    		  .selectAll("div.defects")
+    		  .data(HTMLWidgets.dataframeToD3(args.data))
+    		  .enter()
+    		  .append("div")
+    		  .attr("class", "defects")
+    		  .text(d=>d.severity);
+
+//    		el.innerText = "Message from psgwidget: " ;
+//    		el.style.color = 'red';
+//    		el.style.fontWeight = 'bold';
 
       },
 

@@ -5,17 +5,17 @@
 #' @import htmlwidgets
 #'
 #' @export
-psgwidget <- function(message, width = NULL, height = NULL, elementId = NULL) {
+psgwidget <- function(message, data, width = NULL, height = NULL, elementId = NULL) {
 
   # forward options using x
-  x = list(
-    message = message
+  arguments = list(
+    message = message, data = data
   )
 
   # create widget
   htmlwidgets::createWidget(
     name = 'psgwidget',
-    x,
+    arguments,
     width = width,
     height = height,
     package = 'psgwidget',
