@@ -2,10 +2,10 @@ text {
 font-size: 10px;
 }
 
-g > text.active {
+/* g > text.active {
 font-size: 30px;
-}
-
+} */
+/* 
 
 circle {
 fill: pink;
@@ -19,4 +19,4 @@ fill: red;
 
 circle.inactive {
 fill: gray;
-}
+} */

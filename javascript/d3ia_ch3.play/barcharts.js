@@ -81,9 +81,10 @@ function createBarCharts() {
       .tickSize(0-svgHeight)
       .ticks(10);
 
+    const svg = d3.selectAll("svg");
+
     // Start with globals for the graph.
-    d3.selectAll("svg")
-      .append("g")
+    svg.append("g")
       .attr("id","yAxisG")
       .call(yAxis)
       .attr("transform","translate(" + margin.left + "," + margin.top + ")")
@@ -107,8 +108,7 @@ function createBarCharts() {
 
 
     // Create the chart for each 'category'
-    const charts = d3.select("svg")
-      .selectAll("g.stackedBars")
+    const charts = svg.selectAll("g.stackedBars")
       .data(dataSums)
       .enter()
       .append("g")
@@ -134,7 +134,9 @@ function createBarCharts() {
         .attr("class", "axisLabel")
         .attr("width", xScale_InterState.bandwidth())
         .attr("height", labelHeight)
-        .attr("transform", "translate(" + (xScale_InterState(d.state)) + "," + (svgHeight + 10)  + ")")
+        .attr("x", xScale_InterState(d.state) )
+        .attr("y", (svgHeight + 10))
+//        .attr("transform", "translate(" + (xScale_InterState(d.state)) + "," + (svgHeight + 10)  + ")")
         .append("text")
         .text(d => d.state)
         .style("text-anchor", "middle")
@@ -145,13 +147,15 @@ function createBarCharts() {
         .attr("x", "50%");
 
       // Create a barRegion for each 'team'
-      const barRegions = chart.selectAll("g.state")
+      const barRegions = chart.selectAll("svg.state")
         .data(d.teams)
         .enter()
-        .append("g")
+        .append("svg")
         .attr("id", d => d.state)
         .attr("class", "state")
-        .attr("transform", d1 => "translate(" + xScale_InterState(d.state) + ", " + margin.top + ")");
+        .attr("x", xScale_InterState(d.state))
+        .attr("y", margin.top);
+        //.attr("transform", d1 => "translate(" + xScale_InterState(d.state) + ", " + margin.top + ")");
 
       barRegions.each(function(team,i1){
         const teamBarRegion = d3.select(this);
