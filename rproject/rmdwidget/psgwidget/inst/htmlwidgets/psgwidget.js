@@ -226,6 +226,18 @@ HTMLWidgets.widget({
 
         });
 
+        const mRects = d3.selectAll("rect.measurementRectangle");
+        mRects.on("mouseover", function(d) {
+          const bar = d3.select(this);
+          bar.style("fill","red");
+        });
+
+        mRects.on("mouseout", function(d) {
+          const bar = d3.select(this);
+
+          // Let the stylesheet take over
+          bar.style("fill", "");
+        });
 
 
 
