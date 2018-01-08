@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TplQuickSort3", "Algorithms\TplQuickSort3.csproj", "{FE5CA9D9-A5ED-49E9-B5D7-7535DDB90FCD}"
 EndProject
@@ -50,6 +50,10 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SearchGiant2016", "SearchGiant2016\SearchGiant2016.fsproj", "{AF743F44-6E59-465B-94AA-491803F1F929}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsSearchGiant2016", "CsSearchGiant2016\CsSearchGiant2016.csproj", "{CDDE8557-1455-4E1F-9697-1EB4EC07615B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FSharpScripts", "FSharpScripts", "{D8054401-5BAB-4959-9AF1-EA750E4F33A1}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CountyLatLongs", "CountyLatLongs\CountyLatLongs.fsproj", "{D9E36BAC-2E68-4C9B-A1BC-9970F35C723E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +125,10 @@ Global
 		{CDDE8557-1455-4E1F-9697-1EB4EC07615B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDDE8557-1455-4E1F-9697-1EB4EC07615B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDDE8557-1455-4E1F-9697-1EB4EC07615B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9E36BAC-2E68-4C9B-A1BC-9970F35C723E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9E36BAC-2E68-4C9B-A1BC-9970F35C723E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9E36BAC-2E68-4C9B-A1BC-9970F35C723E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9E36BAC-2E68-4C9B-A1BC-9970F35C723E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,5 +150,6 @@ Global
 		{35E6BCBA-345C-4092-B3FA-F9AB06E09D3D} = {B914FB3D-497E-431D-88DF-864F8AAF273E}
 		{AF743F44-6E59-465B-94AA-491803F1F929} = {B3ADF383-F3D4-4CE8-AD0C-9549FD34D44F}
 		{CDDE8557-1455-4E1F-9697-1EB4EC07615B} = {B3ADF383-F3D4-4CE8-AD0C-9549FD34D44F}
+		{D9E36BAC-2E68-4C9B-A1BC-9970F35C723E} = {D8054401-5BAB-4959-9AF1-EA750E4F33A1}
 	EndGlobalSection
 EndGlobal
