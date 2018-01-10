@@ -6,22 +6,31 @@ function createBarCharts() {
     const teamSums = d3.nest()
       .key(d => d.state)
       .key(d => d.team)
+      .key(d => d.source)
       .key(d => d.severity)
       .rollup(d => d3.sum(d, d1 => d1.count))
       .entries(data);
 
+    const mapSource = source => {
+        const severities = source.values;
+        let offset = 0;
+        severities.forEach(item => {
+          item.x0 = offset;
+          offset += item.value;
+          item.x1 = offset;
+        })
+        return {
+          key:source.key,
+          values:severities,
+          total:severities.reduce((acc,item)=>acc+item.value,0)
+        }
+      }
+
     const mapTeam = team => {
-      const severities = team.values;
-      let offset = 0;
-      severities.forEach(item => {
-        item.x0 = offset;
-        offset += item.value;
-        item.x1 = offset;
-      })
       return {
         key:team.key,
-        values:severities,
-        total:severities.reduce((acc,item)=>acc+item.value,0)
+        values:team.values.map(mapSource),
+        max:20 // TODO: Calculate max
       }
     }
 
@@ -51,6 +60,7 @@ function createBarCharts() {
     // Munge the data
     const teams = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.team), new Set ()));
     const severities  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
+    const sources  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.source), new Set ()));
     const dataSums = summarizeData(incomingData, teams);
 
     // Create the scales
@@ -124,10 +134,10 @@ function createBarCharts() {
         .call(xAxis)
         .attr("transform", "translate(" + xScale_InterState(d.state) + "," + svgHeight + ")");
 
-        xa.selectAll("path.domain")
+      xa.selectAll("path.domain")
         .attr("opacity", "0.2");
 
-        xa.selectAll("g.tick > line")
+      xa.selectAll("g.tick > line")
         .attr("opacity","0.2");
 
       chart.append("svg")
@@ -136,7 +146,6 @@ function createBarCharts() {
         .attr("height", labelHeight)
         .attr("x", xScale_InterState(d.state) )
         .attr("y", (svgHeight + 10))
-//        .attr("transform", "translate(" + (xScale_InterState(d.state)) + "," + (svgHeight + 10)  + ")")
         .append("text")
         .text(d => d.state)
         .style("text-anchor", "middle")
@@ -157,6 +166,7 @@ function createBarCharts() {
         .attr("y", margin.top);
         //.attr("transform", d1 => "translate(" + xScale_InterState(d.state) + ", " + margin.top + ")");
 
+
       barRegions.each(function(team,i1){
         const teamBarRegion = d3.select(this);
         teamBarRegion.append("text")
@@ -172,32 +182,70 @@ function createBarCharts() {
           .enter()
           .append("svg")
           .attr("class", "bars")
-          .attr("x", d1 => xScale_State(d1.x0))
+          .attr("x", d1 => xScale_State(0))
           .attr("y", d1 => yScale(team.key))
-          .attr("class", "measurementRectangle")
+          // .attr("class", "measurementRectangle")
           .attr("height", d1 => yScale.bandwidth())
-          .attr("width", d1 => xScale_State(d1.value) - labelMargin);
+          .attr("logs", d1 => console.log(xScale_State(d1.total)))
+          .attr("width", d1 => xScale_State(d1.total) - labelMargin);
 
-        bars.append("rect")
-          .style("stroke", "black")
-          .style("stroke-width", "1px")
-          .attr("x","0")
-          .attr("y","0")
-          .attr("class", d => "measurementRectangle " + d.key)
-          .attr("height", d1 => yScale.bandwidth())
-          .attr("width", d1 => xScale_State(d1.value) - labelMargin);
+        bars.each(function(source,i2){
+          const bar = d3.select(this);
+          // data: source
 
-        bars.append("text")
-          .text(d1 => d1.value)
-          .style("text-anchor", "middle")
-          .style("dominant-baseline", "central")
-          .style("fill", "black")
-          .attr("y", "50%")
-          .attr("x", "50%");
+          const teamTop = yScale(team.key);
+          const teamBottom = teamTop + yScale.bandwidth();
+          // Create the scales
+          const yScale_Source = d3.scaleBand()
+            .domain(sources)
+            .range([teamTop, teamBottom])
+            .padding(0.2)
+            .round(true);
 
-      });
-    })
+          // TODO: Adjust bar to make this sizing work.
+          // bar.append("text")
+          //   .text(source.total)
+          //   .style("dominant-baseline", "central")
+          //   .style("font-size", "14px")
+          //   .attr("y", yScale_Source(source.key) + yScale_Source.bandwidth() / 2)
+          //   .attr("x", "0");
 
+          // Create a bar segment for each 'severity'
+          const sourceBars = teamBarRegion.selectAll("svg.source_bars")
+            .data(source.values)
+            .enter()
+            .append("svg")
+            .attr("class", "source_bars")
+            .attr("x", d1 => xScale_State(d1.x0))
+            .attr("y", d1 => yScale_Source(source.key))
+            .attr("class", "measurementRectangle")
+            .attr("height", d1 => yScale_Source.bandwidth())
+            .attr("width", d1 => xScale_State(d1.value) - labelMargin);
+
+          sourceBars.append("rect")
+            .style("stroke", "black")
+            .style("stroke-width", "1px")
+            .attr("x","0")
+            .attr("y","0")
+            .attr("class", d => "measurementRectangle " + d.key)
+            .attr("height", d1 => yScale.bandwidth())
+            .attr("width", d1 => xScale_State(d1.value) - labelMargin);
+
+
+          sourceBars.append("text")
+            .text(d1 => d1.value)
+            .style("text-anchor", "middle")
+            .style("dominant-baseline", "central")
+            .style("fill", "black")
+            .attr("y", "50%")
+            .attr("x", "50%");
+
+          });
+
+        });
+    //   });
+    // })
+    //
     const mRects = d3.selectAll("rect.measurementRectangle");
     mRects.on("mouseover", function(d) {
       const bar = d3.select(this);
@@ -209,6 +257,7 @@ function createBarCharts() {
 
       // Let the stylesheet take over
       bar.style("fill", "")
-    });
-  }
+     });
+  })
+}
 }

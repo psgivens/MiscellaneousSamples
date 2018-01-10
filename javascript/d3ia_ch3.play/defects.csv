@@ -1,19 +1,37 @@
-"severity","state","team","count"
-"High","Back Log","Core",3
-"High","Back Log","Learning",3
-"Medium","Back Log","Core",5
-"Low","Back Log","Core",6
-"High","In Progress","Core",3
-"Medium","In Progress","Core",6
-"Low","In Progress","Core",2
-"High","Done","Core",3
-"Medium","Done","Core",1
-"Low","Done","Core",3
-"Medium","Back Log","Learning",0
-"Low","Back Log","Learning",0
-"High","In Progress","Learning",1
-"Medium","In Progress","Learning",0
-"Low","In Progress","Learning",1
-"High","Done","Learning",0
-"Medium","Done","Learning",1
-"Low","Done","Learning",0
+"severity","state","team","count","source"
+"High","Back Log","Core",2,"DAST"
+"High","Back Log","Learning",3,"DAST"
+"Medium","Back Log","Core",3,"DAST"
+"Low","Back Log","Core",7,"DAST"
+"High","In Progress","Core",4,"DAST"
+"Medium","In Progress","Core",5,"DAST"
+"Low","In Progress","Core",2,"DAST"
+"High","Done","Core",3,"DAST"
+"Medium","Done","Core",1,"DAST"
+"Low","Done","Core",3,"DAST"
+"Medium","Back Log","Learning",0,"DAST"
+"Low","Back Log","Learning",0,"DAST"
+"High","In Progress","Learning",1,"DAST"
+"Medium","In Progress","Learning",0,"DAST"
+"Low","In Progress","Learning",1,"DAST"
+"High","Done","Learning",0,"DAST"
+"Medium","Done","Learning",1,"DAST"
+"Low","Done","Learning",0,"DAST"
+"High","Back Log","Core",3,"Pen. Test"
+"High","Back Log","Learning",3,"Pen. Test"
+"Medium","Back Log","Core",5,"Pen. Test"
+"Low","Back Log","Core",6,"Pen. Test"
+"High","In Progress","Core",3,"Pen. Test"
+"Medium","In Progress","Core",6,"Pen. Test"
+"Low","In Progress","Core",2,"Pen. Test"
+"High","Done","Core",3,"Pen. Test"
+"Medium","Done","Core",1,"Pen. Test"
+"Low","Done","Core",3,"Pen. Test"
+"Medium","Back Log","Learning",0,"Pen. Test"
+"Low","Back Log","Learning",0,"Pen. Test"
+"High","In Progress","Learning",1,"Pen. Test"
+"Medium","In Progress","Learning",0,"Pen. Test"
+"Low","In Progress","Learning",1,"Pen. Test"
+"High","Done","Learning",0,"Pen. Test"
+"Medium","Done","Learning",1,"Pen. Test"
+"Low","Done","Learning",0,"Pen. Test"
