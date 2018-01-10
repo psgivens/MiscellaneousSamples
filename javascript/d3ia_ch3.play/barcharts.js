@@ -30,7 +30,8 @@ function createBarCharts() {
       return {
         key:team.key,
         values:team.values.map(mapSource),
-        max:20 // TODO: Calculate max
+        max:20, // TODO: Calculate max
+        total:5
       }
     }
 
@@ -70,6 +71,18 @@ function createBarCharts() {
       .padding(0.2)
       .round(true);
 
+    const createSourceScale = (teamName) => {
+      const teamTop = yScale(teamName);
+      const teamBottom = teamTop + yScale.bandwidth();
+
+      // Create the scales
+      return d3.scaleBand()
+        .domain(sources)
+        .range([teamTop, teamBottom])
+        .padding(0.2)
+        .round(true);
+    };
+
     const xScale_InterState = d3.scaleBand()
       .domain(["Back Log","In Progress", "Done"])
       .range([ margin.left, width + margin.left ])
@@ -88,7 +101,7 @@ function createBarCharts() {
 
     const xAxis = d3.axisBottom()
       .scale(xScale_State)
-      .tickSize(0-svgHeight)
+      .tickSize(0-svgHeight + 20)
       .ticks(10);
 
     const svg = d3.selectAll("svg");
@@ -114,8 +127,6 @@ function createBarCharts() {
     //   .text("Legend")
     //   .attr("y", "100")
     //   // .attr("x", "200")
-
-
 
     // Create the chart for each 'category'
     const charts = svg.selectAll("g.stackedBars")
@@ -164,17 +175,26 @@ function createBarCharts() {
         .attr("class", "state")
         .attr("x", xScale_InterState(d.state))
         .attr("y", margin.top);
-        //.attr("transform", d1 => "translate(" + xScale_InterState(d.state) + ", " + margin.top + ")");
-
 
       barRegions.each(function(team,i1){
         const teamBarRegion = d3.select(this);
-        teamBarRegion.append("text")
-          .text(team.total)
+        const yScale_Source = createSourceScale(team.key);
+
+        teamBarRegion.selectAll("svg.source_total")
+          .data(team.values)
+          .enter()
+          .append("svg")
+          .attr("class", "source_total")
+          .attr("y", d1 => yScale_Source(d1.key))
+          .attr("x", "0")
+          .attr("width", labelMargin)
+          .attr("height", yScale_Source.bandwidth())
+          .append("text")
+          .text(d1 => d1.total)
+          .attr("x", "50%")
+          .attr("y", "50%")
           .style("dominant-baseline", "central")
-          .style("font-size", "14px")
-          .attr("y", yScale(team.key) + yScale.bandwidth() / 2)
-          .attr("x", "0");
+          .style("font-size", "10px");
 
         // Create a bar segment for each 'severity'
         const bars = teamBarRegion.selectAll("svg.bars")
@@ -193,14 +213,6 @@ function createBarCharts() {
           const bar = d3.select(this);
           // data: source
 
-          const teamTop = yScale(team.key);
-          const teamBottom = teamTop + yScale.bandwidth();
-          // Create the scales
-          const yScale_Source = d3.scaleBand()
-            .domain(sources)
-            .range([teamTop, teamBottom])
-            .padding(0.2)
-            .round(true);
 
           // TODO: Adjust bar to make this sizing work.
           // bar.append("text")
