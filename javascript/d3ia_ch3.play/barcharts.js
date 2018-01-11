@@ -272,9 +272,11 @@ function createBarCharts() {
       .tickSize(0-config.svgHeight + 20)
       .ticks(10);
 
+
+    /* Start with globals for the graph.
+    ************************/
     const svg = d3.selectAll("svg");
 
-    // Start with globals for the graph.
     svg.append("g")
       .attr("id","yAxisG")
       .call(yAxis)
@@ -282,7 +284,33 @@ function createBarCharts() {
       .selectAll("path.domain")
       .attr("display", "none");
 
-    // Create the chart for each 'category'
+    let cat1Sections = svg.selectAll("svg.cat2LabelSections")
+      .data(meta.cat1Values)
+      .enter()
+      .append("svg")
+      .attr("class","cat2LabelSections")
+      .attr("transform",d1 => "translate(" + (config.margin.left + config.width) + "," + (scales.outerYScale(d1) + config.margin.top) + ")")
+      .attr("height", scales.outerYScale.bandwidth() - 1)
+      .attr("width", config.margin.right);
+      // .append("rect")
+      // .attr("width",100)
+      // .attr("height",100)
+      // .style("fill","black")
+
+    cat1Sections.each(function(data,iter){
+      const cat1Section = d3.select(this);
+      cat1Section
+        .append("text")
+        .text(d1 => "d1.value")
+        .style("text-anchor", "middle")
+        .style("dominant-baseline", "central")
+        .style("fill", "black")
+        .attr("y", "50%")
+        .attr("x", "50%");
+    });
+
+    /* Create the chart for each 'category'
+    ************************/
     const charts = svg.selectAll("g.stackedBars")
       .data(dataSums)
       .enter()
