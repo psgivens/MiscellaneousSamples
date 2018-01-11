@@ -60,6 +60,8 @@ function createBarCharts() {
     const tickSize = 10;
     const labelMargin = 30;
     const labelHeight = 30;
+    const config = {svgHeight,svgWidth,margin,width,height,catSize,labelOffset,
+                    tickSize,labelMargin,labelHeight};
 
     /* Get the categories
     ************************/
@@ -67,6 +69,7 @@ function createBarCharts() {
     const teams = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.team), new Set ()));
     const severities  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
     const sources  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.source), new Set ()));
+    const meta = {states,teams,severities,sources};
 
     /* Munge the data
     ************************/
@@ -101,6 +104,14 @@ function createBarCharts() {
       .domain([ 0, 15 ])
       .range([ labelMargin, xScale_InterState.bandwidth() - labelMargin]);
 
+    const scales = {
+      outerYScale:yScale,
+      innerYScale:null,
+      outerXScale:xScale_InterState,
+      innerXScale:xScale_State,
+      createInnerYScale
+    }
+
     // Define the axis functions
     const yAxis = d3.axisLeft()
       .scale(yScale)
@@ -121,20 +132,6 @@ function createBarCharts() {
       .attr("transform","translate(" + margin.left + "," + margin.top + ")")
       .selectAll("path.domain")
       .attr("display", "none");
-
-    // TODO: Add legend
-    // d3.select("svg")
-    //   .selectAll("svg.legend")
-    //   .append("svg")
-    //   .attr("transform", "translate(" + (width + margin.left) + ",100")
-    //   .attr("class", "legend")
-    //   .data(severities)
-    //   .enter()
-    //   .append("svg")
-    //   .append("text")
-    //   .text("Legend")
-    //   .attr("y", "100")
-    //   // .attr("x", "200")
 
     // Create the chart for each 'category'
     const charts = svg.selectAll("g.stackedBars")
@@ -229,16 +226,6 @@ function createBarCharts() {
 
         bars.each(function(source,i2){
           const bar = d3.select(this);
-          // data: source
-
-
-          // TODO: Adjust bar to make this sizing work.
-          // bar.append("text")
-          //   .text(source.total)
-          //   .style("dominant-baseline", "central")
-          //   .style("font-size", "14px")
-          //   .attr("y", yScale_Source(source.key) + yScale_Source.bandwidth() / 2)
-          //   .attr("x", "0");
 
           // Create a bar segment for each 'severity'
           const sourceBars = teamBarRegion.selectAll("svg.source_bars")
