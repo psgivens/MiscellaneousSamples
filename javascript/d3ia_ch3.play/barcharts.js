@@ -116,7 +116,8 @@ function createBarCharts() {
       bars.each(buildCat3Bars(this,teamBarRegion,cat1Scales,config));
     };
   }
-  function buildCat1Chart(_this, scales, config, xAxis) {
+
+  function buildCat0Chart(_this, scales, config, xAxis) {
     return function(d,i){
       const chart = d3.select(this);
 
@@ -196,47 +197,48 @@ function createBarCharts() {
   }
 
   function extractMeta(incomingData){
-    const states = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.state), new Set ()));
-    const teams = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.team), new Set ()));
-    const severities  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
-    const sources  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.source), new Set ()));
-    return {states,teams,severities,sources};
+    const cat0Values = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.state), new Set ()));
+    const cat1Values = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.team), new Set ()));
+    const cat2Values  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.source), new Set ()));
+    const cat3Values  = Array.from(incomingData.reduce((acc,d1) => acc.add(d1.severity), new Set ()));
+    return {cat0Values,cat1Values,cat2Values,cat3Values,};
   }
 
   function buildScales(config, meta) {
+
     // Create the scales
-    const yScale = d3.scaleBand()
-      .domain(meta.teams)
-      .range([config.margin.top, config.svgHeight - config.margin.bottom])
-      .padding(0.00)
-      .round(true);
-
-    const createInnerYScale = (teamName) => {
-      const teamTop = yScale(teamName);
-      const teamBottom = teamTop + yScale.bandwidth();
-
-      // Create the scales
-      return d3.scaleBand()
-        .domain(meta.sources)
-        .range([teamTop, teamBottom])
-        .padding(0.1)
-        .round(true);
-    };
-
-    const xScale_InterState = d3.scaleBand()
-      .domain(meta.states)
+    const outerXScale = d3.scaleBand()
+      .domain(meta.cat0Values)
       .range([config.margin.left, config.width + config.margin.left ])
       .padding(0.0)
       .round(true);
 
-    const xScale_State = d3.scaleLinear()
+    const outerYScale = d3.scaleBand()
+      .domain(meta.cat1Values)
+      .range([config.margin.top, config.svgHeight - config.margin.bottom])
+      .padding(0.00)
+      .round(true);
+
+    const createInnerYScale = (cat1Key) => {
+      const top = outerYScale(cat1Key);
+      const bottom = top + outerYScale.bandwidth();
+
+      // Create the scales
+      return d3.scaleBand()
+        .domain(meta.cat2Values)
+        .range([top, bottom])
+        .padding(0.1)
+        .round(true);
+    };
+
+    const innerXScale = d3.scaleLinear()
       .domain([ 0, 15 ])
-      .range([config.labelMargin, xScale_InterState.bandwidth() - config.labelMargin]);
+      .range([config.labelMargin, outerXScale.bandwidth() - config.labelMargin]);
 
     return {
-      outerYScale:yScale,
-      outerXScale:xScale_InterState,
-      innerXScale:xScale_State,
+      outerYScale:outerYScale,
+      outerXScale:outerXScale,
+      innerXScale:innerXScale,
       createInnerYScale:createInnerYScale
     };
   }
@@ -289,6 +291,6 @@ function createBarCharts() {
       .attr("id", d => "xAxis_" + d.cat0Key)
       .attr("width", scales.outerXScale.bandwidth());
 
-    charts.each(buildCat1Chart(this, scales, config, xAxis));
+    charts.each(buildCat0Chart(this, scales, config, xAxis));
   }
 }
