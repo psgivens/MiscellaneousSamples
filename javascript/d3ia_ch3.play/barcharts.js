@@ -21,10 +21,14 @@ function createBarCharts() {
       }
 
     const mapCat1 = cat1Item => {
-      const cat2Items = cat1Item.values.map(mapCat2);
+      const cat2Items =
+        cat1Item.values
+          .map(mapCat2);
+      const cat2Items_1 =
+          cat2Items.reduce((acc,item) => { acc[item.cat2Key] = item; return acc; }, cat2Items);
       return {
         cat1Key:cat1Item.key,
-        cat2Values:cat2Items,
+        cat2Values:cat2Items_1,
         max:cat2Items.reduce((acc,item)=>Math.max(acc,item.total))
       }
     }
@@ -81,13 +85,15 @@ function createBarCharts() {
       };
     };
 
-  function buildCat2Bars(_this, scales, config) {
+  function buildCat2Bars(_this, scales, config, meta) {
     return function(team,i1){
       const teamBarRegion = d3.select(this);
-      const cat1Scales = Object.assign({innerYScale:scales.createInnerYScale(team.cat1Key)}, scales);
+      const top = scales.outerYScale(team.cat1Key);
+      const cat1Scales = Object.assign({innerYScale:scales.createInnerYScale(top, team.cat1Key)}, scales);
+      const values = meta.cat2Values.map(cat2Key => team.cat2Values[cat2Key]);
 
       teamBarRegion.selectAll("svg.source_total")
-        .data(team.cat2Values)
+        .data(values)
         .enter()
         .append("svg")
         .attr("class", "source_total")
@@ -104,7 +110,7 @@ function createBarCharts() {
 
       // Create a bar segment for each 'severity'
       const bars = teamBarRegion.selectAll("svg.bars")
-        .data(team.cat2Values)
+        .data(values)
         .enter()
         .append("svg")
         .attr("class", "bars")
@@ -117,7 +123,76 @@ function createBarCharts() {
     };
   }
 
-  function buildCat0Chart(_this, scales, config, xAxis) {
+  function buildCat2Labels(_this, scales, config, meta) {
+    return function(cat1Key,i1){
+      const cat1Section = d3.select(this);
+      const top = scales.outerYScale(cat1Key);
+      const cat1Scales = Object.assign({innerYScale:scales.createInnerYScale(0,cat1Key)}, scales);
+
+      cat1Section.selectAll("svg.cat2Labels")
+        .data(meta.cat2Values)
+        .enter()
+        .append("svg")
+          .attr("class", "cat2Labels")
+          .attr("y", d1 => cat1Scales.innerYScale(d1))
+          .attr("x", "0")
+          .attr("width", config.margin.right)
+          .attr("height", cat1Scales.innerYScale.bandwidth())
+
+        .append("text")
+        .attr("class", "cat2labels")
+        .text(d1 => d1)
+        .style("text-anchor", "left")
+        .style("dominant-baseline", "central")
+        .style("fill", "black")
+        .attr("y", "50%")
+        .attr("x", "0");
+    };
+  }
+
+
+  // Work in progress
+  function buildCat2Labels2(svg, scales, config, meta) {
+
+    const cat1Scales = meta.cat1Values.reduce((acc,cat1Key) =>
+      Object.assign({cat1Key:scales.createInnerYScale(0,cat1Key)}, acc), {});
+
+    meta.cat1Values.forEach((cat1Key, iter) =>{
+
+    });
+
+    // let cat1Sections = svg.selectAll("svg.cat2LabelSections")
+    //   .data(meta.cat1Values)
+    //   .enter()
+    //   .append("svg")
+    //   .attr("class","cat2LabelSections")
+    //   .attr("transform",d1 => "translate(" + (config.margin.left + config.width) + "," + (scales.outerYScale(d1) + config.margin.top) + ")")
+    //   .attr("height", scales.outerYScale.bandwidth() - 1)
+    //   .attr("width", config.margin.right);
+    //
+    // cat1Section.selectAll("svg.cat2Labels")
+    //   .data(meta.cat2Values)
+    //   .enter()
+    //   .append("svg")
+    //     .attr("class", "cat2Labels")
+    //     .attr("y", d1 => cat1Scales.innerYScale(d1))
+    //     .attr("x", "0")
+    //     .attr("width", config.margin.right)
+    //     .attr("height", cat1Scales.innerYScale.bandwidth())
+    //
+    //   .append("text")
+    //   .attr("class", "cat2labels")
+    //   .text(d1 => d1)
+    //   .style("text-anchor", "left")
+    //   .style("dominant-baseline", "central")
+    //   .style("fill", "black")
+    //   .attr("y", "50%")
+    //   .attr("x", "0");
+  }
+
+
+
+  function buildCat0Chart(_this, scales, config, meta, xAxis) {
     return function(d,i){
       const chart = d3.select(this);
 
@@ -162,7 +237,7 @@ function createBarCharts() {
         .attr("x", scales.outerXScale(d.cat0Key))
         .attr("y", config.margin.top);
 
-      barRegions.each(buildCat2Bars(this, scales, config));
+      barRegions.each(buildCat2Bars(this, scales, config, meta));
 
       /* Wire the chart up for interaction.
       ************************/
@@ -219,8 +294,7 @@ function createBarCharts() {
       .padding(0.00)
       .round(true);
 
-    const createInnerYScale = (cat1Key) => {
-      const top = outerYScale(cat1Key);
+    const createInnerYScale = (top, cat1Key) => {
       const bottom = top + outerYScale.bandwidth();
 
       // Create the scales
@@ -297,17 +371,8 @@ function createBarCharts() {
       // .attr("height",100)
       // .style("fill","black")
 
-    cat1Sections.each(function(data,iter){
-      const cat1Section = d3.select(this);
-      cat1Section
-        .append("text")
-        .text(d1 => "d1.value")
-        .style("text-anchor", "middle")
-        .style("dominant-baseline", "central")
-        .style("fill", "black")
-        .attr("y", "50%")
-        .attr("x", "50%");
-    });
+     cat1Sections.each(buildCat2Labels(this, scales, config, meta));
+    //buildCat2Labels2(svg, scales, config, meta);
 
     /* Create the chart for each 'category'
     ************************/
@@ -319,6 +384,6 @@ function createBarCharts() {
       .attr("id", d => "xAxis_" + d.cat0Key)
       .attr("width", scales.outerXScale.bandwidth());
 
-    charts.each(buildCat0Chart(this, scales, config, xAxis));
+    charts.each(buildCat0Chart(this, scales, config, meta, xAxis));
   }
 }
